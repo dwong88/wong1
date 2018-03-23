@@ -72,8 +72,8 @@ return array(
 		'db'=>array(
 			'connectionString' => 'mysql:host=127.0.0.1;dbname=dbghours',
 			'emulatePrepare' => true,
-			'username' => 'kontraks_usr',
-			'password' => 'kontrak123',
+			'username' => 'root',
+			'password' => '123456',
 			'charset' => 'utf8',
 		),
 		'browser'=>array(
