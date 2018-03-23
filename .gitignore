@@ -1,0 +1,5 @@
+assets/
+protected/runtime/
+**/.DS_Store*
+.settings/
+.idea/

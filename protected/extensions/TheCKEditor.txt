@@ -1,0 +1,2 @@
+http://www.yiiframework.com/extension/the-ckeditor-integration/
+https://github.com/aqlinux/TheCKEditor
