@@ -13,22 +13,25 @@ class Helper
 			echo '<div class="flash-' . $key . ' info">' . $message . "</div>\n";
 		endforeach;
 	}
-	
-	public static function registerNumberField($selector)
-	{
-		Helper::registerJsKarlwei();
-		Yii::app()->clientScript->registerScript(
-					    '__registerNumberField',
-					    "$('{$selector}').live('focus', function() {
+
+    public static function registerNumberField($selector)
+    {
+        Helper::registerJsKarlwei();
+        Yii::app()->clientScript->registerScript(
+            '__registerNumberField',
+            "
+					    $(document).on('focus','{$selector}', function() {
 							this.value = Karlwei.helper.number.removeCommas(this.value);
-						}).live('blur', function() {
+						});
+						$(document).on('blur','{$selector}', function() {
 							this.value = Karlwei.helper.number.addCommas(this.value);
-						}).each(function() {
+						});
+					    $('{$selector}').each(function() {
 							$(this).trigger('blur');
 						});",
-		CClientScript::POS_READY
-		);
-	}
+            CClientScript::POS_READY
+        );
+    }
 	
 	public static function registerJsKarlwei()
 	{
