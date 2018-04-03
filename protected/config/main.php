@@ -28,10 +28,12 @@ return array(
 			'class'=>'system.gii.GiiModule',
 			'password'=>'123456',
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			'ipFilters'=>array('127.0.0.1','::1'),
-		),
-		'core',
-	),
+        'ipFilters'=>array('127.0.0.1','::1'),
+        ),
+        'core',
+        'master',
+        'partner',
+    ),
 
 	// application components
 	'components'=>array(
@@ -70,10 +72,10 @@ return array(
 		*/
 		// uncomment the following to use a MySQL database
 		'db'=>array(
-			'connectionString' => 'mysql:host=127.0.0.1;dbname=dbghours',
+			'connectionString' => 'mysql:host=192.168.100.238;dbname=dbghours',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => '123456',
+			'password' => '12345678',
 			'charset' => 'utf8',
 		),
 		'browser'=>array(
