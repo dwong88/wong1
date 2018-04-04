@@ -1,7 +1,7 @@
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'state-form',
+	'id'=>'city-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
@@ -15,18 +15,23 @@
 	
 	<?php Helper::showFlash(); ?>	
 	<div class="row">
-		<?php echo $form->labelEx($model,'country_id'); ?>
-		<?php echo $form->dropDownList($model, 'country_id', CHtml::listData(Countries::model()->findAll(), 'country_id', 'country_name'),array('prompt'=>'')); ?>
-		<?php echo $form->error($model,'country_id'); ?>
+		<?php echo $form->labelEx($model,'state_id'); ?>
+		<?php echo $form->dropDownList($model,'state_id', CHtml::listData(State::model()->findAll(), 'state_id', 'state_name'),array('prompt'=>'')); ?>
+		<?php echo $form->error($model,'state_id'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'state_name'); ?>
-		<?php echo $form->textField($model,'state_name',array('size'=>50,'maxlength'=>50)); ?>
-		<?php echo $form->error($model,'state_name'); ?>
+		<?php echo $form->labelEx($model,'postal_code'); ?>
+		<?php echo $form->textField($model,'postal_code'); ?>
+		<?php echo $form->error($model,'postal_code'); ?>
 	</div>
 
-	
+	<div class="row">
+		<?php echo $form->labelEx($model,'city_name'); ?>
+		<?php echo $form->textField($model,'city_name',array('size'=>30,'maxlength'=>30)); ?>
+		<?php echo $form->error($model,'city_name'); ?>
+	</div>
+
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
