@@ -30,7 +30,7 @@ class PropertyController extends Controller
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
+		/* from form general*/
 		if(isset($_POST['Property']))
 		{
 			$model->attributes=$_POST['Property'];
@@ -39,6 +39,15 @@ class PropertyController extends Controller
 				$this->redirect(array('index'));
 			}
 		}
+		/*from form ToC*/
+		print_r($_POST['Propertydesc']);
+		$row = Yii::app()->db->createCommand()
+                ->select('propertyid')
+                ->from('tghproperty')
+                ->order('propertyid DESC')
+                ->queryRow();
+    //echo $row['propertyid'];
+		echo $_POST['Propertydesc']['desc'][1];
 
 		$this->render('create',array(
 			'model'=>$model,
@@ -70,19 +79,41 @@ class PropertyController extends Controller
 	public function actionCreaterenderphotos()
 	{
 		$model=new Property;
-
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Property']))
+		print_r($_POST);
+		//$this->redirect(array('index'));
+		/*if(isset($_POST['Property']))
 		{
 			$model->attributes=$_POST['Property'];
 			if($model->save()) {
 				Yii::app()->user->setFlash('success', "Create Successfully");
 				$this->redirect(array('index'));
 			}
-		}
+		}*/
+			if (isset($_POST['simpan'])) {
 
+				$row = Yii::app()->db->createCommand()
+		                ->select('propertyid')
+		                ->from('tghproperty')
+		                ->order('propertyid DESC')
+		                ->queryRow();
+		    //echo $row['propertyid'];
+			$propertyid=$row['propertyid'];
+
+			$sekarang=date("Y-m-d h:i:s");
+			foreach ($_POST['nama_gambar'] as $i => $nama_gambar) {
+			//fungsi foreach untuk mencari nilai dari input html name='nama_produk[]' kemudian nilai i sebagai key Nya
+			$SQL="INSERT INTO tghpropertyphoto values('','$propertyid','$nama_gambar','".$_POST['gambar'][$i]."','enabled','$sekarang','1','$sekarang','1')";
+			//echo $SQL;
+			$command= Yii::app()->db->createCommand($SQL);
+			$n=$command->execute();
+			}
+			//$this->redirect(array('view','id'=>$produk_id));
+			//$this->redirect(array('index'));
+		}
+		//$this->redirect(array('/kategori_produk'));
+	//}tutup
 		$this->render('createphotos',array(
 			'model'=>$model,
 		));
@@ -135,7 +166,7 @@ class PropertyController extends Controller
 		}*/
 
 		$this->render('createterms',array(
-			'model'=>$model,
+			'modeldesc'=>$modeldesc,
 		));
 	}
 

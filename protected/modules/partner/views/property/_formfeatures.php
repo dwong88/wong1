@@ -1,64 +1,35 @@
-<?php
-	Helper::registerJsKarlwei();
-?>
-<style>
-	.lastCollapsable
-	{
-		font-weight:bold;
-	}
-	.tree-menu-name,.tree-menu-act-group,.tree-menu-act
-	{
+<div class="form">
 
-		font-weight:normal;
-	}
-</style>
-<?php
-	$this->breadcrumbs=array(
-		'Usergroup'=>array('index'),
-	);
-?>
-<h1>Add menuconfig:</h1>
-<?php Helper::showFlash(); ?>
-<?php
-	Yii::app()->clientscript->registerScript('menu','
-		$(".rad-act-group").click(function(){
-			var actgroupval = $(this).val();
-			var divparentel = $(this).parent().parent();
-			var actgroupel  = divparentel.find("."+actgroupval);
+<?php $form=$this->beginWidget('CActiveForm', array(
+	'id'=>'propertyfeat-form',
+	// Please note: When you enable ajax validation, make sure the corresponding
+	// controller action is handling ajax validation correctly.
+	// There is a call to performAjaxValidation() commented in generated controller code.
+	// See class documentation of CActiveForm for details on this.
+	'enableAjaxValidation'=>false,
+)); ?>
 
-			divparentel.find("input:checkbox").removeAttr("checked");
-			if(actgroupval != "act-1")
-			{
-				if($(this).is(":checked"))
-					actgroupel.attr("checked","checked");
-			}
-		});
-	');
+	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
- 	$form = $this->beginWidget('CActiveForm', array(
-		'id'=>'menuconf-form',
-		'enableAjaxValidation'=>false,
-	));
+	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
 
-	$this->widget('CTreeView',array(
-        'data'=>$dtTreeView,
-        'animated'=>'fast', //quick animation
-        'htmlOptions'=>array(
-                'class'=>'treeview-red',//there are some classes that ready to use
+	<?php Helper::showFlash(); ?>
 
-        ),
-	));
+	<div class="row">
+			<?php echo $form->labelEx($model,'Allowable Arrival Times'); ?>
+			<?php
+				for($features=1;$features<=50;$features++)
+				{
+						//$win[$d] = $d;
+						echo CHtml::activeCheckBox($model,'propertyname[]',array('value'=>$features)).'Features '.$features." ";
+				}
+			?>
+</div>
 
-	echo CHtml::submitButton('Save Changes');
+	<div class="row buttons">
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+	</div>
 
-	$this->endWidget();
-?>
-<?php echo $form->labelEx($model,'available_cleaning_start'); ?>
-<?php
-echo CHtml::activeCheckBox($model,'propertyname',array());
-?>
-<?php
-foreach ($model as $key => $value) {
-	echo $value;
-}
- ?>
+<?php $this->endWidget(); ?>
+
+</div><!-- form -->

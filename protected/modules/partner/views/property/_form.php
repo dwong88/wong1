@@ -10,14 +10,14 @@ $this->widget('zii.widgets.jui.CJuiTabs',array(
 										'_formterms',
 										array('modeldesc'=>$modeldesc),TRUE
 										)),
-				/*'Features'=>array('id'=>'Features','content'=>$this->renderPartial(
+				'Features'=>array('id'=>'Features','content'=>$this->renderPartial(
 										'_formfeatures',
 										array('model'=>$model),TRUE
 										)),
 				'Photos'=>array('id'=>'Photos','content'=>$this->renderPartial(
 										'_formphotos',
 										array('model'=>$model),TRUE
-                  )),*/
+                  )),
     ),
     // additional javascript options for the tabs plugin
     'options'=>array(
