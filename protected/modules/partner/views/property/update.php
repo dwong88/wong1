@@ -12,4 +12,4 @@ $buttonBar->viewUrl = array('view', 'id'=>$model->propertyid);
 $buttonBar->render();
 ?>
 
-<?php $this->renderPartial('_form', array('model'=>$model,'modeldesc'=>$modeldesc)); ?>
+<?php $this->renderPartial('_formupdate', array('model'=>$model,'models'=>$models,'modeldesc'=>$modeldesc)); ?>

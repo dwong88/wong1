@@ -81,7 +81,7 @@ class PropertyController extends Controller
 		$model=new Property;
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-		print_r($_POST);
+		//print_r($_POST);
 		//$this->redirect(array('index'));
 		/*if(isset($_POST['Property']))
 		{
@@ -152,8 +152,9 @@ class PropertyController extends Controller
                 ->from('tghproperty')
                 ->order('propertyid DESC')
                 ->queryRow();
+
     //echo $row['propertyid'];
-		echo $_POST['Propertydesc']['desc'][1];
+		//echo $_POST['Propertydesc']['desc'][1];
 		/*if(isset($_POST['Propertydesc']))
 		{
 			$model->propertyid = $row['propertyid']+1;
@@ -179,9 +180,16 @@ class PropertyController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-		//$modeldesc=$this->loadModeldesc($id);
+		//$mToc=$this->loadModeldesc($id, 'en', 'toc');
 		$modeldesc= new Propertydesc;
-
+		print_r($_POST['Propertydesc']);
+		$lang=$_POST['Propertydesc']['lang'];
+		$toc=$_POST['Propertydesc']['desc'][0];
+		$payment=$_POST['Propertydesc']['desc'][1];
+		$payment=$_POST['Propertydesc']['desc'][2];
+		//$mToc=$this->loadModeldesc($id, $lang, $toc);
+		//$mPayment=$this->loadModeldesc($id, $lang, $payment);
+		//$mCancel=$this->loadModeldesc($id, $lang, $cancel);
 		/*$usercriteria = new CDbCriteria();
 		$usercriteria->select = "propertyid,lang";
 		$usercriteria->condition = "propertyid=$id";*/
@@ -196,13 +204,14 @@ class PropertyController extends Controller
 			$model->attributes=$_POST['Property'];
 			if($model->save()) {
 				Yii::app()->user->setFlash('success', "Update Successfully");
-				$this->redirect(array('index'));
+				//$this->redirect(array('index'));
 			}
 		}
-
+		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE propertyid = '".$id."'");
 		$this->render('update',array(
 			'model'=>$model,
 			'modeldesc'=>$modeldesc,
+			'models'=>$models,
 		));
 	}
 
@@ -234,10 +243,11 @@ class PropertyController extends Controller
 				$this->redirect(array('index'));
 			}
 		}
-
+		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE propertyid = '".$id."'");
 		$this->render('updategeneral',array(
 			'model'=>$model,
 			'modeldesc'=>$modeldesc,
+			'models'=>$models,
 		));
 	}
 
@@ -271,18 +281,19 @@ class PropertyController extends Controller
         $commands=Yii::app()->db->createCommand($SQL);
         $model=$commands->queryAll();*/
 
-				$model = Yii::app()->db->createCommand()
+				/*$model = Yii::app()->db->createCommand()
 										->select('photo_id,propertyid,photo_name,filename')
 										->from('tghpropertyphoto')
 										->order('propertyid DESC')
-										->queryAll();
+										->queryAll();*/
+				$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE propertyid = '".$id."'");
 				//print_r($model);
         /*$this->render('update',array(
             'model'=>$this->loadModel($id),'models'=>$models
         ));*/
 
 		$this->render('updatephotos',array(
-			'model'=>$model,
+			'models'=>$models,
 		));
 	}
 
@@ -337,6 +348,13 @@ class PropertyController extends Controller
 		return $model;
 	}
 
+	public function loadModeldesc($id,$lang,$type)
+	{
+		$model=Propertydesc::model()->find('propertyid=:pid AND lang = :lng AND type = :ty', array(':pid'=>$id, ':lng'=>$lang, ':ty'=>$type));
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
 
 	/**
 	 * Performs the AJAX validation.
