@@ -17,15 +17,15 @@ $form=$this->beginWidget('CActiveForm', array(
 	<?php Helper::showFlash(); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'countryid'); ?>
+		<?php echo $form->labelEx($model,'country_id'); ?>
 		<?php
 			if($model->isNewRecord) {
-				echo $form->textField($model,'countryid',array('size'=>50,'maxlength'=>50));
+				echo $form->textField($model,'country_id',array('size'=>50,'maxlength'=>50));
 			} else {
 				echo $model->countryid;
 			}
 		?>
-		<?php echo $form->error($model,'countryid'); ?>
+		<?php echo $form->error($model,'country_id'); ?>
 	</div>
 	<div class="row">
 		<?php echo $form->labelEx($model,'country_name'); ?>

@@ -38,7 +38,7 @@ $buttonBar->render();
 	'filter'=>$model,
 	'filterPosition'=>'',
 	'columns'=>array(
-		'countryid',
+		'country_id',
 		'country_name',
 		array('name'=>'refUsercreate.user_name', 'header'=>'Create By'),
 		array('name'=>'create_dt', 'type'=>'datetime'),

@@ -4,7 +4,7 @@
  * This is the model class for table "tghcountries".
  *
  * The followings are the available columns in table 'tghcountries':
- * @property integer $countryid
+ * @property integer $country_id
  * @property string $country_name
  * @property string $create_dt
  * @property string $create_by
@@ -30,12 +30,12 @@ class Countries extends ActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('countryid, country_name', 'required'),
-			array('countryid,create_by, update_by', 'numerical', 'integerOnly'=>true),
+			array('country_id, country_name', 'required'),
+			array('country_id,create_by, update_by', 'numerical', 'integerOnly'=>true),
 			array('country_name', 'length', 'max'=>50),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('countryid, country_name, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
+			array('country_id, country_name, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -58,7 +58,7 @@ class Countries extends ActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'countryid' => 'Countryid',
+			'country_id' => 'ID',
 			'country_name' => 'Country Name',
 			'create_dt' => 'Create Dt',
 			'create_by' => 'Create By',
@@ -85,7 +85,7 @@ class Countries extends ActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('countryid',$this->countryid);
+		$criteria->compare('country_id',$this->country_id);
 		$criteria->compare('country_name',$this->country_name,true);
 		$criteria->compare('create_dt',$this->create_dt,true);
 		$criteria->compare('create_by',$this->create_by,true);
