@@ -11,7 +11,7 @@ return array(
 	//WT: Setting theme. ada di folder "project/theme"
 	'theme'=>'blueribbon',
 	// WT: Untuk setting bahasa pada saat validasi form.
-	//'timeZone'=>'Asia/Bangkok',
+	'timeZone'=>'Asia/Bangkok',
 	// preloading 'log' component
 	'preload'=>array('log'),
 	'defaultController'=>'site/home',
@@ -41,7 +41,7 @@ return array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
 		),
-		
+
 		'widgetFactory'=>array(
 			'widgets'=>array(
 				'JuiDatePicker'=>array(
@@ -50,7 +50,7 @@ return array(
 						'changeMonth'=>true,
 						'changeYear'=>true,
 						'dateFormat'=>'dd/mm/yy', //Please also change params setting at the bottom of this page.
-						'yearRange'=>'1930:2016',
+						'yearRange'=>'1930:2022',
 					),
 					'htmlOptions'=>array(
 						//'readonly'=>'true',
@@ -58,7 +58,7 @@ return array(
 				)
 			)
 		),
-		
+
 		// uncomment the following to enable URLs in path-format
 		/*
 		'urlManager'=>array(

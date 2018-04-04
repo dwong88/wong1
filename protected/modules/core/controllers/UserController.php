@@ -1,11 +1,11 @@
 <?php
 
 class UserController extends Controller
-{	
+{
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
-	 */	
+	 */
 	public function actionView($id)
 	{
 		$this->render('view',array(
@@ -31,18 +31,18 @@ class UserController extends Controller
 			$flag=0;
 			$model->attributes	  = $_POST['User'];
 			$employee->attributes = $_POST['Employee'];
-			
+
 			$model->password=Encryption::encrypt($model->newpass);
 			$employee->employee_cd = Pattern::generate("EMPLOYEE_CODE");
 			$employee->user_id = 0;
-			
+
 			if($model->validate())
 				$flag++;
 			if($employee->validate())
 				$flag++;
-			
+
 			if($flag == 2)
-			{	
+			{
 				Pattern::increase('EMPLOYEE_CODE');
 				$model->save(false);
 				$employee->user_id = $model->user_id;
@@ -55,7 +55,7 @@ class UserController extends Controller
 				$employee->attributes = $_POST['Employee'];
 			}
 		}
-		
+
 		$model->is_active = 1; // Default value for is_active
 		$this->render('create',array(
 			'model'=>$model,
@@ -83,7 +83,7 @@ class UserController extends Controller
 		{
 			$model->attributes=$_POST['User'];
 			$employee->attributes = $_POST['Employee'];
-			
+
 			$model->validate();
 			$employee->validate();
 			if(!$model->hasErrors() && !$employee->hasErrors()) {
@@ -164,44 +164,29 @@ class UserController extends Controller
 			Yii::app()->end();
 		}
 	}
-	
+
 	public function actionChangepass($id)
 	{
 		$model = $this->loadModel($id);
 		$model->scenario = 'changepassadm';
 		$employee = new Employee();
 		$employee = Employee::model()->find('user_id='.$id);
-		
+
 		if(isset($_POST['User'])){
 			$model->attributes = $_POST['User'];
 			$model->password=Encryption::encrypt($model->newpass);
-			
+
 			if($model->save())
 			{
 				Yii::app()->user->setFlash('success', "Password Changed Successfully");
 				$this->redirect(array('index'));
 			}//end if
 		}//end if
-		
-		
+
+
 		$this->render('changepass',array(
 			'model'=>$model,
 			'employee'=>$employee,
 		));
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
