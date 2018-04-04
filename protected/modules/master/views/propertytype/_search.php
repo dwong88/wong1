@@ -17,7 +17,7 @@
 
 	<div class="row">
 		<?php echo $form->label($model,'property_desc'); ?>
-		<?php echo $form->textField($model,'property_desc',array('size'=>100,'maxlength'=>100)); ?>
+		<?php echo $form->textArea($model,'property_desc',array('rows'=>6, 'cols'=>50)); ?>
 	</div>
 
 	
