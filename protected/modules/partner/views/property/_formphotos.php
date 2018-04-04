@@ -1,3 +1,25 @@
+<table class="items">
+<thead>
+    <tr>
+        <th>No</th>
+        <th>Nama Gambar</th>
+        <th>gambar</th>s
+        <th></th>
+    </tr>
+    </thead>
+        <?php
+        if ($model > 0) {
+            $no=1;
+        foreach ($model as $datas): ?>
+        <!-- inpoh untuk xampp v 3 kebawah yg mengalami error silahkan ubah <?//= ?> menjadi "php echo" -->
+        <tr>
+            <td><?=$no++?></td>
+            <td><?=$datas['photo_name']; ?></td>
+            <td><?=$datas['filename'];?></td>
+        </tr>
+    <?php endforeach; }else{ echo "Belum ada data";}    ?>
+</table>
+
 <script type="text/javascript">
 // default  rows form
  $(function() {

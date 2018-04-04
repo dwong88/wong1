@@ -22,7 +22,7 @@ $form=$this->beginWidget('CActiveForm', array(
 			if($model->isNewRecord) {
 				echo $form->textField($model,'country_id',array('size'=>50,'maxlength'=>50));
 			} else {
-				echo $model->countryid;
+				echo $model->country_id;
 			}
 		?>
 		<?php echo $form->error($model,'country_id'); ?>

@@ -99,12 +99,12 @@ class PropertyController extends Controller
 		                ->order('propertyid DESC')
 		                ->queryRow();
 		    //echo $row['propertyid'];
-			$propertyid=$row['propertyid'];
+			$propertyid=$row['propertyid']+1;
 
 			$sekarang=date("Y-m-d h:i:s");
 			foreach ($_POST['nama_gambar'] as $i => $nama_gambar) {
 			//fungsi foreach untuk mencari nilai dari input html name='nama_produk[]' kemudian nilai i sebagai key Nya
-			$SQL="INSERT INTO tghpropertyphoto values('','$propertyid','$nama_gambar','".$_POST['gambar'][$i]."','enabled','$sekarang','1','$sekarang','1')";
+			$SQL="INSERT INTO tghpropertyphoto values('','$propertyid','$nama_gambar','".$_POST['gambar'][$i]."','$sekarang','1','$sekarang','1')";
 			//echo $SQL;
 			$command= Yii::app()->db->createCommand($SQL);
 			$n=$command->execute();
@@ -179,6 +179,14 @@ class PropertyController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
+		//$modeldesc=$this->loadModeldesc($id);
+		$modeldesc= new Propertydesc;
+
+		/*$usercriteria = new CDbCriteria();
+		$usercriteria->select = "propertyid,lang";
+		$usercriteria->condition = "propertyid=$id";*/
+
+		//echo $modeldesc->lang;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -193,7 +201,88 @@ class PropertyController extends Controller
 		}
 
 		$this->render('update',array(
+			'model'=>$model,
 			'modeldesc'=>$modeldesc,
+		));
+	}
+
+	/**
+	 * Updates a particular model.
+	 * If update is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $id the ID of the model to be updated
+	 */
+	public function actionUpdategeneral($id)
+	{
+		$model=$this->loadModel($id);
+		$modeldesc= new Propertydesc;
+
+		/*$usercriteria = new CDbCriteria();
+		$usercriteria->select = "propertyid,lang";
+		$usercriteria->condition = "propertyid=$id";*/
+
+
+		//echo $modeldesc->lang;
+
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
+
+		if(isset($_POST['Property']))
+		{
+			$model->attributes=$_POST['Property'];
+			if($model->save()) {
+				Yii::app()->user->setFlash('success', "Update Successfully");
+				$this->redirect(array('index'));
+			}
+		}
+
+		$this->render('updategeneral',array(
+			'model'=>$model,
+			'modeldesc'=>$modeldesc,
+		));
+	}
+
+	public function actionUpdateterms($id)
+	{
+		$model1=$this->loadModeldesc($id);
+		$modeldesc= new Propertydesc;
+
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
+
+		if(isset($_POST['Property']))
+		{
+			$model->attributes=$_POST['Property'];
+			if($model->save()) {
+				Yii::app()->user->setFlash('success', "Update Successfully");
+				$this->redirect(array('index'));
+			}
+		}
+
+		$this->render('updateterms',array(
+			'model'=>$model,
+			'modeldesc'=>$modeldesc,
+		));
+	}
+
+	public function actionUpdatephotos($id)
+	{
+		//echo $id;
+			/*$SQL="SELECT * FROM tghpropertyphoto WHERE propertyid='".$id."'";
+        $commands=Yii::app()->db->createCommand($SQL);
+        $model=$commands->queryAll();*/
+
+				$model = Yii::app()->db->createCommand()
+										->select('photo_id,propertyid,photo_name,filename')
+										->from('tghpropertyphoto')
+										->order('propertyid DESC')
+										->queryAll();
+				//print_r($model);
+        /*$this->render('update',array(
+            'model'=>$this->loadModel($id),'models'=>$models
+        ));*/
+
+		$this->render('updatephotos',array(
+			'model'=>$model,
 		));
 	}
 
@@ -230,7 +319,6 @@ class PropertyController extends Controller
 
 		$this->render('index',array(
 			'model'=>$model,
-			'modelPol'=>$modelPol,
 		));
 	}
 
@@ -248,6 +336,7 @@ class PropertyController extends Controller
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
 	}
+
 
 	/**
 	 * Performs the AJAX validation.

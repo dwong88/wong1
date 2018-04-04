@@ -6,7 +6,7 @@ $this->widget('zii.widgets.jui.CJuiTabs',array(
 										'_formgeneral',
 										array('model'=>$model),TRUE
 										)),
-				'Policies'=>array('id'=>'Policies','content'=>$this->renderPartial(
+        'Policies'=>array('id'=>'Policies','content'=>$this->renderPartial(
 										'_formterms',
 										array('modeldesc'=>$modeldesc),TRUE
 										)),
