@@ -11,6 +11,11 @@
  */
 class Propertydesc extends CActiveRecord
 {
+	public static $publicTypeDesc = array('toc', 'payment', 'cancel');
+	public $cancel;
+	public $toc;
+	public $payment;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -30,6 +35,7 @@ class Propertydesc extends CActiveRecord
 			array('lang, desc', 'required'),
 			array('lang', 'length', 'max'=>2),
 			array('type', 'length', 'max'=>100),
+			array('cancel, toc, payment', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('propertyid, lang, type, desc', 'safe', 'on'=>'search'),
@@ -54,9 +60,12 @@ class Propertydesc extends CActiveRecord
 	{
 		return array(
 			'propertyid' => 'Propertyid',
-			'lang' => 'Lang',
+			'lang' => 'Language',
 			'type' => 'Type',
 			'desc' => 'Desc',
+			'toc' => 'Terms And Conditions',
+			'payment' => 'Payment Policy',
+			'cancel' => 'Cancellation Policy',
 		);
 	}
 

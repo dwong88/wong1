@@ -1,6 +1,7 @@
 <?php
 class Helper
 {
+	public static $listLanguage = array('en'=>'English', 'id'=>'Indonesia');
 	public static function showFlash()
 	{
 		Yii::app()->clientScript->registerScript(
@@ -8,7 +9,7 @@ class Helper
 			    '$(".info").animate({opacity: 1.0}, 3000).fadeOut("slow");',
 		CClientScript::POS_READY
 		);
-		
+
 		foreach(Yii::app()->user->getFlashes() as $key => $message) :
 			echo '<div class="flash-' . $key . ' info">' . $message . "</div>\n";
 		endforeach;
@@ -32,7 +33,7 @@ class Helper
             CClientScript::POS_READY
         );
     }
-	
+
 	public static function registerJsKarlwei()
 	{
 		Yii::app()->getClientScript()->registerScriptFile(Yii::app()->baseUrl.'/js/karlwei.js');

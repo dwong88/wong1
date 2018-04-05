@@ -71,7 +71,7 @@
 
 </script>
 <br/>
-  <form method="post" name="foto-form" action="<?php echo Yii::app()->baseUrl; ?>/index.php?r=partner/property/createrenderphotos" onSubmit="return confirm('Apakah data yang di input sudah benar?');">
+  <form method="post" name="foto-form" action="<?php echo Yii::app()->baseUrl; ?>/index.php?r=partner/property/createrenderphotos&id=<?php echo $_GET['id'];?>"  onSubmit="return confirm('Apakah data yang di input sudah benar?');">
 		<table width="100%">
 		                  <tr>
 		                     <td align="left" width="700px"><strong style="font-size:12px;" > Produk </strong></td>

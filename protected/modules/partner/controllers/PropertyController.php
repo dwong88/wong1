@@ -35,23 +35,23 @@ class PropertyController extends Controller
 		{
 			$model->attributes=$_POST['Property'];
 			if($model->save()) {
+				foreach (Propertydesc::$publicTypeDesc as $descType) {
+					foreach (Helper::$listLanguage as $lng=>$lngText) {
+						$mDescTac = new Propertydesc();
+						$mDescTac->propertyid = $model->propertyid;
+						$mDescTac->lang = $lng;
+						$mDescTac->type = $descType;
+						$mDescTac->desc = "";
+						$mDescTac->save(false);
+					}
+				}
 				Yii::app()->user->setFlash('success', "Create Successfully");
 				$this->redirect(array('index'));
 			}
 		}
-		/*from form ToC*/
-		print_r($_POST['Propertydesc']);
-		$row = Yii::app()->db->createCommand()
-                ->select('propertyid')
-                ->from('tghproperty')
-                ->order('propertyid DESC')
-                ->queryRow();
-    //echo $row['propertyid'];
-		echo $_POST['Propertydesc']['desc'][1];
 
 		$this->render('create',array(
 			'model'=>$model,
-			'modeldesc'=>$modeldesc
 		));
 	}
 
@@ -78,40 +78,22 @@ class PropertyController extends Controller
 
 	public function actionCreaterenderphotos()
 	{
-		$model=new Property;
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-		//print_r($_POST);
-		//$this->redirect(array('index'));
-		/*if(isset($_POST['Property']))
-		{
-			$model->attributes=$_POST['Property'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
+		$model=new Propertyphoto;
+			if (isset($_POST['simpan']))
+			{
+					$propertyid=$_GET['id'];
+					$sekarang=date("Y-m-d h:i:s");
+					foreach ($_POST['nama_gambar'] as $i => $nama_gambar)
+					{
+						//fungsi foreach untuk mencari nilai dari input html name='nama_produk[]' kemudian nilai i sebagai key Nya
+						$SQL="INSERT INTO tghpropertyphoto values(null,'$propertyid','$nama_gambar','".$_POST['gambar'][$i]."','$sekarang','1','$sekarang','1')";
+						//echo $SQL;
+						$command= Yii::app()->db->createCommand($SQL);
+						$n=$command->execute();
+					}
+					//$this->redirect(array('view','id'=>$produk_id));
+					$this->redirect(array('index'));
 			}
-		}*/
-			if (isset($_POST['simpan'])) {
-
-				$row = Yii::app()->db->createCommand()
-		                ->select('propertyid')
-		                ->from('tghproperty')
-		                ->order('propertyid DESC')
-		                ->queryRow();
-		    //echo $row['propertyid'];
-			$propertyid=$row['propertyid']+1;
-
-			$sekarang=date("Y-m-d h:i:s");
-			foreach ($_POST['nama_gambar'] as $i => $nama_gambar) {
-			//fungsi foreach untuk mencari nilai dari input html name='nama_produk[]' kemudian nilai i sebagai key Nya
-			$SQL="INSERT INTO tghpropertyphoto values('','$propertyid','$nama_gambar','".$_POST['gambar'][$i]."','$sekarang','1','$sekarang','1')";
-			//echo $SQL;
-			$command= Yii::app()->db->createCommand($SQL);
-			$n=$command->execute();
-			}
-			//$this->redirect(array('view','id'=>$produk_id));
-			//$this->redirect(array('index'));
-		}
 		//$this->redirect(array('/kategori_produk'));
 	//}tutup
 		$this->render('createphotos',array(
@@ -140,64 +122,40 @@ class PropertyController extends Controller
 		));
 	}
 
-	public function actionCreaterenderterms()
-	{
-		$modeldesc=new Propertydesc;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-		print_r($_POST['Propertydesc']);
-		$row = Yii::app()->db->createCommand()
-                ->select('propertyid')
-                ->from('tghproperty')
-                ->order('propertyid DESC')
-                ->queryRow();
-
-    //echo $row['propertyid'];
-		//echo $_POST['Propertydesc']['desc'][1];
-		/*if(isset($_POST['Propertydesc']))
-		{
-			$model->propertyid = $row['propertyid']+1;
-			$model->type = 'test';
-			$model->attributes=$_POST['Propertydesc'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
-			}
-		}*/
-
-		$this->render('createterms',array(
-			'modeldesc'=>$modeldesc,
-		));
-	}
-
 
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdate($id)
+	public function actionUpdate($id, $lng = 'en')
 	{
 		$model=$this->loadModel($id);
 		//$mToc=$this->loadModeldesc($id, 'en', 'toc');
 		$modeldesc= new Propertydesc;
-		print_r($_POST['Propertydesc']);
-		$lang=$_POST['Propertydesc']['lang'];
-		$toc=$_POST['Propertydesc']['desc'][0];
-		$payment=$_POST['Propertydesc']['desc'][1];
-		$payment=$_POST['Propertydesc']['desc'][2];
+		$modeldesc->lang = $lng;
+		foreach (Propertydesc::$publicTypeDesc as $key => $value) {
+			$modeldesc->$value = $this->loadModeldesc($id, $lng, $value)->desc;
+		}
+
+		//print_r($_POST['Propertydesc']);
+		if(isset($_POST['Propertydesc']))
+		{
+			$modeldesc->attributes = $_POST['Propertydesc'];
+
+			foreach (Propertydesc::$publicTypeDesc as $key => $value) {
+				$mSave = $this->loadModeldesc($id, $lng, $value);
+				$mSave->desc = $modeldesc->$value;
+				$mSave->save();
+			}
+		}
+
 		//$mToc=$this->loadModeldesc($id, $lang, $toc);
 		//$mPayment=$this->loadModeldesc($id, $lang, $payment);
 		//$mCancel=$this->loadModeldesc($id, $lang, $cancel);
-		/*$usercriteria = new CDbCriteria();
-		$usercriteria->select = "propertyid,lang";
-		$usercriteria->condition = "propertyid=$id";*/
 
-		//echo $modeldesc->lang;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		/*update foto*/
+		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE propertyid = '".$id."'");
 
 		if(isset($_POST['Property']))
 		{
@@ -207,90 +165,17 @@ class PropertyController extends Controller
 				//$this->redirect(array('index'));
 			}
 		}
-		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE propertyid = '".$id."'");
 		$this->render('update',array(
 			'model'=>$model,
-			'modeldesc'=>$modeldesc,
 			'models'=>$models,
-		));
-	}
-
-	/**
-	 * Updates a particular model.
-	 * If update is successful, the browser will be redirected to the 'view' page.
-	 * @param integer $id the ID of the model to be updated
-	 */
-	public function actionUpdategeneral($id)
-	{
-		$model=$this->loadModel($id);
-		$modeldesc= new Propertydesc;
-
-		/*$usercriteria = new CDbCriteria();
-		$usercriteria->select = "propertyid,lang";
-		$usercriteria->condition = "propertyid=$id";*/
-
-
-		//echo $modeldesc->lang;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Property']))
-		{
-			$model->attributes=$_POST['Property'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Update Successfully");
-				$this->redirect(array('index'));
-			}
-		}
-		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE propertyid = '".$id."'");
-		$this->render('updategeneral',array(
-			'model'=>$model,
-			'modeldesc'=>$modeldesc,
-			'models'=>$models,
-		));
-	}
-
-	public function actionUpdateterms($id)
-	{
-		$model1=$this->loadModeldesc($id);
-		$modeldesc= new Propertydesc;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Property']))
-		{
-			$model->attributes=$_POST['Property'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Update Successfully");
-				$this->redirect(array('index'));
-			}
-		}
-
-		$this->render('updateterms',array(
-			'model'=>$model,
 			'modeldesc'=>$modeldesc,
 		));
 	}
+
 
 	public function actionUpdatephotos($id)
 	{
-		//echo $id;
-			/*$SQL="SELECT * FROM tghpropertyphoto WHERE propertyid='".$id."'";
-        $commands=Yii::app()->db->createCommand($SQL);
-        $model=$commands->queryAll();*/
-
-				/*$model = Yii::app()->db->createCommand()
-										->select('photo_id,propertyid,photo_name,filename')
-										->from('tghpropertyphoto')
-										->order('propertyid DESC')
-										->queryAll();*/
-				$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE propertyid = '".$id."'");
-				//print_r($model);
-        /*$this->render('update',array(
-            'model'=>$this->loadModel($id),'models'=>$models
-        ));*/
+		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE propertyid = '".$id."'");
 
 		$this->render('updatephotos',array(
 			'models'=>$models,
