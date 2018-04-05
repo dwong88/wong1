@@ -10,10 +10,11 @@
 )); ?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
-
+    
+    
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
 	
-	<?php Helper::showFlash(); ?>	
+	<?php Helper::showFlash(); ?>
 	<div class="row">
 		<?php echo $form->labelEx($model,'room_type_id'); ?>
 		<?php echo $form->dropDownList($model,'room_type_id', CHtml::listData(Roomtype::model()->findAll(), 'room_type_id', 'room_type_name'),array('prompt'=>'')); ?>
