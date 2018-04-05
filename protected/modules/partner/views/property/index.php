@@ -38,12 +38,12 @@ $buttonBar->render();
 	'filter'=>$model,
 	'filterPosition'=>'',
 	'columns'=>array(
-		'propertyid',
-		'propertyname',
+		'property_id',
+		'property_name',
 		'addressline1',
 		'addressline2',
-		'cityid',
-		'postcode',
+		'city_id',
+		'postal_code',
 		/*
 		'suburb',
 		'country',

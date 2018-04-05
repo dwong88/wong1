@@ -6,13 +6,13 @@
 )); ?>
 
 	<div class="row">
-		<?php echo $form->label($model,'propertyid'); ?>
-		<?php echo $form->textField($model,'propertyid',array('size'=>11,'maxlength'=>11)); ?>
+		<?php echo $form->label($model,'property_id'); ?>
+		<?php echo $form->textField($model,'property_id',array('size'=>11,'maxlength'=>11)); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'propertyname'); ?>
-		<?php echo $form->textField($model,'propertyname',array('size'=>60,'maxlength'=>100)); ?>
+		<?php echo $form->label($model,'property_name'); ?>
+		<?php echo $form->textField($model,'property_name',array('size'=>60,'maxlength'=>100)); ?>
 	</div>
 
 	<div class="row">
@@ -26,13 +26,13 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'cityid'); ?>
-		<?php echo $form->textField($model,'cityid'); ?>
+		<?php echo $form->label($model,'city_id'); ?>
+		<?php echo $form->textField($model,'city_id'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'postcode'); ?>
-		<?php echo $form->textField($model,'postcode',array('size'=>5,'maxlength'=>5)); ?>
+		<?php echo $form->label($model,'postal_code'); ?>
+		<?php echo $form->textField($model,'postal_code',array('size'=>5,'maxlength'=>5)); ?>
 	</div>
 
 	<div class="row">
@@ -41,13 +41,13 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'country'); ?>
-		<?php echo $form->textField($model,'country'); ?>
+		<?php echo $form->label($model,'country_id'); ?>
+		<?php echo $form->textField($model,'country_id'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'state'); ?>
-		<?php echo $form->textField($model,'state',array('size'=>50,'maxlength'=>50)); ?>
+		<?php echo $form->label($model,'state_id'); ?>
+		<?php echo $form->textField($model,'state_id',array('size'=>50,'maxlength'=>50)); ?>
 	</div>
 
 	<div class="row">

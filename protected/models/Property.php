@@ -148,11 +148,11 @@ class Property extends ActiveRecord
 		$criteria->compare('property_name',$this->property_name,true);
 		$criteria->compare('addressline1',$this->addressline1,true);
 		$criteria->compare('addressline2',$this->addressline2,true);
-		$criteria->compare('city_id',$this->cityid);
-		$criteria->compare('postal_code',$this->postcode,true);
+		$criteria->compare('city_id',$this->city_id);
+		$criteria->compare('postal_code',$this->postal_code,true);
 		$criteria->compare('suburb',$this->suburb,true);
-		$criteria->compare('country_id',$this->country);
-		$criteria->compare('state_id',$this->state,true);
+		$criteria->compare('country_id',$this->country_id);
+		$criteria->compare('state_id',$this->state_id,true);
 		$criteria->compare('weekend_start',$this->weekend_start,true);
 		$criteria->compare('hotel_phone_number',$this->hotel_phone_number,true);
 		$criteria->compare('phone_number',$this->phone_number,true);

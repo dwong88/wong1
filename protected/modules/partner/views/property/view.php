@@ -1,7 +1,7 @@
 <?php
 $this->breadcrumbs=array(
 	'Properties'=>array('index'),
-	$model->propertyid,
+	$model->property_id,
 );
 ?>
 
@@ -10,23 +10,23 @@ $this->breadcrumbs=array(
 $buttonBar = new ButtonBar('{list} {create} {update} {delete}');
 $buttonBar->listUrl = array('index');
 $buttonBar->createUrl = array('create');
-$buttonBar->updateUrl = array('update', 'id'=>$model->propertyid);
-$buttonBar->deleteLinkHtmlOptions = array('submit'=>array('delete','id'=>$model->propertyid),'confirm'=>'Are you sure you want to delete this item?');
+$buttonBar->updateUrl = array('update', 'id'=>$model->property_id);
+$buttonBar->deleteLinkHtmlOptions = array('submit'=>array('delete','id'=>$model->property_id),'confirm'=>'Are you sure you want to delete this item?');
 $buttonBar->render();
 ?>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'propertyid',
-		'propertyname',
+		'property_id',
+		'property_name',
 		'addressline1',
 		'addressline2',
-		'cityid',
-		'postcode',
+		'city_id',
+		'postal_code',
 		'suburb',
-		'country',
-		'state',
+		'country_id',
+		'state_id',
 		'weekend_start',
 		'hotel_phone_number',
 		'phone_number',
