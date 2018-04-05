@@ -4,10 +4,10 @@
  * This is the model class for table "tghmasterbed".
  *
  * The followings are the available columns in table 'tghmasterbed':
- * @property integer $bed_id
- * @property string $bed_name
- * @property integer $bed_capacity
- * @property string $bed_size
+ * @property integer $master_bed_id
+ * @property string $master_bed_name
+ * @property integer $master_bed_capacity
+ * @property string $master_bed_size
  * @property string $create_dt
  * @property integer $create_by
  * @property string $update_dt
@@ -38,12 +38,12 @@ class Masterbed extends ActiveRecord
 		// will receive user inputs.
 		return array(
 			
-			array('bed_name', 'length', 'max'=>50),
-			array('bed_size', 'length', 'max'=>20),
-            array('bed_capacity', 'length', 'max'=>20),
+			array('master_bed_name', 'length', 'max'=>50),
+			array('master_bed_size', 'length', 'max'=>20),
+            array('master_bed_capacity', 'length', 'max'=>20),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('bed_id, bed_name, bed_capacity, bed_size, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
+			array('master_bed_id, master_bed_name, master_bed_capacity, master_bed_size, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -66,10 +66,10 @@ class Masterbed extends ActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'bed_id' => 'Bed',
-			'bed_name' => 'Bed Name',
-			'bed_capacity' => 'Bed Capacity',
-			'bed_size' => 'Bed Size',
+			'master_bed_id' => 'Master Bed',
+			'master_bed_name' => 'Master Bed Name',
+			'master_bed_capacity' => 'Master Bed Capacity',
+			'master_bed_size' => 'Master Bed Size',
 			'create_dt' => 'Create Date',
 			'create_by' => 'Create By',
 			'update_dt' => 'Update Date',
@@ -95,10 +95,10 @@ class Masterbed extends ActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('bed_id',$this->bed_id);
-		$criteria->compare('bed_name',$this->bed_name,true);
-		$criteria->compare('bed_capacity',$this->bed_capacity);
-		$criteria->compare('bed_size',$this->bed_size,true);
+		$criteria->compare('master_bed_id',$this->master_bed_id);
+		$criteria->compare('master_bed_name',$this->master_bed_name,true);
+		$criteria->compare('master_bed_capacity',$this->master_bed_capacity);
+		$criteria->compare('master_bed_size',$this->master_bed_size,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
