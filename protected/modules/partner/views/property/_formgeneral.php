@@ -15,9 +15,9 @@
 
 	<?php Helper::showFlash(); ?>
 	<div class="row">
-		<?php echo $form->labelEx($model,'propertyname'); ?>
-		<?php echo $form->textField($model,'propertyname',array('size'=>60,'maxlength'=>100)); ?>
-		<?php echo $form->error($model,'propertyname'); ?>
+		<?php echo $form->labelEx($model,'property_name'); ?>
+		<?php echo $form->textField($model,'property_name',array('size'=>60,'maxlength'=>100)); ?>
+		<?php echo $form->error($model,'property_name'); ?>
 	</div>
 
 	<div class="row">
@@ -33,15 +33,15 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'cityid'); ?>
-		<?php echo $form->textField($model,'cityid'); ?>
-		<?php echo $form->error($model,'cityid'); ?>
+		<?php echo $form->labelEx($model,'city_id'); ?>
+		<?php echo $form->dropDownList($model,'city_id', CHtml::listData(City::model()->findAll(), 'city_id', 'city_name'),array('prompt'=>'')); ?>
+		<?php echo $form->error($model,'city_id'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'postcode'); ?>
-		<?php echo $form->textField($model,'postcode',array('size'=>5,'maxlength'=>5)); ?>
-		<?php echo $form->error($model,'postcode'); ?>
+		<?php echo $form->labelEx($model,'postal_code'); ?>
+		<?php echo $form->textField($model,'postal_code',array('size'=>5,'maxlength'=>5)); ?>
+		<?php echo $form->error($model,'postal_code'); ?>
 	</div>
 
 	<div class="row">
@@ -51,15 +51,15 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'country'); ?>
-		<?php echo $form->textField($model,'country'); ?>
-		<?php echo $form->error($model,'country'); ?>
+		<?php echo $form->labelEx($model,'country_id'); ?>
+		<?php echo $form->dropDownList($model,'country_id', CHtml::listData(Countries::model()->findAll(), 'country_id', 'country_name'),array('prompt'=>'')); ?>
+		<?php echo $form->error($model,'country_id'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'state'); ?>
-		<?php echo $form->textField($model,'state',array('size'=>50,'maxlength'=>50)); ?>
-		<?php echo $form->error($model,'state'); ?>
+		<?php echo $form->labelEx($model,'state_id'); ?>
+		<?php echo $form->dropDownList($model,'state_id', CHtml::listData(State::model()->findAll(), 'state_id', 'state_name'),array('prompt'=>'')); ?>
+		<?php echo $form->error($model,'state_id'); ?>
 	</div>
 
 	<div class="row">
@@ -198,14 +198,6 @@ for($d=0;$d<=23;$d++)
 
 	?>
 
-	<?php
-	/*foreach ($test as $value) {
-				$cart[$value] = array($value => $value.'hours',);
-		*/
-		//print_r($cart);
-	?>
-
-
 <div class="row">
 	<?php echo $form->labelEx($model,'roles'); ?>
 	<?php //echo $form->dropDownList($model, 'available_cleaning_start', array('ADMIN'=>'Admin', 'Partner'=>'Partner',), array('prompt'=>'')); ?>
@@ -219,17 +211,3 @@ for($d=0;$d<=23;$d++)
 	 </pre>
 	<?php //echo $form->error($model,'roles'); ?>
 </div>
-
-<?php
-/*function myFunction(){
-	//echo "test1212";
-	for($d=0;$d<=23;$d++)
-	{
-		$test[$d]=$d;
-		//$win[] = array($d => $d);
-	}
-	//print_r($win);
-	return null;
-}*/
-//echo myFunction();
-?>

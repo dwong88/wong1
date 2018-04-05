@@ -21,7 +21,7 @@
 				for($features=1;$features<=50;$features++)
 				{
 						//$win[$d] = $d;
-						echo CHtml::activeCheckBox($model,'propertyname[]',array('value'=>$features)).'Features '.$features." ";
+						echo CHtml::activeCheckBox($model,'property_name[]',array('value'=>$features)).'Features '.$features." ";
 				}
 			?>
 </div>

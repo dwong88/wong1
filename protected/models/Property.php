@@ -4,8 +4,8 @@
  * This is the model class for table "tghproperty".
  *
  * The followings are the available columns in table 'tghproperty':
- * @property string $propertyid
- * @property string $propertyname
+ * @property string $property_id
+ * @property string $property_name
  * @property string $addressline1
  * @property string $addressline2
  * @property integer $cityid
@@ -55,17 +55,17 @@ class Property extends ActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('cityid, country, numberofstar, maximumchildage, maximuminfantage', 'numerical', 'integerOnly'=>true),
-			array('propertyname, gmaps_longitude, gmaps_latitude', 'length', 'max'=>100),
-			array('postcode, minimumroomrate', 'length', 'max'=>5),
-			array('suburb, state, bookingconfirmationemail, enquiryemail', 'length', 'max'=>50),
+			array('city_id, country_id,state_id, numberofstar, maximumchildage, maximuminfantage', 'numerical', 'integerOnly'=>true),
+			array('property_name, gmaps_longitude, gmaps_latitude', 'length', 'max'=>100),
+			array('postal_code, minimumroomrate', 'length', 'max'=>5),
+			array('suburb, bookingconfirmationemail, enquiryemail', 'length', 'max'=>50),
 			array('weekend_start, create_by, update_by,available_cleaning_start, available_cleaning_end', 'length', 'max'=>10),
 			array('hotel_phone_number, phone_number, tax_number, bookingconfirmationccemail, availabilityalertemail', 'length', 'max'=>11),
 			array('star_rated', 'length', 'max'=>3),
 			array('addressline1, addressline2, description, locationinstruction, create_dt, update_dt', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('propertyid, propertyname, addressline1, addressline2, cityid, postcode, suburb, country, state, weekend_start, hotel_phone_number, phone_number, tax_number, minimumroomrate, star_rated, numberofstar, maximumchildage, maximuminfantage, bookingconfirmationemail, bookingconfirmationccemail, enquiryemail, availabilityalertemail, description, gmaps_longitude, gmaps_latitude, available_cleaning_start, available_cleaning_end, locationinstruction, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
+			array('property_id, property_name, addressline1, addressline2, city_id, postal_code, suburb, country_id, state_id, weekend_start, hotel_phone_number, phone_number, tax_number, minimumroomrate, star_rated, numberofstar, maximumchildage, maximuminfantage, bookingconfirmationemail, bookingconfirmationccemail, enquiryemail, availabilityalertemail, description, gmaps_longitude, gmaps_latitude, available_cleaning_start, available_cleaning_end, locationinstruction, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -79,6 +79,9 @@ class Property extends ActiveRecord
 		return array(
 			'refUsercreate' => array(self::BELONGS_TO, 'User', 'create_by'),
 			'refUserupdate' => array(self::BELONGS_TO, 'User', 'update_by'),
+			'refCountry' => array(self::BELONGS_TO, 'Countries', 'country_id'),
+			'refState' => array(self::BELONGS_TO, 'State', 'state_id'),
+			'refCity' => array(self::BELONGS_TO, 'C', 'city_id'),
 		);
 	}
 
@@ -88,15 +91,15 @@ class Property extends ActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'propertyid' => 'Propertyid',
-			'propertyname' => 'Propertyname',
-			'addressline1' => 'Addressline1',
-			'addressline2' => 'Addressline2',
-			'cityid' => 'Cityid',
-			'postcode' => 'Postcode',
+			'property_id' => 'Property ID',
+			'property_name' => 'Property Name',
+			'addressline1' => 'Address line1',
+			'addressline2' => 'Address line2',
+			'city_id' => 'City',
+			'postal_code' => 'Postal code',
 			'suburb' => 'Suburb',
-			'country' => 'Country',
-			'state' => 'State',
+			'country_id' => 'Country',
+			'state_id' => 'State',
 			'weekend_start' => 'Weekend Start',
 			'hotel_phone_number' => 'Hotel Phone Number',
 			'phone_number' => 'Phone Number',
@@ -141,15 +144,15 @@ class Property extends ActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('propertyid',$this->propertyid,true);
-		$criteria->compare('propertyname',$this->propertyname,true);
+		$criteria->compare('property_id',$this->property_id,true);
+		$criteria->compare('property_name',$this->property_name,true);
 		$criteria->compare('addressline1',$this->addressline1,true);
 		$criteria->compare('addressline2',$this->addressline2,true);
-		$criteria->compare('cityid',$this->cityid);
-		$criteria->compare('postcode',$this->postcode,true);
+		$criteria->compare('city_id',$this->cityid);
+		$criteria->compare('postal_code',$this->postcode,true);
 		$criteria->compare('suburb',$this->suburb,true);
-		$criteria->compare('country',$this->country);
-		$criteria->compare('state',$this->state,true);
+		$criteria->compare('country_id',$this->country);
+		$criteria->compare('state_id',$this->state,true);
 		$criteria->compare('weekend_start',$this->weekend_start,true);
 		$criteria->compare('hotel_phone_number',$this->hotel_phone_number,true);
 		$criteria->compare('phone_number',$this->phone_number,true);

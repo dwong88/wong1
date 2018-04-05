@@ -4,18 +4,21 @@
  * This is the model class for table "tghpropertydesc".
  *
  * The followings are the available columns in table 'tghpropertydesc':
- * @property string $propertyid
+ * @property integer $property_id
  * @property string $lang
  * @property string $type
  * @property string $desc
+ * @property string $create_dt
+ * @property integer $create_by
+ * @property string $update_dt
+ * @property integer $update_by
  */
-class Propertydesc extends CActiveRecord
+class Propertydesc extends ActiveRecord
 {
 	public static $publicTypeDesc = array('toc', 'payment', 'cancel');
 	public $cancel;
 	public $toc;
 	public $payment;
-
 	/**
 	 * @return string the associated database table name
 	 */
@@ -23,7 +26,11 @@ class Propertydesc extends CActiveRecord
 	{
 		return 'tghpropertydesc';
 	}
-
+	public function __construct($scenario = 'insert')
+	{
+			parent::__construct($scenario);
+			$this->logRecord=true;
+	}
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -38,7 +45,7 @@ class Propertydesc extends CActiveRecord
 			array('cancel, toc, payment', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('propertyid, lang, type, desc', 'safe', 'on'=>'search'),
+			array('property_id, lang, type, desc, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -50,6 +57,8 @@ class Propertydesc extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'refUsercreate' => array(self::BELONGS_TO, 'User', 'create_by'),
+			'refUserupdate' => array(self::BELONGS_TO, 'User', 'update_by'),
 		);
 	}
 
@@ -59,13 +68,17 @@ class Propertydesc extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'propertyid' => 'Propertyid',
+			'property_id' => 'property_id',
 			'lang' => 'Language',
 			'type' => 'Type',
 			'desc' => 'Desc',
 			'toc' => 'Terms And Conditions',
 			'payment' => 'Payment Policy',
 			'cancel' => 'Cancellation Policy',
+			'create_dt' => 'Create Dt',
+			'create_by' => 'Create By',
+			'update_dt' => 'Update Dt',
+			'update_by' => 'Update By',
 		);
 	}
 
@@ -87,10 +100,14 @@ class Propertydesc extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('propertyid',$this->propertyid,true);
+		$criteria->compare('property_id',$this->property_id);
 		$criteria->compare('lang',$this->lang,true);
 		$criteria->compare('type',$this->type,true);
 		$criteria->compare('desc',$this->desc,true);
+		$criteria->compare('create_dt',$this->create_dt,true);
+		$criteria->compare('create_by',$this->create_by);
+		$criteria->compare('update_dt',$this->update_dt,true);
+		$criteria->compare('update_by',$this->update_by);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

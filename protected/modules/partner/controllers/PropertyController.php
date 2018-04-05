@@ -25,24 +25,22 @@ class PropertyController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Property;
-		$modeldesc=new Propertydesc;
+		$model=new Property; #formgeneral
+		$modeldesc=new Propertydesc; #formPolicies
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
 		/* from form general*/
 		if(isset($_POST['Property']))
 		{
 			$model->attributes=$_POST['Property'];
 			if($model->save()) {
 				foreach (Propertydesc::$publicTypeDesc as $descType) {
-					foreach (Helper::$listLanguage as $lng=>$lngText) {
+					foreach (Helper::$listLanguage as $lng=>$lngText) { #fungsi helper panggil list language
 						$mDescTac = new Propertydesc();
-						$mDescTac->propertyid = $model->propertyid;
+						$mDescTac->property_id = $model->property_id;
 						$mDescTac->lang = $lng;
 						$mDescTac->type = $descType;
 						$mDescTac->desc = "";
-						$mDescTac->save(false);
+						$mDescTac->save(false); #save(false)--> save tidak validasi
 					}
 				}
 				Yii::app()->user->setFlash('success', "Create Successfully");
@@ -70,7 +68,6 @@ class PropertyController extends Controller
 				$this->redirect(array('index'));
 			}
 		}
-
 		$this->render('creategeneral',array(
 			'model'=>$model,
 		));
@@ -81,12 +78,12 @@ class PropertyController extends Controller
 		$model=new Propertyphoto;
 			if (isset($_POST['simpan']))
 			{
-					$propertyid=$_GET['id'];
+					$property_id=$_GET['id'];
 					$sekarang=date("Y-m-d h:i:s");
 					foreach ($_POST['nama_gambar'] as $i => $nama_gambar)
 					{
 						//fungsi foreach untuk mencari nilai dari input html name='nama_produk[]' kemudian nilai i sebagai key Nya
-						$SQL="INSERT INTO tghpropertyphoto values(null,'$propertyid','$nama_gambar','".$_POST['gambar'][$i]."','$sekarang','1','$sekarang','1')";
+						$SQL="INSERT INTO tghpropertyphoto values(null,'$property_id','$nama_gambar','".$_POST['gambar'][$i]."','$sekarang','1','$sekarang','1')";
 						//echo $SQL;
 						$command= Yii::app()->db->createCommand($SQL);
 						$n=$command->execute();
@@ -100,28 +97,6 @@ class PropertyController extends Controller
 			'model'=>$model,
 		));
 	}
-
-	public function actionCreaterenderfeatures()
-	{
-		$model=new Property;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Property']))
-		{
-			$model->attributes=$_POST['Property'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
-			}
-		}
-
-		$this->render('createfeatures',array(
-			'model'=>$model,
-		));
-	}
-
 
 	/**
 	 * Updates a particular model.
@@ -155,7 +130,7 @@ class PropertyController extends Controller
 		//$mCancel=$this->loadModeldesc($id, $lang, $cancel);
 
 		/*update foto*/
-		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE propertyid = '".$id."'");
+		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE property_id = '".$id."'");
 
 		if(isset($_POST['Property']))
 		{
@@ -175,7 +150,7 @@ class PropertyController extends Controller
 
 	public function actionUpdatephotos($id)
 	{
-		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE propertyid = '".$id."'");
+		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE property_id = '".$id."'");
 
 		$this->render('updatephotos',array(
 			'models'=>$models,
@@ -235,7 +210,7 @@ class PropertyController extends Controller
 
 	public function loadModeldesc($id,$lang,$type)
 	{
-		$model=Propertydesc::model()->find('propertyid=:pid AND lang = :lng AND type = :ty', array(':pid'=>$id, ':lng'=>$lang, ':ty'=>$type));
+		$model=Propertydesc::model()->find('property_id=:pid AND lang = :lng AND type = :ty', array(':pid'=>$id, ':lng'=>$lang, ':ty'=>$type));
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
