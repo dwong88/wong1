@@ -1,4 +1,12 @@
 <?php
+$csrf = '';
+if(Yii::app()->request->enableCsrfValidation)
+{
+    $csrfTokenName = Yii::app()->request->csrfTokenName;
+    $csrfToken = Yii::app()->request->csrfToken;
+    $csrf = "\n\t\tdata:{ '$csrfTokenName':'$csrfToken' },";
+}
+
 $this->breadcrumbs=array(
 	'Properties',
 );
@@ -15,6 +23,7 @@ $('.search-form form').submit(function(){
 	$('.search-form').hide();
 	return false;
 });
+
 ");
 ?>
 
@@ -32,7 +41,7 @@ $buttonBar->render();
 )); ?>
 </div><!-- search-form -->
 
-<?php $this->widget('application.extensions.widget.GridView', array(
+<?php $this->widget('application.extensions.widget.GridViewProperty', array(
 	'id'=>'property-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
@@ -72,6 +81,18 @@ $buttonBar->render();
 		'update_dt',
 		'update_by',
 		*/
+		array(
+            'header'=>'Add Room Type',
+            'class'=>'application.extensions.widget.ButtonColumn',
+            'template'=>'{roomtype}',
+            'buttons'=>array(
+                'roomtype'=>array(
+                    'imageUrl'=>Yii::app()->theme->baseUrl.'/images/create.png',
+                    'url'=>'CHtml::normalizeUrl(array("/master/roomtype/create","id"=>$data->property_id))',
+                    'options'=>array('title'=>'Add Room Type'),
+                ),
+            )
+        ),
 		array(
 			'class'=>'application.extensions.widget.ButtonColumn',
 		),

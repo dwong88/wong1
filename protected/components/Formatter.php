@@ -12,6 +12,7 @@ class Formatter extends CFormatter {
     public $dateFormat='d M Y';
     public $datetimeFormat='d M Y, H:i';
     public $numberFormat=array('decimals'=>'2', 'decimalSeparator'=>'.', 'thousandSeparator'=>',');
+    public $number0Format=array('decimals'=>'0', 'decimalSeparator'=>'.', 'thousandSeparator'=>',');
     public $timeFormat='H:i';
     
     //put your code here
@@ -31,6 +32,11 @@ class Formatter extends CFormatter {
     {
             if(!is_numeric($value)) $value=strtotime ($value);
             return date($this->timeFormat,$value);
+    }
+
+    public function formatNumber0($value)
+    {
+        return number_format($value,$this->number0Format['decimals'],$this->number0Format['decimalSeparator'],$this->number0Format['thousandSeparator']);
     }
 }
 ?>

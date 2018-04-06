@@ -28,3 +28,6 @@ input[readonly] {background-color: #dedede ! important;}
 .grid-view-status .row-disabled {color: grey;}
 .grid-view-status .row-active {color: green;}
 .grid-view-status .row-inactive {color: red;}
+.cls-table-detail {
+	padding: 5px;
+}

@@ -106,7 +106,7 @@ class Roomtype extends ActiveRecord
 		return array(
 			'room_type_id' => 'Room Type',
 			'property_id' => 'Property Id',
-			'room_type_name' => 'Name',
+			'room_type_name' => 'Room Type Name',
 			'room_type_desc' => 'Desc',
 			'create_dt' => 'Create Date',
 			'create_by' => 'Create By',

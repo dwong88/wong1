@@ -208,6 +208,7 @@ class PropertyController extends Controller
 				else {
 					// we only allow deletion via POST request
 					$this->loadModel($id)->delete();
+					Roomtype::model()->deleteAll('property_id = :pid', array(':pid'=>$id));
 				}
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))

@@ -23,9 +23,14 @@ class RoomtypeController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
+	public function actionCreate($id)
 	{
-		$model=new Roomtype;
+		$mProperty = Property::model()->findByPk($id);
+        if($mProperty===null)
+            throw new CHttpException(404,'The requested page does not exist.');
+
+        $model=new Roomtype;
+        $model->property_id = $mProperty->property_id;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -35,12 +40,13 @@ class RoomtypeController extends Controller
 			$model->attributes=$_POST['Roomtype'];
 			if($model->save()) {
 				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
+				$this->redirect(array('/partner/property/index'));
 			}
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
+            'mProperty'=>$mProperty
 		));
 	}
 
@@ -52,6 +58,7 @@ class RoomtypeController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
+        $mProperty = Property::model()->findByPk($model->property_id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -61,12 +68,13 @@ class RoomtypeController extends Controller
 			$model->attributes=$_POST['Roomtype'];
 			if($model->save()) {
 				Yii::app()->user->setFlash('success', "Update Successfully");
-				$this->redirect(array('index'));
+                $this->redirect(array('/partner/property/index'));
 			}
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
+            'mProperty'=>$mProperty
 		));
 	}
 

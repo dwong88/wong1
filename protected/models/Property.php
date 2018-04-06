@@ -44,6 +44,8 @@
  */
 class Property extends ActiveRecord
 {
+    public $qRoomType = null;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -205,4 +207,15 @@ class Property extends ActiveRecord
 		parent::__construct($scenario);
 		$this->logRecord=true;
 	}
+
+	public function getRoomType()
+    {
+        if($this->qRoomType === null) {
+            $this->qRoomType = DAO::queryAllSql('SELECT room_type_id, room_type_name, room_type_cleaning_minutes, room_type_rack_rate, room_type_maximum_occupants 
+                                                FROM tghroomtype
+                                                WHERE `property_id` = :pid
+                                                ORDER BY room_type_name', array(':pid'=>$this->property_id));
+        }
+        return $this->qRoomType;
+    }
 }

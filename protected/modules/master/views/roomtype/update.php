@@ -1,15 +1,15 @@
 <?php
 $this->breadcrumbs=array(
-	'Room type'=>array('index'),
-	$model->room_type_name=>array('view','id'=>$model->room_type_id),
+    'Property'=>array('/partner/property/index'),
+    'Room Type',
+	$model->room_type_name,
 	'Update',
 );
 
-$buttonBar = new ButtonBar('{list} {create} {view}');
-$buttonBar->listUrl = array('index');
-$buttonBar->createUrl = array('create');
-$buttonBar->viewUrl = array('view', 'id'=>$model->room_type_id);
+$buttonBar = new ButtonBar('{list} {create}');
+$buttonBar->listUrl = array('/partner/property/index');
+$buttonBar->createUrl = array('/master/roomtype/create', 'id'=>$mProperty->property_id);
 $buttonBar->render();
 ?>
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model, 'mProperty'=>$mProperty)); ?>

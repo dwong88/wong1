@@ -17,18 +17,10 @@
 	
 	<?php Helper::showFlash(); ?>
     
-    <br><h1>GENERAL</h1><br/>
+    <br><h1><?php echo $mProperty->property_name; ?></h1><br/>
+    <?php echo $form->hiddenField($model,'property_id'); ?>
     
     <table>
-    <tr>
-        <td colspan="2">
-        <div class="row">
-            <?php echo $form->labelEx($model,'property_id'); ?>
-            <?php echo $form->dropDownList($model,'property_id', CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),array('prompt'=>'')); ?>
-            <?php echo $form->error($model,'property_id'); ?>
-        </div>
-        </td>
-    </tr>
     <tr>
         <td colspan="2">
         <div class="row">

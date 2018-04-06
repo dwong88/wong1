@@ -1,12 +1,13 @@
 <?php
 $this->breadcrumbs=array(
-	'Room type'=>array('index'),
+	'Property'=>array('/partner/property/index'),
+	'Room Type',
 	'Create',
 );
 
 $buttonBar = new ButtonBar('{list}');
-$buttonBar->listUrl = array('index');
+$buttonBar->listUrl = array('/partner/property/index');
 $buttonBar->render();
 ?>
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model, 'mProperty'=>$mProperty)); ?>
