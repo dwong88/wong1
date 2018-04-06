@@ -1,6 +1,6 @@
 <?php
 
-class PartnerController extends Controller
+class RoomtypefeaturesController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -16,7 +16,6 @@ class PartnerController extends Controller
 	{
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
-			'model1'=>$this->loadModel1($id),
 		));
 	}
 
@@ -26,28 +25,59 @@ class PartnerController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Partner;
-		$model1 = new Partnerlogin;
+		$model=new Roomtypefeatures;
+
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Partner']))
+		if(isset($_POST['Roomtypefeatures']))
 		{
-			$model->attributes=$_POST['Partner'];
-			$model1->attributes=$_POST['Partnerlogin'];
-			if($model->save()) {
-				$model1->partner_id = $model->partner_id;
-				$model1->password=Encryption::encrypt($model1->password);
-				$model1->save();
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
-			}
-		}
+            $model->attributes = $_POST['Roomtypefeatures'];
+            //$model->room_features_id = array('room_features_id');
+            $loop=$model->room_features_id;
+            $id= $model->room_type_id;
+
+            $mDel = DAO::executeSql("DELETE FROM tghroomtypefeatures WHERE room_type_id = '".$id."'");
+            foreach ($loop as $key => $value) {
+                $msaverf= new Roomtypefeatures;
+                $msaverf->room_features_id = $value;
+                $msaverf->room_type_id = $id;
+                //Yii::app()->end();
+                $msaverf->save(false);
+
+            }
+            Yii::app()->user->setFlash('success', "Create Successfully");
+            $this->redirect(array('index'));
+        }
+
+
+
 
 		$this->render('create',array(
-			'model'=>$model,'model1'=>$model1
+			'model'=>$model,
 		));
 	}
+
+    /*public function actionCreate()
+    {
+        $model=new Roomtypefeatures;
+
+        // Uncomment the following line if AJAX validation is needed
+        // $this->performAjaxValidation($model);
+
+        if(isset($_POST['Roomtypefeatures']))
+        {
+            $model->attributes=$_POST['Roomtypefeatures'];
+            if($model->save()) {
+                Yii::app()->user->setFlash('success', "Create Successfully");
+                $this->redirect(array('index'));
+            }
+        }
+
+        $this->render('create',array(
+            'model'=>$model,
+        ));
+    }*/
 
 	/**
 	 * Updates a particular model.
@@ -57,23 +87,21 @@ class PartnerController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-		$model1 = $this->loadModel1($id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Partner']))
+		if(isset($_POST['Roomtypefeatures']))
 		{
-			$model->attributes=$_POST['Partner'];
+			$model->attributes=$_POST['Roomtypefeatures'];
 			if($model->save()) {
-				$model1->save();
 				Yii::app()->user->setFlash('success', "Update Successfully");
 				$this->redirect(array('index'));
 			}
 		}
 
 		$this->render('update',array(
-			'model'=>$model,'model1'=>$model1
+			'model'=>$model,
 		));
 	}
 
@@ -102,16 +130,13 @@ class PartnerController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$model=new Partner('search');
+		$model=new Roomtypefeatures('search');
 		$model->unsetAttributes();  // clear any default values
-		$model1=new Partnerlogin('search');
-		$model1->unsetAttributes();  // clear any default values
-		if(isset($_GET['Partner']))
-			$model->attributes=$_GET['Partner'];
-			$model1->attributes=$_GET['Partner'];
+		if(isset($_GET['Roomtypefeatures']))
+			$model->attributes=$_GET['Roomtypefeatures'];
 
 		$this->render('index',array(
-			'model'=>$model,'model1'=>$model1
+			'model'=>$model,
 		));
 	}
 
@@ -119,20 +144,12 @@ class PartnerController extends Controller
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Partner the loaded model
+	 * @return Roomtypefeatures the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=Partner::model()->findByPk($id);
-		if($model===null)
-			throw new CHttpException(404,'The requested page does not exist.');
-		return $model;
-	}
-
-	public function loadModel1($id)
-	{
-		$model=Partnerlogin::model()->findByPk($id);
+		$model=Roomtypefeatures::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -140,11 +157,11 @@ class PartnerController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param Partner $model the model to be validated
+	 * @param Roomtypefeatures $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='partner-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='roomtypefeatures-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
