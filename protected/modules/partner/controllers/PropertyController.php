@@ -2,6 +2,10 @@
 
 class PropertyController extends Controller
 {
+	public $start_hours;
+	public $start_minutes;
+	public $end_hours;
+	public $end_minutes;
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
@@ -151,7 +155,15 @@ class PropertyController extends Controller
 		//$mCancel=$this->loadModeldesc($id, $lang, $cancel);
 		//Yii::app()->end();
 		/* bagian update foto*/
-		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE property_id = '".$id."'");
+
+		#$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE property_id = '".$id."'");
+		$models= new Propertyphoto;
+
+		$models=new Propertyphoto('search');
+		$models->unsetAttributes();  // clear any default values
+		$models->property_id=$id;
+		//$models=$this->loadModelPhoto($id);
+		//print_r($models);
 		/*bagian update property general */
 		if(isset($_POST['Property']))
 		{
@@ -189,9 +201,14 @@ class PropertyController extends Controller
 	{
 		if(Yii::app()->request->isPostRequest)
 		{
-			// we only allow deletion via POST request
-			$this->loadModel($id)->delete();
-
+			if($_GET['pid']!=NULL){
+				$pid=$_GET['pid'];
+				$photoDel = DAO::executeSql("DELETE FROM tghpropertyphoto WHERE property_id = '".$id."' AND photo_id = '".$pid."'");
+			}
+				else {
+					// we only allow deletion via POST request
+					$this->loadModel($id)->delete();
+				}
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
 				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('index'));
@@ -207,7 +224,7 @@ class PropertyController extends Controller
 	{
 		$model=new Property('search');
 		$model->unsetAttributes();  // clear any default values
-		$modelPol=new Propertydesc;
+
 		if(isset($_GET['Property']))
 			$model->attributes=$_GET['Property'];
 
@@ -230,9 +247,18 @@ class PropertyController extends Controller
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
 	}
+
 	public function loadModelFeat($id)
 	{
 		$model=Propertyfeatures::model()->findByPk($id);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+
+	public function loadModelPhoto($id)
+	{
+		$model=Propertyphoto::model()->find('property_id=:pid', array(':pid'=>$id));
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;

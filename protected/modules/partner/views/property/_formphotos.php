@@ -1,26 +1,23 @@
-<table class="items">
-<thead>
-    <tr>
-        <th>No</th>
-        <th>Nama Gambar</th>
-        <th>gambar</th>
-        <th></th>
-    </tr>
-    </thead>
-        <?php
-          //print_r($model);
-        if ($models > 0) {
-            $no=1;
-        foreach ($models as $datas): ?>
-        <!-- inpoh untuk xampp v 3 kebawah yg mengalami error silahkan ubah <?//= ?> menjadi "php echo" -->
-        <tr>
-            <td><?php echo $no++?></td>
-            <td><?php echo $datas['photo_name'];?></td>
-            <td><?php echo $datas['filename'];?></td>
-        </tr>
-    <?php endforeach; }else{ echo "Belum ada data";}    ?>
-</table>
+<?php
+//print_R($models);
+?>
 
+<?php $this->widget('application.extensions.widget.GridView', array(
+	'id'=>'property-grid',
+	'dataProvider'=>$models->search(),
+	'filter'=>$models,
+	'filterPosition'=>'',
+	'columns'=>array(
+		'photo_id',
+		'photo_name',
+		'filename',
+		array(
+      'class'=>'CButtonColumn',
+      'template'=>'{delete}',
+			'deleteButtonUrl'=>'CHtml::normalizeUrl(array("property/delete", "id"=>$_GET["id"], "pid"=>$data->photo_id))',
+		),
+	),
+)); ?>
 <script type="text/javascript">
 // default  rows form
  $(function() {

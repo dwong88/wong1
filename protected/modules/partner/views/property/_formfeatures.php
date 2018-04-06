@@ -1,3 +1,8 @@
+<style>
+	div.form label{
+		display: inline;
+	}
+</style>
 <?php
 //print_r($checkedFeat);
 ?>

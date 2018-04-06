@@ -37,6 +37,10 @@
  * @property string $create_by
  * @property string $update_dt
  * @property string $update_by
+ * @property string $start_hours
+ * @property string $end_hours
+ * @property string $start_minutes
+ * @property string $end_minutes
  */
 class Property extends ActiveRecord
 {
