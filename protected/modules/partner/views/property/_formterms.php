@@ -108,7 +108,6 @@ CClientScript::POS_READY
 			<?php //echo $form->error($modeldesc,'desc[]'); ?>
 		</div>
 	<?php } ?>
-
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($modeldesc->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>

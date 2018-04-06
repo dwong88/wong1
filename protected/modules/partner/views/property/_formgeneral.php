@@ -21,6 +21,12 @@
 	</div>
 
 	<div class="row">
+		<?php echo $form->labelEx($model,'property_type_id'); ?>
+		<?php echo $form->dropDownList($model,'property_type_id', CHtml::listData(Propertytype::model()->findAll(), 'property_type_id', 'property_type_name'),array('prompt'=>'')); ?>
+		<?php echo $form->error($model,'property_type_id'); ?>
+	</div>
+
+	<div class="row">
 		<?php echo $form->labelEx($model,'addressline1'); ?>
 		<?php echo $form->textArea($model,'addressline1',array('rows'=>6, 'cols'=>50)); ?>
 		<?php echo $form->error($model,'addressline1'); ?>

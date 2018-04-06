@@ -152,7 +152,6 @@ class PropertyController extends Controller
 		//Yii::app()->end();
 		/* bagian update foto*/
 		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE property_id = '".$id."'");
-
 		/*bagian update property general */
 		if(isset($_POST['Property']))
 		{

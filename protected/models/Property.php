@@ -6,6 +6,7 @@
  * The followings are the available columns in table 'tghproperty':
  * @property string $property_id
  * @property string $property_name
+ * @property string $property_type_id
  * @property string $addressline1
  * @property string $addressline2
  * @property integer $cityid
@@ -55,7 +56,7 @@ class Property extends ActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('city_id, country_id,state_id, numberofstar, maximumchildage, maximuminfantage', 'numerical', 'integerOnly'=>true),
+			array('property_type_id,city_id, country_id,state_id, numberofstar, maximumchildage, maximuminfantage', 'numerical', 'integerOnly'=>true),
 			array('property_name, gmaps_longitude, gmaps_latitude', 'length', 'max'=>100),
 			array('postal_code, minimumroomrate', 'length', 'max'=>5),
 			array('suburb, bookingconfirmationemail, enquiryemail', 'length', 'max'=>50),
@@ -81,7 +82,8 @@ class Property extends ActiveRecord
 			'refUserupdate' => array(self::BELONGS_TO, 'User', 'update_by'),
 			'refCountry' => array(self::BELONGS_TO, 'Countries', 'country_id'),
 			'refState' => array(self::BELONGS_TO, 'State', 'state_id'),
-			'refCity' => array(self::BELONGS_TO, 'C', 'city_id'),
+			'refCity' => array(self::BELONGS_TO, 'City', 'city_id'),
+			'refProptype' => array(self::BELONGS_TO, 'Propertytype', 'property_type_id'),
 		);
 	}
 
@@ -93,6 +95,7 @@ class Property extends ActiveRecord
 		return array(
 			'property_id' => 'Property ID',
 			'property_name' => 'Property Name',
+			'property_type_id' => 'Property Type',
 			'addressline1' => 'Address line1',
 			'addressline2' => 'Address line2',
 			'city_id' => 'City',
@@ -146,6 +149,7 @@ class Property extends ActiveRecord
 
 		$criteria->compare('property_id',$this->property_id,true);
 		$criteria->compare('property_name',$this->property_name,true);
+		$criteria->compare('property_type_id',$this->property_type_id,true);
 		$criteria->compare('addressline1',$this->addressline1,true);
 		$criteria->compare('addressline2',$this->addressline2,true);
 		$criteria->compare('city_id',$this->city_id);
