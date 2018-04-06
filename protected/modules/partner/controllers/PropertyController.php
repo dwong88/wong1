@@ -27,8 +27,8 @@ class PropertyController extends Controller
 	{
 		$model=new Property; #formgeneral
 		$modeldesc=new Propertydesc; #formPolicies
-
-		/* from form general*/
+		$modelfeat=new Propertyfeatures; #gate features
+		/* from form Policies*/
 		if(isset($_POST['Property']))
 		{
 			$model->attributes=$_POST['Property'];
@@ -43,32 +43,15 @@ class PropertyController extends Controller
 						$mDescTac->save(false); #save(false)--> save tidak validasi
 					}
 				}
+				$modelfeat->property_id = $model->property_id;
+				$modelfeat->prop_features_id = "";
+				$modelfeat->save(false); #save(false)--> save tidak validasi
 				Yii::app()->user->setFlash('success', "Create Successfully");
 				$this->redirect(array('index'));
 			}
 		}
 
 		$this->render('create',array(
-			'model'=>$model,
-		));
-	}
-
-	public function actionCreaterendergeneral()
-	{
-		$model=new Property;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Property']))
-		{
-			$model->attributes=$_POST['Property'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
-			}
-		}
-		$this->render('creategeneral',array(
 			'model'=>$model,
 		));
 	}
@@ -107,8 +90,17 @@ class PropertyController extends Controller
 	{
 		$model=$this->loadModel($id);
 		//$mToc=$this->loadModeldesc($id, 'en', 'toc');
+
+		/* bagian prop desc toc Policies*/
 		$modeldesc= new Propertydesc;
 		$modeldesc->lang = $lng;
+		if($_GET['lang']==NULL){
+				$modeldesc->lang = $lng;
+		}
+		else {
+				$modeldesc->lang = $_GET['lang'];
+				$lng=$_GET['lang'];
+		}
 		foreach (Propertydesc::$publicTypeDesc as $key => $value) {
 			$modeldesc->$value = $this->loadModeldesc($id, $lng, $value)->desc;
 		}
@@ -117,21 +109,51 @@ class PropertyController extends Controller
 		if(isset($_POST['Propertydesc']))
 		{
 			$modeldesc->attributes = $_POST['Propertydesc'];
-
 			foreach (Propertydesc::$publicTypeDesc as $key => $value) {
 				$mSave = $this->loadModeldesc($id, $lng, $value);
 				$mSave->desc = $modeldesc->$value;
+				//print_r($mSave);
+				//Yii::app()->end();
 				$mSave->save();
 			}
+
 		}
 
+		/*bagian features*/
+		$modelfeat=new Propertyfeatures; #gate features
+		$mFeat=new Mspropertyfeatures; #master prop features
+		//print_r($_POST['propfeat']);
+		//echo count($_POST['propfeat']);
+		if(isset($_POST['propfeat']))
+		{
+				$loop=$_POST['propfeat'];
+				$mDel = DAO::executeSql("DELETE FROM tghpropertyfeatures WHERE property_id = '".$id."'");
+				foreach ($loop as $key => $value) {
+					$mSavef = new Propertyfeatures;
+					$mSavef->prop_features_id = $value;
+					$mSavef->property_id = $id;
+					$mSavef->save(false);
+				}
+		}
+		$mSelf = DAO::queryAllSql("SELECT * FROM tghpropertyfeatures WHERE property_id = '".$id."'");
+		//$mSavef->prop_features_id = $temp_f;
+		#print_r($mSelf);
+		$countselect=count($mSelf);
+		for($c=0;$c<$countselect;$c++)
+		{
+			$checkedFeat[$c] = $mSelf[$c]['prop_features_id'];
+		}
+		//print_r($checkedFeat);
+		//$modelfeat->property_id = $id;
+		//$mSavef->save(false);
 		//$mToc=$this->loadModeldesc($id, $lang, $toc);
 		//$mPayment=$this->loadModeldesc($id, $lang, $payment);
 		//$mCancel=$this->loadModeldesc($id, $lang, $cancel);
-
-		/*update foto*/
+		//Yii::app()->end();
+		/* bagian update foto*/
 		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE property_id = '".$id."'");
 
+		/*bagian update property general */
 		if(isset($_POST['Property']))
 		{
 			$model->attributes=$_POST['Property'];
@@ -142,6 +164,8 @@ class PropertyController extends Controller
 		}
 		$this->render('update',array(
 			'model'=>$model,
+			'mFeat'=>$mFeat,
+			'checkedFeat'=>$checkedFeat,
 			'models'=>$models,
 			'modeldesc'=>$modeldesc,
 		));
@@ -203,6 +227,13 @@ class PropertyController extends Controller
 	public function loadModel($id)
 	{
 		$model=Property::model()->findByPk($id);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+	public function loadModelFeat($id)
+	{
+		$model=Propertyfeatures::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;

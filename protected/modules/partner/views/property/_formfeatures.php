@@ -1,3 +1,6 @@
+<?php
+//print_r($checkedFeat);
+?>
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -10,26 +13,22 @@
 )); ?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
-
-	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
-
+	<?php
+	if($mFeat->hasErrors()) echo $form->errorSummary($mFeat); ?>
 	<?php Helper::showFlash(); ?>
-
-	<div class="row">
-			<?php echo $form->labelEx($model,'Allowable Arrival Times'); ?>
-			<?php
-				for($features=1;$features<=50;$features++)
-				{
-						//$win[$d] = $d;
-						echo CHtml::activeCheckBox($model,'property_name[]',array('value'=>$features)).'Features '.$features." ";
-				}
-			?>
-</div>
+	<?php echo CHtml::checkBoxList(
+	        'propfeat',
+	        //'$checkedFeat',//you can pass the array here which you want to be pre checked
+					#array('0'=>'3','1'=>'4'),
+					$checkedFeat,
+	        CHtml::listData(Mspropertyfeatures::model()->findAll(),'prop_features_id','features_name'),
+	        array('checkAll'=>'Select all tasks', 'checkAllLast'=>true)
+	    ); ?>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Save' : 'Save'); ?>
+		<?php echo CHtml::submitButton($mFeat->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>
 
 <?php $this->endWidget(); ?>
 
-</div><!-- form -->
+</div>
