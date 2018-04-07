@@ -23,12 +23,31 @@ class RoomtypefeaturesController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
+	public function actionCreate($id=0)
 	{
 		$model=new Roomtypefeatures;
+        $model->room_type_id = $id;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
+        
+        $mSelf = DAO::queryAllSql("SELECT room_features_id FROM `tghroomtypefeatures`WHERE room_type_id = '".$id."'");
+		//$mSavef->prop_features_id = $temp_f;
+		#print_r($mSelf);
+		$countselect=count($mSelf);
+		for($c=0;$c<$countselect;$c++)
+		{
+			$checkedFeat[$c] = $mSelf[$c]['room_features_id'];
+		}
+        $model->room_features_id = $checkedFeat;
+
+		$qProperty = DAO::queryRowSql('SELECT property_name,room_type_name
+                                    FROM `tghroomtype`
+                                    JOIN tghproperty on tghroomtype.property_id=tghproperty.property_id
+                                    WHERE room_type_id=:rid'
+                                    , array(':rid'=>$id));
+
+		//echo $qProperty['room_type_name']
 
 		if(isset($_POST['Roomtypefeatures']))
 		{
@@ -55,6 +74,7 @@ class RoomtypefeaturesController extends Controller
 
 		$this->render('create',array(
 			'model'=>$model,
+            'qProperty'=>$qProperty,
 		));
 	}
 
@@ -88,12 +108,13 @@ class RoomtypefeaturesController extends Controller
 	{
 		$model=$this->loadModel($id);
 
+		$roomfeatures = explode(', ', $model->room_features_id);
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['Roomtypefeatures']))
 		{
-			$model->attributes=$_POST['Roomtypefeatures'];
+			$roomfeatures = implode(",", $_POST['room_features_id']);
 			if($model->save()) {
 				Yii::app()->user->setFlash('success', "Update Successfully");
 				$this->redirect(array('index'));

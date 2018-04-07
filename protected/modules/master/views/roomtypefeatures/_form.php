@@ -24,9 +24,11 @@
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
 	
 	<?php Helper::showFlash(); ?>	
-    
+    <h2><?php echo $qProperty['property_name']; ?></h2>
+    <h3><?php echo $qProperty['room_type_name']; ?></h3>
     <table>
 	<div class="row">
+        
         <?php echo $form->labelEx($model,'room_features_id'); ?>
         <tr>
 		<td colspan="3">
@@ -43,11 +45,13 @@
     
     
     
+<!--
 	<div class="row">
 		<?php echo $form->labelEx($model,'room_type_id'); ?>
 		<?php echo $form->dropDownList($model,'room_type_id', CHtml::listData(Roomtype::model()->findAll(), 'room_type_id', 'room_type_name'),array('prompt'=>'')); ?>
 		<?php echo $form->error($model,'room_type_id'); ?>
 	</div>
+-->
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

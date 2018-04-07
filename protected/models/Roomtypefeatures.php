@@ -42,7 +42,7 @@ class Roomtypefeatures extends ActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'refRoomfeatures' => array(self::BELONGS_TO, 'Roomfeatures', 'room_features_id'),
-			'refRoomtype' => array(self::BELONGS_TO, 'Roomtype', 'room_type_id'),
+//			'refRoomtype' => array(self::BELONGS_TO, 'Roomtype', 'room_type_id'),
 		);
 	}
 
@@ -53,7 +53,7 @@ class Roomtypefeatures extends ActiveRecord
 	{
 		return array(
 			'room_features_id' => 'Room Features',
-			'room_type_id' => 'Room Type',
+//			'room_type_id' => 'Room Type',
 		);
 	}
 
@@ -76,7 +76,7 @@ class Roomtypefeatures extends ActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('room_features_id',$this->room_features_id);
-		$criteria->compare('room_type_id',$this->room_type_id);
+//		$criteria->compare('room_type_id',$this->room_type_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

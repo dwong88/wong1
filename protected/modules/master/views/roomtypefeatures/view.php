@@ -16,6 +16,6 @@ $buttonBar->render();
 	'data'=>$model,
 	'attributes'=>array(
 		array('name'=>'roomfeatures','value'=>$model->refRoomfeatures->room_features_name),
-		array('name'=>'roomtype','value'=>$model->refRoomtype->room_type_name),
+//		array('name'=>'roomtype','value'=>$model->refRoomtype->room_type_name),
 	),
 )); ?>

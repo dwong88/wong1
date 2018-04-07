@@ -39,7 +39,7 @@ $buttonBar->render();
 	'filterPosition'=>'',
 	'columns'=>array(
 		array('name'=>'refRoomfeatures.room_features_name', 'header'=>'Roomfeatures'),
-		array('name'=>'refRoomtype.room_type_name', 'header'=>'Roomtype'),
+//		array('name'=>'refRoomtype.room_type_name', 'header'=>'Roomtype'),
 		array(
 			'class'=>'application.extensions.widget.ButtonColumn',
 		),
