@@ -2,10 +2,6 @@
 
 class PropertyController extends Controller
 {
-	public $start_hours;
-	public $start_minutes;
-	public $end_hours;
-	public $end_minutes;
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
@@ -31,15 +27,19 @@ class PropertyController extends Controller
 	{
 		$model=new Property; #formgeneral
 		$modeldesc=new Propertydesc; #formPolicies
-		$modelfeat=new Propertyfeatures; #gate features
-		/* from form Policies*/
+		$modelfeat=new Propertyfeatures; #relation table features
+		/* Create untuk form general dan Policies*/
 		if(isset($_POST['Property']))
 		{
+			#set attribute untuk property
 			$model->attributes=$_POST['Property'];
+			#proses save property
 			if($model->save()) {
+				#looping tipe policies ex:toc,payment,cancel
 				foreach (Propertydesc::$publicTypeDesc as $descType) {
+					#looping tipe languange
 					foreach (Helper::$listLanguage as $lng=>$lngText) { #fungsi helper panggil list language
-						$mDescTac = new Propertydesc();
+						$mDescTac = new Propertydesc(); #declare $mDescTac menggunakan table Propertydesc
 						$mDescTac->property_id = $model->property_id;
 						$mDescTac->lang = $lng;
 						$mDescTac->type = $descType;
@@ -48,6 +48,7 @@ class PropertyController extends Controller
 					}
 				}
 
+				#proces property features
 				$modelfeat->property_id = $model->property_id;
 				$modelfeat->prop_features_id = "";
 				$modelfeat->save(false); #save(false)--> save tidak validasi
@@ -61,52 +62,6 @@ class PropertyController extends Controller
 		));
 	}
 
-	public function actionCreaterenderphotos()
-	{
-		$model=new Propertyphoto;
-			if (isset($_POST['simpan']))
-			{
-					$property_id=$_GET['id'];
-					/*$sekarang=date("Y-m-d h:i:s");
-					foreach ($_POST['nama_gambar'] as $i => $nama_gambar)
-					{
-						//fungsi foreach untuk mencari nilai dari input html name='nama_produk[]' kemudian nilai i sebagai key Nya
-						$SQL="INSERT INTO tghpropertyphoto values(null,'$property_id','$nama_gambar','".$_POST['gambar'][$i]."','$sekarang','1','$sekarang','1')";
-						//echo $SQL;
-						$command= Yii::app()->db->createCommand($SQL);
-						$n=$command->execute();
-					}*/
-
-						foreach ($_POST['nama_gambar'] as $i => $nama_gambar)
-						{
-							$rnd = rand(0,9999);  // generate random number between 0-9999
-							$model->attributes=$_POST['simpan'];
-
-							$uploadedFile=CUploadedFile::getInstance($model,'image');
-							$fileName = "{$rnd}-{$uploadedFile}";  // random number + file name
-							$model->property_id = $_GET['id'];
-							$model->photo_name = $fileName;
-						}
-
-
-
-					//$this->redirect(array('view','id'=>$produk_id));
-					//$this->redirect(array('index'));
-			}
-			print_r($model);
-			Yii::app()->end();
-			if($model->save())
-			{
-				$uploadedFile->saveAs(Yii::app()->basePath.'/../banner/'.$fileName);  // image will uplode to rootDirectory/banner/
-				$this->redirect(array('admin'));
-			}
-		//$this->redirect(array('/kategori_produk'));
-	//}tutup
-		$this->render('createphotos',array(
-			'model'=>$model,
-		));
-	}
-
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
@@ -114,23 +69,24 @@ class PropertyController extends Controller
 	 */
 	public function actionUpdate($id, $lng = 'en')
 	{
-		$model=$this->loadModel($id);
-		$models= new Propertyphoto;
+		$model=$this->loadModel($id); #panggil fungsi loadmodel property
+		$models= new Propertyphoto; #declare use model propertyphoto
 		$models->property_id=$id;
 		$models->propertyphototype_id =1;
-		//$mToc=$this->loadModeldesc($id, 'en', 'toc');
+		#proses upload file photo
 		if(isset($_POST['Propertyphoto']))
 		{
-				$rnd = rand(0,9999);  // generate random number between 0-9999
 				$models->attributes=$_POST['Propertyphoto'];
-
+				#fungsi upload file yii
 				$models->doc = CUploadedFile::getInstance($models, 'doc');
 				if($models->doc !== null) {
 					$models->setAttribute('filename', $models->doc->name);
 				} else {
 					echo 'Tidak ada file yg di upload';
 				}
+				#fungsi validasi proses
 				if($models->validate()) {
+					#$transaction mulai transaksi
 					$transaction = Yii::app()->db->beginTransaction();
 					try{
 						$models->save(false);
@@ -138,7 +94,7 @@ class PropertyController extends Controller
 						$models->update(array('filename'));
 						$fileNamephoto = FileUpload::getFilePath($models->filename, FileUpload::PROPERTY_PHOTO_PATH);
 						$models->doc->saveAs($fileNamephoto);
-
+						#jika tidak ada error transaksi proses di commit
 						$transaction->commit();
 						Yii::app()->user->setFlash('success', "Photo Uploaded Successfully");
 					}
@@ -149,72 +105,67 @@ class PropertyController extends Controller
 				}
 		}
 		/* bagian prop desc toc Policies*/
-		$modeldesc= new Propertydesc;
+		$modeldesc= new Propertydesc; #$modeldesc panggil model Propertydesc
 		$modeldesc->lang = $lng;
-		if($_GET['lang']==NULL){
+		if($_GET['lang']==NULL)
+		{
 				$modeldesc->lang = $lng;
 		}
-		else {
+		else
+		{
 				$modeldesc->lang = $_GET['lang'];
 				$lng=$_GET['lang'];
 		}
+		#Set descripsi Propertydesc
 		foreach (Propertydesc::$publicTypeDesc as $key => $value) {
 			$modeldesc->$value = $this->loadModeldesc($id, $lng, $value)->desc;
 		}
-
-		//print_r($_POST['Propertydesc']);
+		#proses update descripsi
 		if(isset($_POST['Propertydesc']))
 		{
 			$modeldesc->attributes = $_POST['Propertydesc'];
-			foreach (Propertydesc::$publicTypeDesc as $key => $value) {
-				$mSave = $this->loadModeldesc($id, $lng, $value);
-				$mSave->desc = $modeldesc->$value;
-				//print_r($mSave);
+			foreach (Propertydesc::$publicTypeDesc as $key => $value)
+			{
+				$mSaveDesc = $this->loadModeldesc($id, $lng, $value);
+				$mSaveDesc->desc = $modeldesc->$value;
 				//Yii::app()->end();
-				$mSave->save();
+				$mSaveDesc->save();
 			}
-
 		}
 
 		/*bagian features*/
 		$modelfeat=new Propertyfeatures; #gate features
 		$mFeat=new Mspropertyfeatures; #master prop features
-		//print_r($_POST['propfeat']);
-		//echo count($_POST['propfeat']);
+
 		if(isset($_POST['propfeat']))
 		{
 				$loop=$_POST['propfeat'];
 				$mDel = DAO::executeSql("DELETE FROM tghpropertyfeatures WHERE property_id = '".$id."'");
 				foreach ($loop as $key => $value) {
-					$mSavef = new Propertyfeatures;
-					$mSavef->prop_features_id = $value;
-					$mSavef->property_id = $id;
-					$mSavef->save(false);
+					$mSavefeatures = new Propertyfeatures;
+					$mSavefeatures->prop_features_id = $value;
+					$mSavefeatures->property_id = $id;
+					$mSavefeatures->save(false);
 				}
 		}
-		$mSelf = DAO::queryAllSql("SELECT * FROM tghpropertyfeatures WHERE property_id = '".$id."'");
-		//$mSavef->prop_features_id = $temp_f;
-		#print_r($mSelf);
-		$countselect=count($mSelf);
+		#hasil $mSelf masing multidimensi array
+		$mSelf = DAO::queryAllSql("SELECT property_id,prop_features_id FROM tghpropertyfeatures WHERE property_id = '".$id."'");
+		$countselect = count($mSelf);
+		#fungsi convert ke single array
 		for($c=0;$c<$countselect;$c++)
 		{
 			$checkedFeat[$c] = $mSelf[$c]['prop_features_id'];
 		}
 
 		//Yii::app()->end();
-		/* bagian update foto*/
 
-		#$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE property_id = '".$id."'");
-
-		//$models=$this->loadModelPhoto($id);
-		//print_r($models);
 		/*bagian update property general */
 		if(isset($_POST['Property']))
 		{
 			$model->attributes=$_POST['Property'];
 			if($model->save()) {
 				Yii::app()->user->setFlash('success', "Update Successfully");
-				//$this->redirect(array('index'));
+				$this->redirect(array('index'));
 			}
 		}
 		$this->render('update',array(
@@ -223,16 +174,6 @@ class PropertyController extends Controller
 			'checkedFeat'=>$checkedFeat,
 			'models'=>$models,
 			'modeldesc'=>$modeldesc,
-		));
-	}
-
-
-	public function actionUpdatephotos($id)
-	{
-		$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE property_id = '".$id."'");
-
-		$this->render('updatephotos',array(
-			'models'=>$models,
 		));
 	}
 
@@ -245,11 +186,17 @@ class PropertyController extends Controller
 	{
 		if(Yii::app()->request->isPostRequest)
 		{
-			if($_GET['pid']!=NULL){
-				$pid=$_GET['pid'];
-				$photoDel = DAO::executeSql("DELETE FROM tghpropertyphoto WHERE property_id = '".$id."' AND photo_id = '".$pid."'");
-			}
-				else {
+				#bagian proses delete photo
+				if($_GET['pid']!=NULL)
+				{
+					$pid=$_GET['pid'];
+					$photoDel = DAO::executeSql("DELETE FROM tghpropertyphoto WHERE property_id = '".$id."' AND photo_id = '".$pid."'");
+					$docPath = FileUpload::getFilePath($model->filename, FileUpload::PROPERTY_PHOTO_PATH);
+					//$fileNamephoto = FileUpload::getFilePath($models->filename, FileUpload::PROPERTY_PHOTO_PATH);
+					if(file_exists($docPath)) unlink($docPath);
+				}
+				else
+				{
 					// we only allow deletion via POST request
 					$this->loadModel($id)->delete();
 					Roomtype::model()->deleteAll('property_id = :pid', array(':pid'=>$id));
@@ -285,6 +232,8 @@ class PropertyController extends Controller
 	 * @return Property the loaded model
 	 * @throws CHttpException
 	 */
+
+	#load model untuk tabel property
 	public function loadModel($id)
 	{
 		$model=Property::model()->findByPk($id);
@@ -293,6 +242,7 @@ class PropertyController extends Controller
 		return $model;
 	}
 
+	#load model untuk tabel property features
 	public function loadModelFeat($id)
 	{
 		$model=Propertyfeatures::model()->findByPk($id);
@@ -300,7 +250,7 @@ class PropertyController extends Controller
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
 	}
-
+	#load model untuk tabel property photo
 	public function loadModelPhoto($id)
 	{
 		$model=Propertyphoto::model()->find('property_id=:pid', array(':pid'=>$id));
@@ -309,6 +259,7 @@ class PropertyController extends Controller
 		return $model;
 	}
 
+	#load model untuk tabel property policies
 	public function loadModeldesc($id,$lang,$type)
 	{
 		$model=Propertydesc::model()->find('property_id=:pid AND lang = :lng AND type = :ty', array(':pid'=>$id, ':lng'=>$lang, ':ty'=>$type));

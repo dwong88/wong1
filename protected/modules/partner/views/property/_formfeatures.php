@@ -3,9 +3,6 @@
 		display: inline;
 	}
 </style>
-<?php
-//print_r($checkedFeat);
-?>
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -24,7 +21,6 @@
 	<?php echo CHtml::checkBoxList(
 	        'propfeat',
 	        //'$checkedFeat',//you can pass the array here which you want to be pre checked
-					#array('0'=>'3','1'=>'4'),
 					$checkedFeat,
 	        CHtml::listData(Mspropertyfeatures::model()->findAll(),'prop_features_id','features_name'),
 	        array('checkAll'=>'Select all tasks', 'checkAllLast'=>true)
