@@ -9,7 +9,6 @@
 	'filterPosition'=>'',
 	'columns'=>array(
 		'photo_id',
-		'photo_name',
 		'filename',
 		array(
       'class'=>'CButtonColumn',
@@ -95,3 +94,35 @@
 				         <button type="submit"  name="simpan" value="Simpan"   onClick="return validate();"> Simpan </button>
 			 </div>
   </form>
+
+
+	<div class="form">
+
+	<?php $form=$this->beginWidget('CActiveForm', array(
+		'id'=>'propertyphoto-form',
+		// Please note: When you enable ajax validation, make sure the corresponding
+		// controller action is handling ajax validation correctly.
+		// There is a call to performAjaxValidation() commented in generated controller code.
+		// See class documentation of CActiveForm for details on this.
+		'enableAjaxValidation' => false,
+		'htmlOptions' => array('enctype' => 'multipart/form-data', 'title' => 'form title'),
+
+	)); ?>
+
+		<p class="note">Fields with <span class="required">*</span> are required.</p>
+
+		<?php if($models->hasErrors()) echo $form->errorSummary($models); ?>
+
+		<?php Helper::showFlash(); ?>
+		<div class="row">
+			<?php echo $form->labelEx($models,'doc'); ?>
+			<?php echo $form->fileField($models,'doc'); ?>
+			<?php echo $form->error($models,'doc'); ?>
+		</div>
+		<div class="row buttons">
+			<?php echo CHtml::submitButton($models->isNewRecord ? 'Create' : 'Save'); ?>
+		</div>
+
+	<?php $this->endWidget(); ?>
+
+	</div><!-- form -->

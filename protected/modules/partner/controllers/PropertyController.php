@@ -47,6 +47,7 @@ class PropertyController extends Controller
 						$mDescTac->save(false); #save(false)--> save tidak validasi
 					}
 				}
+
 				$modelfeat->property_id = $model->property_id;
 				$modelfeat->prop_features_id = "";
 				$modelfeat->save(false); #save(false)--> save tidak validasi
@@ -66,7 +67,7 @@ class PropertyController extends Controller
 			if (isset($_POST['simpan']))
 			{
 					$property_id=$_GET['id'];
-					$sekarang=date("Y-m-d h:i:s");
+					/*$sekarang=date("Y-m-d h:i:s");
 					foreach ($_POST['nama_gambar'] as $i => $nama_gambar)
 					{
 						//fungsi foreach untuk mencari nilai dari input html name='nama_produk[]' kemudian nilai i sebagai key Nya
@@ -74,9 +75,30 @@ class PropertyController extends Controller
 						//echo $SQL;
 						$command= Yii::app()->db->createCommand($SQL);
 						$n=$command->execute();
-					}
+					}*/
+
+						foreach ($_POST['nama_gambar'] as $i => $nama_gambar)
+						{
+							$rnd = rand(0,9999);  // generate random number between 0-9999
+							$model->attributes=$_POST['simpan'];
+
+							$uploadedFile=CUploadedFile::getInstance($model,'image');
+							$fileName = "{$rnd}-{$uploadedFile}";  // random number + file name
+							$model->property_id = $_GET['id'];
+							$model->photo_name = $fileName;
+						}
+
+
+
 					//$this->redirect(array('view','id'=>$produk_id));
-					$this->redirect(array('index'));
+					//$this->redirect(array('index'));
+			}
+			print_r($model);
+			Yii::app()->end();
+			if($model->save())
+			{
+				$uploadedFile->saveAs(Yii::app()->basePath.'/../banner/'.$fileName);  // image will uplode to rootDirectory/banner/
+				$this->redirect(array('admin'));
 			}
 		//$this->redirect(array('/kategori_produk'));
 	//}tutup
@@ -93,8 +115,39 @@ class PropertyController extends Controller
 	public function actionUpdate($id, $lng = 'en')
 	{
 		$model=$this->loadModel($id);
+		$models= new Propertyphoto;
+		$models->property_id=$id;
+		$models->propertyphototype_id =1;
 		//$mToc=$this->loadModeldesc($id, 'en', 'toc');
+		if(isset($_POST['Propertyphoto']))
+		{
+				$rnd = rand(0,9999);  // generate random number between 0-9999
+				$models->attributes=$_POST['Propertyphoto'];
 
+				$models->doc = CUploadedFile::getInstance($models, 'doc');
+				if($models->doc !== null) {
+					$models->setAttribute('filename', $models->doc->name);
+				} else {
+					echo 'Tidak ada file yg di upload';
+				}
+				if($models->validate()) {
+					$transaction = Yii::app()->db->beginTransaction();
+					try{
+						$models->save(false);
+						$models->setAttribute('filename', 'propertyphoto_'.$models->photo_id.'.'.$models->doc->extensionName);
+						$models->update(array('filename'));
+						$fileNamephoto = FileUpload::getFilePath($models->filename, FileUpload::PROPERTY_PHOTO_PATH);
+						$models->doc->saveAs($fileNamephoto);
+
+						$transaction->commit();
+						Yii::app()->user->setFlash('success', "Photo Uploaded Successfully");
+					}
+						catch(exception $e) {
+							$transaction->rollback();
+							throw new CHttpException(500, $e->getMessage());
+					}
+				}
+		}
 		/* bagian prop desc toc Policies*/
 		$modeldesc= new Propertydesc;
 		$modeldesc->lang = $lng;
@@ -147,21 +200,12 @@ class PropertyController extends Controller
 		{
 			$checkedFeat[$c] = $mSelf[$c]['prop_features_id'];
 		}
-		//print_r($checkedFeat);
-		//$modelfeat->property_id = $id;
-		//$mSavef->save(false);
-		//$mToc=$this->loadModeldesc($id, $lang, $toc);
-		//$mPayment=$this->loadModeldesc($id, $lang, $payment);
-		//$mCancel=$this->loadModeldesc($id, $lang, $cancel);
+
 		//Yii::app()->end();
 		/* bagian update foto*/
 
 		#$models = DAO::queryAllSql("SELECT * FROM tghpropertyphoto WHERE property_id = '".$id."'");
-		$models= new Propertyphoto;
 
-		$models=new Propertyphoto('search');
-		$models->unsetAttributes();  // clear any default values
-		$models->property_id=$id;
 		//$models=$this->loadModelPhoto($id);
 		//print_r($models);
 		/*bagian update property general */

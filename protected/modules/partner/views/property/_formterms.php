@@ -20,65 +20,6 @@ CClientScript::POS_READY
 
 ?>
 
-<?php/*
-Yii::app()->clientScript->registerScript(
-					    '__inPageScript',
-					    "
-							$(function () {
-
-							    // Lets be professional, shall we?
-							    'use strict';
-
-							    // Some variables for later
-							    var dictionary, set_lang;
-
-							    // Object literal behaving as multi-dictionary
-							    dictionary = {
-							        'en': {
-							            '_hello': 'Hello',
-							            '_january': 'January'
-							        },
-							        'id': {
-							            '_hello': 'Oie',
-							            '_january': 'Janeiro'
-							        },
-							        'russian': {
-							            '_hello': 'привет',
-							            '_january': 'январь'
-							        }
-							    };
-
-							    // Function for swapping dictionaries
-							    set_lang = function (dictionary) {
-							        $('[data-translate]').text(function () {
-							            var key = $(this).data('translate');
-							            if (dictionary.hasOwnProperty(key)) {
-							                return dictionary[key];
-							            }
-							        });
-							    };
-
-							    // Swap languages when menu changes
-							    $('#id-sel-language').on('change', function () {
-							        var language = $(this).val().toLowerCase();
-												console.log(language);
-							        if (dictionary.hasOwnProperty(language)) {
-							            set_lang(dictionary[language]);
-							        }
-							    });
-
-							    // Set initial language to English
-							    set_lang(dictionary.en);
-
-							});
-
-							",
-CClientScript::POS_READY
-);
-
-*/
-?>
-
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
