@@ -34,6 +34,9 @@ class PropertyController extends Controller
 			#set attribute untuk property
 			$model->attributes=$_POST['Property'];
 			#proses save property
+			$model->available_cleaning_start =$_POST['Property']['start_hours'].":".$_POST['Property']['start_minutes'];
+			$model->available_cleaning_end =$_POST['Property']['end_hours'].":".$_POST['Property']['end_minutes'];
+			//Yii::app()->end();
 			if($model->save()) {
 				#looping tipe policies ex:toc,payment,cancel
 				foreach (Propertydesc::$publicTypeDesc as $descType) {
@@ -70,6 +73,17 @@ class PropertyController extends Controller
 	public function actionUpdate($id, $lng = 'en')
 	{
 		$model=$this->loadModel($id); #panggil fungsi loadmodel property
+
+		#explode
+		$str1 = $model->available_cleaning_start;
+		//print_r (explode(":",$str1));
+		$model->start_hours = $str1[0];
+		$model->start_minutes = $str1[2];
+		$str2 = $model->available_cleaning_start;
+		//print_r (explode(":",$str2));
+		$model->end_hours = $str2[0];
+		$model->end_minutes = $str2[2];
+
 		$modelphoto= new Propertyphoto; #declare use model propertyphoto
 		$modelphoto->property_id=$id;
 		$modelphoto->propertyphototype_id =$_POST['Propertyphoto']['propertyphototype_id'];
