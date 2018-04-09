@@ -44,29 +44,67 @@ class RoomtypebedController extends Controller
 		));
 	}
 
+    
+//    public function actionUpdate($id)
+//	{
+//		$model=new Roomtypebed;
+//        
+//		// Uncomment the following line if AJAX validation is needed
+//		// $this->performAjaxValidation($model);
+//
+//		if(isset($_POST['Roomtypebed']))
+//		{
+//			$model->attributes=$_POST['Roomtypebed'];
+//			if($model->save()) {
+//				Yii::app()->user->setFlash('success', "Create Successfully");
+//				$this->redirect(array('index'));
+//			}
+//		}
+//
+//		$this->render('create',array(
+//			'model'=>$model,
+//		));
+//	}
+    
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdate($id)
+    
+	public function actionUpdate($id, $bedid=0)
 	{
-		$model=$this->loadModel($id);
+	    $mRoomType = Roomtype::model()->findByPk($id);
+        if($mRoomType===null)
+            throw new CHttpException(404,'The requested page does not exist.');
 
+        if($bedid==0) {
+            $model = new Roomtypebed();
+            $model->room_type_id = $id;
+        } else {
+            $model = $this->loadModel($bedid);
+        }
+
+        $mBed = new Roomtypebed('search');
+        $mBed->unsetAttributes();  // clear any default values
+        $mBed->room_type_id = $id;
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
+        //print_r($_POST);
 
-		if(isset($_POST['Roomtypebed']))
-		{
-			$model->attributes=$_POST['Roomtypebed'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Update Successfully");
-				$this->redirect(array('index'));
-			}
-		}
+
+        if (isset($_POST['Roomtypebed'])) {
+            $model->attributes = $_POST['Roomtypebed'];
+            if ($model->save()) {
+                Yii::app()->user->setFlash('success', "Create Successfully");
+                $this->redirect(array('update','id'=>$model->room_type_id));
+            }
+        }
 
 		$this->render('update',array(
-			'model'=>$model,
+			'mBed'=>$mBed,
+            'mRoomType'=>$mRoomType,
+            'model'=>$model
 		));
 	}
 

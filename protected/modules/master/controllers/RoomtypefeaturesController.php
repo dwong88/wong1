@@ -66,7 +66,7 @@ class RoomtypefeaturesController extends Controller
 
             }
             Yii::app()->user->setFlash('success', "Create Successfully");
-            $this->redirect(array('index'));
+            $this->redirect(array('/partner/property/index'));
         }
 
 

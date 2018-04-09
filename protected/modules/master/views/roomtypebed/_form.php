@@ -7,18 +7,25 @@
 	// There is a call to performAjaxValidation() commented in generated controller code.
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
-)); ?>
+));
+echo $form->hiddenField($model, 'room_type_bed_id');
+?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
     
     
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
-	
+<b style="font-size: 18px;">
+    <?php
+        if($model->isNewRecord) echo 'Create new bed';
+        else
+            echo 'Update';
+    ?>
+</b>
 	<?php Helper::showFlash(); ?>
 	<div class="row">
 		<?php echo $form->labelEx($model,'room_type_id'); ?>
-		<?php echo $form->dropDownList($model,'room_type_id', CHtml::listData(Roomtype::model()->findAll(), 'room_type_id', 'room_type_name'),array('prompt'=>'')); ?>
-		<?php echo $form->error($model,'room_type_id'); ?>
+		<?php echo $mRoomType->room_type_name; ?>
 	</div>
 
 	<div class="row">
@@ -36,7 +43,32 @@
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>
+    
+<?php
+echo CHtml::link('Create new bed', array('update','id'=>$model->room_type_id));
+$this->widget('application.extensions.widget.GridView', array(
+	'id'=>'roomtypebed-grid',
+	'dataProvider'=>$mBed->search(),
+	'filter'=>$mBed,
+	'filterPosition'=>'',
+	'columns'=>array(
+		'room_type_bed_id',
+		array('name'=>'refRoomtype.room_type_name', 'header'=>'Room type'),
+		array('name'=>'refMasterbed.master_bed_name', 'header'=>'Master bed'),
+		'room_type_bed_quantity_room',
+		array(
+			'class'=>'application.extensions.widget.ButtonColumn',
+            'template'=>'{update}',
+            'buttons'=>array(
+                    'update'=>array(
+                            'url'=>'CHtml::normalizeUrl(array("update","id"=>$data->room_type_id, "bedid"=>$data->room_type_bed_id))',
 
+                    )
+            )
+		),
+	),
+)); ?>
+    
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->

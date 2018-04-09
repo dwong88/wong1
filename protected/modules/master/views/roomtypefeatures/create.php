@@ -1,12 +1,14 @@
 <?php
 $this->breadcrumbs=array(
-	'Room type features'=>array('index'),
-	'Create',
+    //'Room type features'=>array('index'),
+    $qProperty['property_name'],
+    $qProperty['room_type_name'],
+	'Update',
 	//$qProperty['room_type_name'],
 );
 
 $buttonBar = new ButtonBar('{list}');
-$buttonBar->listUrl = array('index');
+$buttonBar->listUrl = array('/partner/property/index');
 $buttonBar->render();
 ?>
 
