@@ -25,6 +25,7 @@ class GridViewProperty extends CGridView
                     echo "<th>Cleaning Minutes</th>";
                     echo "<th>Rack Rate</th>";
                     echo "<th>Max. Occupants</th>";
+                    echo "<th>Room</th>";
                     echo "<th class='button-column' style='width: 80px;'></th>";
                 echo "</tr>";
                     foreach ($qRoomType as $vRoomType) {
@@ -33,6 +34,7 @@ class GridViewProperty extends CGridView
                         echo "<td class=\"col-right\">".$this->getFormatter()->format($vRoomType['room_type_cleaning_minutes'], 'number0')."</td>";
                         echo "<td class=\"col-right\">".$this->getFormatter()->format($vRoomType['room_type_rack_rate'], 'number0')."</td>";
                         echo "<td class=\"col-right\">".$this->getFormatter()->format($vRoomType['room_type_maximum_occupants'], 'number0')."</td>";
+                        echo "<td class=\"col-right\">".CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/create.png', 'Create'), array('/master/room/index', 'id'=>$vRoomType['room_type_id']), array('title'=>'Room')).'&nbsp;'."</td>";
                         echo '<td class="button-column">';
                             echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/bed.png', 'Bed'), array('/master/roomtypebed/index', 'id'=>$vRoomType['room_type_id']), array('title'=>'Bed')).'&nbsp;';
                             echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/features.png', 'Features'), array('/master/roomtypefeatures/update', 'id'=>$vRoomType['room_type_id']), array('title'=>'Features')).'&nbsp;';

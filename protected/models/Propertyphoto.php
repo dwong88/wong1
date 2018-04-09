@@ -6,7 +6,7 @@
  * The followings are the available columns in table 'tghpropertyphoto':
  * @property string $photo_id
  * @property integer $property_id
- * @property integer $photopropertytype_id
+ * @property integer $propertyphototype_id
  * @property string $filename
  * @property string $create_dt
  * @property integer $create_by
@@ -23,7 +23,7 @@ class Propertyphoto extends ActiveRecord
 	{
 		return 'tghpropertyphoto';
 	}
-	
+
 	public function __construct($scenario = 'insert')
 	{
 			parent::__construct($scenario);
@@ -39,10 +39,10 @@ class Propertyphoto extends ActiveRecord
 		return array(
 			array('doc','file','allowEmpty'=>true,'types'=>array('jpg','jpeg','png'),'maxSize'=>1024*1024*10,'tooLarge'=>'Ukuran File harus lebih kecil dari 10MB'),
 			array('property_id, filename', 'required'),
-			array('property_id, photopropertytype_id', 'numerical', 'integerOnly'=>true),
+			array('property_id, propertyphototype_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('photo_id, photopropertytype_id, property_id, filename, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
+			array('photo_id, propertyphototype_id, property_id, filename, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -56,7 +56,7 @@ class Propertyphoto extends ActiveRecord
 		return array(
 			'refUsercreate' => array(self::BELONGS_TO, 'User', 'create_by'),
 			'refUserupdate' => array(self::BELONGS_TO, 'User', 'update_by'),
-			//'refProptype' => array(self::BELONGS_TO, 'Propertytypeid', 'propertyphototype_id'),
+			'refPropphototype' => array(self::BELONGS_TO, 'Propertyphototype', 'propertyphototype_id'),
 		);
 	}
 

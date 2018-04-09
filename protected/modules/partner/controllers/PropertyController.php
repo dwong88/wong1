@@ -70,30 +70,30 @@ class PropertyController extends Controller
 	public function actionUpdate($id, $lng = 'en')
 	{
 		$model=$this->loadModel($id); #panggil fungsi loadmodel property
-		$models= new Propertyphoto; #declare use model propertyphoto
-		$models->property_id=$id;
-		$models->propertyphototype_id =1;
+		$modelphoto= new Propertyphoto; #declare use model propertyphoto
+		$modelphoto->property_id=$id;
+		$modelphoto->propertyphototype_id =$_POST['Propertyphoto']['propertyphototype_id'];
 		#proses upload file photo
 		if(isset($_POST['Propertyphoto']))
 		{
-				$models->attributes=$_POST['Propertyphoto'];
+				$modelphoto->attributes=$_POST['Propertyphoto'];
 				#fungsi upload file yii
-				$models->doc = CUploadedFile::getInstance($models, 'doc');
-				if($models->doc !== null) {
-					$models->setAttribute('filename', $models->doc->name);
+				$modelphoto->doc = CUploadedFile::getInstance($modelphoto, 'doc');
+				if($modelphoto->doc !== null) {
+					$modelphoto->setAttribute('filename', $modelphoto->doc->name);
 				} else {
 					echo 'Tidak ada file yg di upload';
 				}
 				#fungsi validasi proses
-				if($models->validate()) {
+				if($modelphoto->validate()) {
 					#$transaction mulai transaksi
 					$transaction = Yii::app()->db->beginTransaction();
 					try{
-						$models->save(false);
-						$models->setAttribute('filename', 'propertyphoto_'.$models->photo_id.'.'.$models->doc->extensionName);
-						$models->update(array('filename'));
-						$fileNamephoto = FileUpload::getFilePath($models->filename, FileUpload::PROPERTY_PHOTO_PATH);
-						$models->doc->saveAs($fileNamephoto);
+						$modelphoto->save(false);
+						$modelphoto->setAttribute('filename', 'propertyphoto_'.$modelphoto->photo_id.'.'.$modelphoto->doc->extensionName);
+						$modelphoto->update(array('filename'));
+						$fileNamephoto = FileUpload::getFilePath($modelphoto->filename, FileUpload::PROPERTY_PHOTO_PATH);
+						$modelphoto->doc->saveAs($fileNamephoto);
 						#jika tidak ada error transaksi proses di commit
 						$transaction->commit();
 						Yii::app()->user->setFlash('success', "Photo Uploaded Successfully");
@@ -172,7 +172,7 @@ class PropertyController extends Controller
 			'model'=>$model,
 			'mFeat'=>$mFeat,
 			'checkedFeat'=>$checkedFeat,
-			'models'=>$models,
+			'modelphoto'=>$modelphoto,
 			'modeldesc'=>$modeldesc,
 		));
 	}
@@ -192,7 +192,6 @@ class PropertyController extends Controller
 					$pid=$_GET['pid'];
 					$photoDel = DAO::executeSql("DELETE FROM tghpropertyphoto WHERE property_id = '".$id."' AND photo_id = '".$pid."'");
 					$docPath = FileUpload::getFilePath($model->filename, FileUpload::PROPERTY_PHOTO_PATH);
-					//$fileNamephoto = FileUpload::getFilePath($models->filename, FileUpload::PROPERTY_PHOTO_PATH);
 					if(file_exists($docPath)) unlink($docPath);
 				}
 				else
@@ -210,7 +209,7 @@ class PropertyController extends Controller
 	}
 
 	/**
-	 * Lists all models.
+	 * Lists all modelphoto.
 	 */
 	public function actionIndex()
 	{

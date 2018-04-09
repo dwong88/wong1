@@ -16,7 +16,7 @@ $this->widget('zii.widgets.jui.CJuiTabs',array(
                       )),
           'Photos'=>array('id'=>'Photos','content'=>$this->renderPartial(
                       '_formphotos',
-                      array('models'=>$models),TRUE
+                      array('modelphoto'=>$modelphoto),TRUE
                     )),
     ),
     // additional javascript options for the tabs plugin
