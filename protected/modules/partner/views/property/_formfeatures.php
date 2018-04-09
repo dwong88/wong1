@@ -2,6 +2,9 @@
 	div.form label{
 		display: inline;
 	}
+	ul {
+  list-style-type: none;
+	}
 </style>
 <div class="form">
 
@@ -15,19 +18,29 @@
 )); ?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
+	<table>
+		<div class="row">
 	<?php
 	if($mFeat->hasErrors()) echo $form->errorSummary($mFeat); ?>
 	<?php Helper::showFlash(); ?>
+	<tr>
+	<td colspan="3">
+					<ul id="ul-features">
 	<?php echo CHtml::checkBoxList(
 	        'propfeat',
 	        //'$checkedFeat',//you can pass the array here which you want to be pre checked
 					$checkedFeat,
 	        CHtml::listData(Mspropertyfeatures::model()->findAll(),'prop_features_id','features_name'),
-	        array('checkAll'=>'Select all tasks', 'checkAllLast'=>true)
+	        array('checkAll'=>'Select all tasks', 'checkAllLast'=>true , 'template'=>'<li>{input} {label}</li>')
 	    ); ?>
-
+				</ul>
+				<div style="clear: both;"></div>
+		</td>
+	</tr>
+		</div>
+	</table>
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($mFeat->isNewRecord ? 'Create' : 'Save'); ?>
+		<?php echo CHtml::submitButton($mFeat->isNewRecord ? 'Save' : 'Save'); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

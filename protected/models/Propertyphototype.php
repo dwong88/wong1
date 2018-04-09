@@ -13,6 +13,8 @@
  */
 class Propertyphototype extends ActiveRecord
 {
+	public $country_id;
+	public $state_id;
 	/**
 	 * @return string the associated database table name
 	 */

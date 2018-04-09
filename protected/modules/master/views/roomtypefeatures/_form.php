@@ -22,13 +22,13 @@
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
-	
-	<?php Helper::showFlash(); ?>	
+
+	<?php Helper::showFlash(); ?>
     <h2><?php echo $qProperty['property_name']; ?></h2>
     <h3><?php echo $qProperty['room_type_name']; ?></h3>
     <table>
 	<div class="row">
-        
+
         <?php echo $form->labelEx($model,'room_features_id'); ?>
         <tr>
 		<td colspan="3">
@@ -42,9 +42,9 @@
         <?php echo $form->error($model,'room_features_id'); ?>
 	</div>
     </table>
-    
-    
-    
+
+
+
 <!--
 	<div class="row">
 		<?php echo $form->labelEx($model,'room_type_id'); ?>

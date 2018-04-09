@@ -38,7 +38,7 @@ CClientScript::POS_READY
 		<?php echo $form->dropDownList($modeldesc, 'lang', Helper::$listLanguage, array('prompt'=>'', 'id'=>'id-sel-language')); ?>
 	</div>
 	<!--looping tipe desc ex:toc,payment,Cancel-->
-	<?php foreach (Propertydesc::$publicTypeDesc as $key => $value) { ?> <!--Propertydesc::$publicTypeDesc used var $publicTypeDesc dari model Propertydesc --> 
+	<?php foreach (Propertydesc::$publicTypeDesc as $key => $value) { ?> <!--Propertydesc::$publicTypeDesc used var $publicTypeDesc dari model Propertydesc -->
 			<div class="row">
 						<?php echo $form->labelEx($modeldesc,$value).'<br>'; ?>
 		        <?php echo $form->textArea($modeldesc,$value,array('rows'=>6, 'cols'=>50)).'<br>';; ?>
@@ -46,7 +46,7 @@ CClientScript::POS_READY
 	<?php } ?>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($modeldesc->isNewRecord ? 'Create' : 'Save'); ?>
+		<?php echo CHtml::submitButton($modeldesc->isNewRecord ? 'Save' : 'Save'); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

@@ -50,7 +50,7 @@ $this->widget('application.extensions.widget.GridView', array(
 		<?php echo $form->error($modelphoto,'propertyphototype_id'); ?>
 	</div>
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($modelphoto->isNewRecord ? 'Create' : 'Save'); ?>
+		<?php echo CHtml::submitButton($modelphoto->isNewRecord ? 'Save' : 'Save'); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

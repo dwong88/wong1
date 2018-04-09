@@ -45,6 +45,10 @@
 class Property extends ActiveRecord
 {
     public $qRoomType = null;
+    public $start_hours;
+    public $end_hours;
+    public $start_minutes;
+    public $end_minutes;
 
 	/**
 	 * @return string the associated database table name
