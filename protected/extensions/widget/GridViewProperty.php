@@ -34,9 +34,9 @@ class GridViewProperty extends CGridView
                         echo "<td class=\"col-right\">".$this->getFormatter()->format($vRoomType['room_type_cleaning_minutes'], 'number0')."</td>";
                         echo "<td class=\"col-right\">".$this->getFormatter()->format($vRoomType['room_type_rack_rate'], 'number0')."</td>";
                         echo "<td class=\"col-right\">".$this->getFormatter()->format($vRoomType['room_type_maximum_occupants'], 'number0')."</td>";
-                        echo "<td class=\"col-right\">".CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/create.png', 'Create'), array('/master/room/index', 'id'=>$vRoomType['room_type_id']), array('title'=>'Room')).'&nbsp;'."</td>";
+                        echo "<td class=\"col-right\">".CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/create.png', 'Create'), array('/master/room/update', 'id'=>$vRoomType['room_type_id']), array('title'=>'Room')).'&nbsp;'."</td>";
                         echo '<td class="button-column">';
-                            echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/bed.png', 'Bed'), array('/master/roomtypebed/index', 'id'=>$vRoomType['room_type_id']), array('title'=>'Bed')).'&nbsp;';
+                            echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/bed.png', 'Bed'), array('/master/roomtypebed/update', 'id'=>$vRoomType['room_type_id']), array('title'=>'Bed')).'&nbsp;';
                             echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/features.png', 'Features'), array('/master/roomtypefeatures/create', 'id'=>$vRoomType['room_type_id']), array('title'=>'Features')).'&nbsp;';
                             echo CHtml::link(CHtml::image($this->baseScriptUrl.'/update.png', 'view'), array('/master/roomtype/update', 'id'=>$vRoomType['room_type_id']), array('title'=>'Update')).'&nbsp;';
                             echo CHtml::link(CHtml::image($this->baseScriptUrl.'/delete.png', 'view'), array('/master/roomtype/delete', 'id'=>$vRoomType['room_type_id']), array('class'=>'delete', 'title'=>'Delete'));
