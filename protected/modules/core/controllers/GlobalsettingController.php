@@ -8,7 +8,7 @@ class GlobalsettingController extends Controller
 	 */
 	public $layout='//layouts/column1';
 
-	
+
 
 	/**
 	 * Lists all models.
@@ -32,6 +32,36 @@ class GlobalsettingController extends Controller
 			'model'=>$model,
 		));
 	}
+
+
+		public function actionLoadstates()
+		{
+			//echo "string1";
+
+		   $data=State::model()->findAll('country_id=:country_id',array(':country_id'=>(int) $_POST['country_id']));
+
+		   $data=CHtml::listData($data,'state_id','state_name');
+
+		   echo "<option value=''>Select State</option>";
+		   foreach($data as $value=>$state_name)
+		   echo CHtml::tag('option', array('value'=>$value),CHtml::encode($state_name),true);
+
+		}
+
+		public function actionLoadcities()
+		{
+				//echo "string2";
+
+		   $data=City::model()->findAll('state_id=:state_id',array(':state_id'=>(int) $_POST['state_id']));
+
+		   $data=CHtml::listData($data,'city_id','city_name');
+
+	 	 	//echo $form->dropDownList($data,'city_id', CHtml::listData(City::model()->findAll(), 'city_id', 'city_name'),array('prompt'=>''));
+
+		   echo "<option value=''>Select City</option>";
+		   foreach($data as $value=>$city_name)
+		   echo CHtml::tag('option', array('value'=>$value),CHtml::encode($city_name),true);
+		}
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.

@@ -30,7 +30,7 @@ class Countries extends ActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('country_id, country_name', 'required'),
+			array('country_name', 'required'),
 			array('country_id,create_by, update_by', 'numerical', 'integerOnly'=>true),
 			array('country_name', 'length', 'max'=>50),
 			// The following rule is used by search().

@@ -49,7 +49,7 @@ CClientScript::POS_READY
     'prompt'=>'Select Country',
     'ajax' => array(
     'type'=>'POST',
-    'url'=>Yii::app()->createUrl('master/Propertyphototype/loadstates'), //or $this->createUrl('loadcities') if '$this' extends CController
+    'url'=>Yii::app()->createUrl('core/globalsetting/loadstates'), //or $this->createUrl('loadcities') if '$this' extends CController
     'update'=>'#state_name', //or 'success' => 'function(data){...handle the data in the way you want...}',
   'data'=>array('country_id'=>'js:this.value'),
   ))); ?>
@@ -63,7 +63,7 @@ CClientScript::POS_READY
     'prompt'=>'Select Region',
     'ajax' => array(
     'type'=>'POST',
-    'url'=>Yii::app()->createUrl('master/Propertyphototype/loadcities'), //or $this->createUrl('loadcities') if '$this' extends CController
+    'url'=>Yii::app()->createUrl('core/globalsetting/loadcities'), //or $this->createUrl('loadcities') if '$this' extends CController
     'update'=>'#city_name', //or 'success' => 'function(data){...handle the data in the way you want...}',
   'data'=>array('state_id'=>'js:this.value'),
   )));

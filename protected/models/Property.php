@@ -11,7 +11,6 @@
  * @property string $addressline2
  * @property integer $cityid
  * @property string $postcode
- * @property string $suburb
  * @property integer $country
  * @property string $state
  * @property string $weekend_start
@@ -66,17 +65,17 @@ class Property extends ActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('property_type_id,city_id, country_id,state_id, numberofstar, maximumchildage, maximuminfantage', 'numerical', 'integerOnly'=>true),
+			array('property_type_id,city_id, country_id,state_id, numberofstar', 'numerical', 'integerOnly'=>true),
 			array('property_name, gmaps_longitude, gmaps_latitude', 'length', 'max'=>100),
 			array('postal_code, minimumroomrate', 'length', 'max'=>5),
-			array('suburb, bookingconfirmationemail, enquiryemail', 'length', 'max'=>50),
+			array('bookingconfirmationemail, enquiryemail, maximumchildage, maximuminfantage', 'length', 'max'=>50),
 			array('weekend_start, create_by, update_by,available_cleaning_start, available_cleaning_end', 'length', 'max'=>10),
 			array('hotel_phone_number, phone_number, tax_number, bookingconfirmationccemail, availabilityalertemail', 'length', 'max'=>11),
 			array('star_rated', 'length', 'max'=>3),
 			array('addressline1, addressline2, description, locationinstruction, create_dt, update_dt', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('property_id, property_name, addressline1, addressline2, city_id, postal_code, suburb, country_id, state_id, weekend_start, hotel_phone_number, phone_number, tax_number, minimumroomrate, star_rated, numberofstar, maximumchildage, maximuminfantage, bookingconfirmationemail, bookingconfirmationccemail, enquiryemail, availabilityalertemail, description, gmaps_longitude, gmaps_latitude, available_cleaning_start, available_cleaning_end, locationinstruction, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
+			array('property_id, property_name, addressline1, addressline2, city_id, postal_code, country_id, state_id, weekend_start, hotel_phone_number, phone_number, tax_number, minimumroomrate, star_rated, numberofstar, maximumchildage, maximuminfantage, bookingconfirmationemail, bookingconfirmationccemail, enquiryemail, availabilityalertemail, description, gmaps_longitude, gmaps_latitude, available_cleaning_start, available_cleaning_end, locationinstruction, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -110,7 +109,6 @@ class Property extends ActiveRecord
 			'addressline2' => 'Address line2',
 			'city_id' => 'City',
 			'postal_code' => 'Postal code',
-			'suburb' => 'Suburb',
 			'country_id' => 'Country',
 			'state_id' => 'State',
 			'weekend_start' => 'Weekend Start',
@@ -164,7 +162,6 @@ class Property extends ActiveRecord
 		$criteria->compare('addressline2',$this->addressline2,true);
 		$criteria->compare('city_id',$this->city_id);
 		$criteria->compare('postal_code',$this->postal_code,true);
-		$criteria->compare('suburb',$this->suburb,true);
 		$criteria->compare('country_id',$this->country_id);
 		$criteria->compare('state_id',$this->state_id,true);
 		$criteria->compare('weekend_start',$this->weekend_start,true);

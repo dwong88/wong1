@@ -5,6 +5,7 @@
  *
  * The followings are the available columns in table 'tghcity':
  * @property string $city_id
+ * @property integer $country_id
  * @property integer $state_id
  * @property integer $postal_code
  * @property string $city_name
@@ -28,7 +29,7 @@ class City extends ActiveRecord
         parent::__construct($scenario);
         $this->logRecord=true;
     }
-    
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -38,12 +39,12 @@ class City extends ActiveRecord
 		// will receive user inputs.
 		return array(
 			array('state_id', 'required'),
-			array('state_id', 'numerical', 'integerOnly'=>true),
+			array('country_id,state_id', 'numerical', 'integerOnly'=>true),
 			array('city_name', 'length', 'max'=>30),
             array('postal_code', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('city_id, state_id, postal_code, city_name, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
+			array('city_id, country_id, state_id, postal_code, city_name, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -57,7 +58,8 @@ class City extends ActiveRecord
 		return array(
 			'refUsercreate' => array(self::BELONGS_TO, 'User', 'create_by'),
             'refUserupdate' => array(self::BELONGS_TO, 'User', 'update_by'),
-            'refState' => array(self::BELONGS_TO, 'State', 'state_id'),
+						'refCountry' => array(self::BELONGS_TO, 'Countries', 'country_id'),
+						'refState' => array(self::BELONGS_TO, 'State', 'state_id'),
 		);
 	}
 
@@ -68,6 +70,7 @@ class City extends ActiveRecord
 	{
 		return array(
 			'city_id' => 'City',
+			'country_id' => 'Country',
 			'state_id' => 'State',
 			'postal_code' => 'Postal Code',
 			'city_name' => 'City Name',
@@ -97,6 +100,7 @@ class City extends ActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('city_id',$this->city_id,true);
+		$criteria->compare('country_id',$this->country_id);
 		$criteria->compare('state_id',$this->state_id);
 		$criteria->compare('postal_code',$this->postal_code);
 		$criteria->compare('city_name',$this->city_name,true);

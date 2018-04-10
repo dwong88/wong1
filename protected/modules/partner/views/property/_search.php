@@ -35,10 +35,6 @@
 		<?php echo $form->textField($model,'postal_code',array('size'=>5,'maxlength'=>5)); ?>
 	</div>
 
-	<div class="row">
-		<?php echo $form->label($model,'suburb'); ?>
-		<?php echo $form->textField($model,'suburb',array('size'=>50,'maxlength'=>50)); ?>
-	</div>
 
 	<div class="row">
 		<?php echo $form->label($model,'country_id'); ?>

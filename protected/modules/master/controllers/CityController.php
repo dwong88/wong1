@@ -32,7 +32,9 @@ class CityController extends Controller
 
 		if(isset($_POST['City']))
 		{
+			//echo $_POST['state_id'];
 			$model->attributes=$_POST['City'];
+			$model->state_id = $_POST['state_id'];
 			if($model->save()) {
 				Yii::app()->user->setFlash('success', "Create Successfully");
 				$this->redirect(array('index'));
@@ -53,6 +55,9 @@ class CityController extends Controller
 	{
 		$model=$this->loadModel($id);
 
+		$mCity = DAO::queryAllSql("SELECT state_id,city_id FROM tghcity WHERE city_id = '".$id."'");
+		$mState = DAO::queryAllSql("SELECT state_id,state_name FROM tghstate WHERE state_id = '".$mCity[0]['state_id']."'");
+		//print_r($mState);
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
@@ -67,6 +72,7 @@ class CityController extends Controller
 
 		$this->render('update',array(
 			'model'=>$model,
+			'mState'=>$mState,
 		));
 	}
 

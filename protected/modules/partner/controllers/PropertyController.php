@@ -33,6 +33,8 @@ class PropertyController extends Controller
 		{
 			#set attribute untuk property
 			$model->attributes=$_POST['Property'];
+			$model->state_id = $_POST['state_id'];
+			$model->city_id = $_POST['city_id'];
 			#proses save property
 			$model->available_cleaning_start =$_POST['Property']['start_hours'].":".$_POST['Property']['start_minutes'];
 			$model->available_cleaning_end =$_POST['Property']['end_hours'].":".$_POST['Property']['end_minutes'];
@@ -83,6 +85,9 @@ class PropertyController extends Controller
 		//print_r (explode(":",$str2));
 		$model->end_hours = $str2[0];
 		$model->end_minutes = $str2[2];
+
+		#state and city_id
+		$mStatec = DAO::queryAllSql("SELECT st.state_name,st.state_id,ct.city_id,ct.city_name,p.property_id FROM `tghproperty` as p,`tghstate` as st,`tghcity` as ct WHERE  p.state_id=st.state_id AND p.city_id=ct.city_id AND p.property_id = '".$id."'");
 
 		$modelphoto= new Propertyphoto; #declare use model propertyphoto
 		$modelphoto->property_id=$id;
@@ -185,6 +190,7 @@ class PropertyController extends Controller
 		$this->render('update',array(
 			'model'=>$model,
 			'mFeat'=>$mFeat,
+			'mStatec'=>$mStatec,
 			'checkedFeat'=>$checkedFeat,
 			'modelphoto'=>$modelphoto,
 			'modeldesc'=>$modeldesc,
