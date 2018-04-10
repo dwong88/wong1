@@ -12,18 +12,11 @@
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
-	
-	<?php Helper::showFlash(); ?>	
-	<div class="row">
-		<?php echo $form->labelEx($model,'status_room_type_id'); ?>
-		<?php echo $form->dropDownList($model,'status_room_type_id', CHtml::listData(Statusroomtype::model()->findAll(), 'status_room_type_id', 'status_room_type_name'),array('prompt'=>'')); ?>
-		<?php echo $form->error($model,'status_room_type_id'); ?>
-	</div>
 
+	<?php Helper::showFlash(); ?>
 	<div class="row">
-		<?php echo $form->labelEx($model,'room_type_id'); ?>
-		<?php echo $form->dropDownList($model,'room_type_id', CHtml::listData(Roomtype::model()->findAll(), 'room_type_id', 'room_type_name'),array('prompt'=>'')); ?>
-		<?php echo $form->error($model,'room_type_id'); ?>
+		<?php echo $form->labelEx($modelroom,$modelroom->room_type_name); ?>
+		<?php echo $form->hiddenField($model,'room_type_id',array('value'=>$modelroom->room_type_id)); ?>
 	</div>
 
 	<div class="row">
@@ -44,7 +37,7 @@
 		<?php echo $form->error($model,'room_status'); ?>
 	</div>
 
-	
+
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
@@ -53,3 +46,27 @@
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
+
+<?php
+echo CHtml::link('Create New Room', array('update','id'=>$model->room_type_id));
+$this->widget('application.extensions.widget.GridView', array(
+	'id'=>'roomtypebed-grid',
+	'dataProvider'=>$mRoom->search(),
+	'filter'=>$mRoom,
+	'filterPosition'=>'',
+	'columns'=>array(
+		'room_id',
+		array('name'=>'refRoomtype.room_type_name', 'header'=>'Room type'),
+		'room_floor',
+		array(
+			'class'=>'application.extensions.widget.ButtonColumn',
+            'template'=>'{update}',
+            'buttons'=>array(
+                    'update'=>array(
+                            'url'=>'CHtml::normalizeUrl(array("update","id"=>$data->room_type_id, "roomid"=>$data->room_id))',
+
+                    )
+            )
+		),
+	),
+)); ?>

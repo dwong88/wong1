@@ -19,7 +19,7 @@ $('.search-form form').submit(function(){
 ?>
 
 <?php Helper::showFlash(); ?>
-<?php 
+<?php
 $buttonBar = new ButtonBar('{search} {create}');
 $buttonBar->searchLinkHtmlOptions = array('id'=>'srcbutton');
 $buttonBar->createUrl = array('create');
@@ -39,7 +39,6 @@ $buttonBar->render();
 	'filterPosition'=>'',
 	'columns'=>array(
 		'room_id',
-		array('name'=>'refStatusroomtype.status_room_type_name', 'header'=>'Status room type'),
 		array('name'=>'refRoomtype.room_type_name', 'header'=>'Room type'),
 		'room_floor',
 		'room_name',

@@ -11,11 +11,6 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'status_room_type_id'); ?>
-		<?php echo $form->textField($model,'status_room_type_id', CHtml::listData(Statusroomtype::model()->findAll(), 'status_room_type_id', 'status_room_type_name'),array('prompt'=>'')); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->label($model,'room_type_id'); ?>
 		<?php echo $form->textField($model,'room_type_id', CHtml::listData(Roomtype::model()->findAll(), 'room_type_id', 'room_type_name'),array('prompt'=>'')); ?>
 	</div>
@@ -35,7 +30,7 @@
 		<?php echo $form->textArea($model,'room_status',array('rows'=>6, 'cols'=>50)); ?>
 	</div>
 
-	
+
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton('Search'); ?>

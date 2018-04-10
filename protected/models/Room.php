@@ -5,7 +5,6 @@
  *
  * The followings are the available columns in table 'tghroom':
  * @property string $room_id
- * @property integer $status_room_type_id
  * @property integer $room_type_id
  * @property string $room_floor
  * @property string $room_name
@@ -39,8 +38,6 @@ class Room extends ActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('status_room_type_id', 'required'),
-			array('status_room_type_id', 'numerical', 'integerOnly'=>true),
 			array('room_type_id', 'required'),
 			array('room_type_id', 'numerical', 'integerOnly'=>true),
 			array('room_floor', 'length', 'max'=>30),
@@ -48,7 +45,7 @@ class Room extends ActiveRecord
 			array('room_status', 'length', 'max'=>100),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('room_id, status_room_type_id, room_type_id, room_floor, room_name, room_status, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
+			array('room_id, room_type_id, room_floor, room_name, room_status, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -62,7 +59,6 @@ class Room extends ActiveRecord
 		return array(
 			'refUsercreate' => array(self::BELONGS_TO, 'User', 'create_by'),
             'refUserupdate' => array(self::BELONGS_TO, 'User', 'update_by'),
-            'refStatusroomtype' => array(self::BELONGS_TO, 'Statusroomtype', 'status_room_type_id'),
             'refRoomtype' => array(self::BELONGS_TO, 'Roomtype', 'room_type_id'),
 		);
 	}
@@ -74,7 +70,6 @@ class Room extends ActiveRecord
 	{
 		return array(
 			'room_id' => 'Room',
-			'status_room_type_id' => 'Status Room Type',
 			'room_type_id' => 'Room Type',
 			'room_floor' => 'Room Floor',
 			'room_name' => 'Room Name',
@@ -105,12 +100,11 @@ class Room extends ActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('room_id',$this->room_id,true);
-		$criteria->compare('status_room_type_id',$this->status_room_type_id);
 		$criteria->compare('room_type_id',$this->room_type_id);
 		$criteria->compare('room_floor',$this->room_floor,true);
 		$criteria->compare('room_name',$this->room_name,true);
 		$criteria->compare('room_status',$this->room_status,true);
-		
+
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

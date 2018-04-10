@@ -21,14 +21,14 @@ CClientScript::POS_READY
 #looping buat jam
 for($d=0;$d<=23;$d++)
 {
-	$win[$d] = $d.'hours';
+	$win[$d] = $d;
 }
 ?>
 <?php
 #looping buat Menit
 for($f=0;$f<=59;$f++)
 {
-	$min[$f] = $f.'Minutes';
+	$min[$f] = $f;
 }
 ?>
 

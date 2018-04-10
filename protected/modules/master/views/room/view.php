@@ -6,7 +6,7 @@ $this->breadcrumbs=array(
 ?>
 
 <?php Helper::showFlash(); ?>
-<?php 
+<?php
 $buttonBar = new ButtonBar('{list} {create} {update} {delete}');
 $buttonBar->listUrl = array('index');
 $buttonBar->createUrl = array('create');
@@ -19,7 +19,6 @@ $buttonBar->render();
 	'data'=>$model,
 	'attributes'=>array(
 		'room_id',
-		array('name'=>'statusroomtype','value'=>$model->refStatusroomtype->status_room_type_name),
 		array('name'=>'roomtype','value'=>$model->refRoomtype->room_type_name),
 		'room_floor',
 		'room_name',

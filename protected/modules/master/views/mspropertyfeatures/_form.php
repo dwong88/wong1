@@ -16,7 +16,7 @@
 	<?php Helper::showFlash(); ?>
 	<div class="row">
 		<?php echo $form->labelEx($model,'features_name'); ?>
-		<?php echo $form->textField($model,'features_name',array('size'=>60,'maxlength'=>100)); ?>
+		<?php echo $form->textField($model,'features_name',array('size'=>60,'maxlength'=>100,'placeholder'=>'Masukan Nama Features')); ?>
 		<?php echo $form->error($model,'features_name'); ?>
 	</div>
 

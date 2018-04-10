@@ -23,7 +23,7 @@ class RoomController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
+	public function actionCreate($id)
 	{
 		$model=new Room;
 
@@ -49,24 +49,46 @@ class RoomController extends Controller
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdate($id)
+	public function actionUpdate($id,$roomid=0)
 	{
-		$model=$this->loadModel($id);
+		$modelroom= new Roomtype;
+		$modelroom=$this->loadModelroomtype($id);
 
+
+		if($roomid==0) {
+				$model=new Room;
+				$model->room_type_id = $id;
+				$pesan="Create Successfully";
+				//Yii::app()->end();
+		} else {
+			//echo "string";
+				$pesan="Update Successfully";
+				$model = $this->loadModel($roomid);
+				//$modelroom=$this->loadModelroomtype($id);
+		}
+
+		$mRoom = new Room('search');
+		$mRoom->unsetAttributes();  // clear any default values
+		$mRoom->room_type_id = $id;
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['Room']))
 		{
 			$model->attributes=$_POST['Room'];
+			//print_r($model);
+			//Yii::app()->end();
 			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Update Successfully");
-				$this->redirect(array('index'));
+				Yii::app()->user->setFlash('success', $pesan);
+				//$this->redirect(array('index'));
+				$this->redirect(array('update','id'=>$model->room_type_id));
 			}
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
+			'mRoom'=>$mRoom,
+			'modelroom'=>$modelroom,
 		));
 	}
 
@@ -115,6 +137,14 @@ class RoomController extends Controller
 	public function loadModel($id)
 	{
 		$model=Room::model()->findByPk($id);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+
+	public function loadModelroomtype($id)
+	{
+		$model=Roomtype::model()->find('room_type_id=:pid', array(':pid'=>$id));
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
