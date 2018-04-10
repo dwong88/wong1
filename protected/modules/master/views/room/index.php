@@ -20,10 +20,10 @@ $('.search-form form').submit(function(){
 
 <?php Helper::showFlash(); ?>
 <?php
-$buttonBar = new ButtonBar('{search} {create}');
+/*$buttonBar = new ButtonBar('{search} {create}');
 $buttonBar->searchLinkHtmlOptions = array('id'=>'srcbutton');
 $buttonBar->createUrl = array('create');
-$buttonBar->render();
+$buttonBar->render();*/
 ?>
 
 <div class="search-form" style="display:none">

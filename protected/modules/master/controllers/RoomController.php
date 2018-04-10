@@ -72,6 +72,12 @@ class RoomController extends Controller
 		$mRoom->room_type_id = $id;
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
+		$qProperty = DAO::queryRowSql('SELECT property_name,room_type_name
+                                    FROM `tghroomtype`
+                                    JOIN tghproperty on tghroomtype.property_id=tghproperty.property_id
+                                    WHERE room_type_id=:rid'
+                                    , array(':rid'=>$id));
+
 
 		if(isset($_POST['Room']))
 		{
@@ -88,6 +94,7 @@ class RoomController extends Controller
 		$this->render('update',array(
 			'model'=>$model,
 			'mRoom'=>$mRoom,
+			'qProperty'=>$qProperty,
 			'modelroom'=>$modelroom,
 		));
 	}

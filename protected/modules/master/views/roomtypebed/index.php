@@ -19,7 +19,7 @@ $('.search-form form').submit(function(){
 ?>
 
 <?php Helper::showFlash(); ?>
-<?php 
+<?php
 $buttonBar = new ButtonBar('{search} {create}');
 $buttonBar->searchLinkHtmlOptions = array('id'=>'srcbutton');
 $buttonBar->createUrl = array('create');

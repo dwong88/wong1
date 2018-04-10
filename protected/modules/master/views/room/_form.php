@@ -14,8 +14,14 @@
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
 
 	<?php Helper::showFlash(); ?>
+	<h2><?php
+	if($_GET['id']!=null)
+	{
+		echo 'Nama Property:'.$qProperty['property_name']."<br>";
+		echo 'Room Type:'.$qProperty['room_type_name'];
+	} ?>
+</h2>
 	<div class="row">
-		<?php echo $form->labelEx($modelroom,$modelroom->room_type_name); ?>
 		<?php echo $form->hiddenField($model,'room_type_id',array('value'=>$modelroom->room_type_id)); ?>
 	</div>
 

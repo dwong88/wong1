@@ -1,7 +1,7 @@
 <?php
 $this->breadcrumbs=array(
 	'Room'=>array('index'),
-	$model->room_name=>array('view','id'=>$model->room_id),
+	$model->room_id=>array('view','id'=>$model->room_id),
 	'Update',
 );
 
@@ -12,4 +12,4 @@ $buttonBar->viewUrl = array('view', 'id'=>$model->room_id);
 $buttonBar->render();
 ?>
 
-<?php $this->renderPartial('_form', array('model'=>$model,'modelroom'=>$modelroom,'mRoom'=>$mRoom)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model,'modelroom'=>$modelroom,'mRoom'=>$mRoom,'qProperty'=>$qProperty)); ?>

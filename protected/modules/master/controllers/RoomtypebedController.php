@@ -30,6 +30,11 @@ class RoomtypebedController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
+		$mBed = new Roomtypebed('search');
+		$mBed->unsetAttributes();  // clear any default values
+		$mBed->room_type_id = $id;
+
+		//Yii::app()->end();
 		if(isset($_POST['Roomtypebed']))
 		{
 			$model->attributes=$_POST['Roomtypebed'];
@@ -40,15 +45,15 @@ class RoomtypebedController extends Controller
 		}
 
 		$this->render('create',array(
-			'model'=>$model,
+			'model'=>$model,'mBed'=>$mBed,
 		));
 	}
 
-    
+
 //    public function actionUpdate($id)
 //	{
 //		$model=new Roomtypebed;
-//        
+//
 //		// Uncomment the following line if AJAX validation is needed
 //		// $this->performAjaxValidation($model);
 //
@@ -65,13 +70,13 @@ class RoomtypebedController extends Controller
 //			'model'=>$model,
 //		));
 //	}
-    
+
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-    
+
 	public function actionUpdate($id, $bedid=0)
 	{
 	    $mRoomType = Roomtype::model()->findByPk($id);
@@ -85,6 +90,14 @@ class RoomtypebedController extends Controller
             $model = $this->loadModel($bedid);
         }
 
+				#query property
+				$qProperty = DAO::queryRowSql('SELECT property_name,room_type_name
+		                                    FROM `tghroomtype`
+		                                    JOIN tghproperty on tghroomtype.property_id=tghproperty.property_id
+		                                    WHERE room_type_id=:rid'
+		                                    , array(':rid'=>$id));
+
+				#index buat room type bed
         $mBed = new Roomtypebed('search');
         $mBed->unsetAttributes();  // clear any default values
         $mBed->room_type_id = $id;
@@ -103,8 +116,9 @@ class RoomtypebedController extends Controller
 
 		$this->render('update',array(
 			'mBed'=>$mBed,
-            'mRoomType'=>$mRoomType,
-            'model'=>$model
+			'qProperty'=>$qProperty,
+      'mRoomType'=>$mRoomType,
+      'model'=>$model,
 		));
 	}
 

@@ -12,8 +12,8 @@ echo $form->hiddenField($model, 'room_type_bed_id');
 ?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
-    
-    
+
+
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
 <b style="font-size: 18px;">
     <?php
@@ -23,9 +23,23 @@ echo $form->hiddenField($model, 'room_type_bed_id');
     ?>
 </b>
 	<?php Helper::showFlash(); ?>
+	<h2><?php
+	if($_GET['id']!=null)
+	{
+		echo 'Nama Property:'.$qProperty['property_name'];
+	} ?>
+</h2>
 	<div class="row">
 		<?php echo $form->labelEx($model,'room_type_id'); ?>
-		<?php echo $mRoomType->room_type_name; ?>
+		<?php
+			if($_GET['id']==null)
+			{
+				echo $form->dropDownList($model,'room_type_id', CHtml::listData(Roomtype::model()->findAll(), 'room_type_id', 'room_type_name'),array('prompt'=>'Pilih Room Type'));
+			}
+			else
+			{
+					echo $mRoomType->room_type_name;
+			} ?>
 	</div>
 
 	<div class="row">
@@ -43,9 +57,17 @@ echo $form->hiddenField($model, 'room_type_bed_id');
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>
-    
+
 <?php
-echo CHtml::link('Create new bed', array('update','id'=>$model->room_type_id));
+if($_GET['id']!=null)
+{
+	echo CHtml::link('Create new bed', array('update','id'=>$model->room_type_id));
+}
+else
+{
+	 echo "";
+}
+
 $this->widget('application.extensions.widget.GridView', array(
 	'id'=>'roomtypebed-grid',
 	'dataProvider'=>$mBed->search(),
@@ -68,7 +90,7 @@ $this->widget('application.extensions.widget.GridView', array(
 		),
 	),
 )); ?>
-    
+
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
