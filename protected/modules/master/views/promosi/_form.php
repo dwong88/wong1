@@ -34,19 +34,25 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'date_start'); ?>
-		<?php echo $form->textField($model,'date_start'); ?>
+		<?php $this->widget('application.extensions.widget.JuiDatePicker', array(
+				                        'model'=>$model,
+				                        'attribute'=>'date_start',
+		                                ));?>
 		<?php echo $form->error($model,'date_start'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'date_end'); ?>
-		<?php echo $form->textField($model,'date_end'); ?>
+		<?php $this->widget('application.extensions.widget.JuiDatePicker', array(
+				                        'model'=>$model,
+				                        'attribute'=>'date_end',
+		                                ));?>
 		<?php echo $form->error($model,'date_end'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'promosi_status'); ?>
-		<?php echo $form->textField($model,'promosi_status',array('size'=>50,'maxlength'=>50)); ?>
+		<?php echo $form->dropDownList($model, 'promosi_status', array('enable'=>'Enable', 'disable'=>'Disable'), array('prompt'=>'Status')); ?>
 		<?php echo $form->error($model,'promosi_status'); ?>
 	</div>
 

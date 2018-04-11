@@ -34,6 +34,9 @@ class Promosi extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+			array('date_start', 'application.components.validator.DatePickerSwitcherValidator'),
+			array('date_end', 'application.components.validator.DatePickerSwitcherValidator'),
+			array('amount','application.components.validator.NumberSwitcherValidator'),
 			array('promosi_name, amount, promosi_code, date_start, date_end, promosi_status', 'required'),
 			array('promosi_code, create_by, update_by', 'numerical', 'integerOnly'=>true),
 			array('amount', 'numerical'),
