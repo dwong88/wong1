@@ -220,8 +220,50 @@ for($f=0;$f<=59;$f++)
 		<?php echo $form->error($model,'gmaps_latitude'); ?>
 	</div>
 
+<!--start gmaps-->
 
+<?php
+$default='-6.214626,106.84513';
+?>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNtFhOOiG7ZWxIYP3_Vic8Qd157YQit0g&callback=initialize"
+    async defer></script>
+<input type='hidden' value=<?php echo floatval($model->gmaps_longitude);?> id='gmaps_lat'>
+<input type='hidden' value=<?php echo floatval($model->gmaps_latitude);?> id='gmaps_lng'>
+<script type="text/javascript">
+  var map;
+  function initialize() {
+	var gmaps1 = document.getElementById('gmaps_lat').value;
+	var gmaps2 = document.getElementById('gmaps_lng').value;
+  var myLatlng = new google.maps.LatLng(gmaps1,gmaps2);
+alert(myLatlng);
+  var myOptions = {
+     zoom: 8,
+     center: myLatlng,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+     }
+  map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
+  var marker = new google.maps.Marker({
+  draggable: true,
+  position: myLatlng,
+  map: map,
+  title: "Your location"
+  });
+
+  google.maps.event.addListener(marker, 'dragend', function (event) {
+      document.getElementById("Property_gmaps_longitude").value = this.getPosition().lat();
+      document.getElementById("Property_gmaps_latitude").value = this.getPosition().lng();
+  });
+
+}
+</script>
+<!--<div id="latlong">
+	<p>Latitude: <input size="20" type="text" id="latbox" name="lat" ></p>
+	<p>Longitude: <input size="20" type="text" id="lngbox" name="lng" ></p>
+</div>-->
+<div class="row">
+  <div id="map_canvas" style="width:50%; height:30%; position:absolute;left:620px;top:700px;overflow: none"></div>
+</div>
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>
