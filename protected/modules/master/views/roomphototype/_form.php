@@ -1,7 +1,7 @@
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'propertyfeatures-form',
+	'id'=>'roomphototype-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
@@ -12,12 +12,12 @@
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
-	
-	<?php Helper::showFlash(); ?>	
+
+	<?php Helper::showFlash(); ?>
 	<div class="row">
-		<?php echo $form->labelEx($model,'propertyid'); ?>
-		<?php echo $form->textField($model,'propertyid'); ?>
-		<?php echo $form->error($model,'propertyid'); ?>
+		<?php echo $form->labelEx($model,'roomphototype_name'); ?>
+		<?php echo $form->textField($model,'roomphototype_name',array('size'=>60,'maxlength'=>100)); ?>
+		<?php echo $form->error($model,'roomphototype_name'); ?>
 	</div>
 
 	<div class="row buttons">

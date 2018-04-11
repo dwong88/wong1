@@ -113,6 +113,22 @@ class PropertyController extends Controller
 						$modelphoto->update(array('filename'));
 						$fileNamephoto = FileUpload::getFilePath($modelphoto->filename, FileUpload::PROPERTY_PHOTO_PATH);
 						$modelphoto->doc->saveAs($fileNamephoto);
+
+						$fileNamephotocopy = FileUpload::getFilePath($modelphoto->filename, FileUpload::PROPERTY_PHOTO_THUMBS_PATH);
+						copy($fileNamephoto,$fileNamephotocopy);
+						/*ambil filenya*/
+						//$name = getcwd() . '/images/products/thumbs/' . $model->image;
+
+						#create thumbnail
+						$name = FileUpload::getFilePath($modelphoto->filename, FileUpload::PROPERTY_PHOTO_THUMBS_PATH);
+						/*panggil component image dengan param $image*/
+						$image = Yii::app()->image->load($name);
+						/*resize gambar/thumb gambar*/
+						$image->resize(93, 0);
+						/*simpan thumb image kembali gambar ke
+						 *images/products/thumbs*/
+						$image->save();
+
 						#jika tidak ada error transaksi proses di commit
 						$transaction->commit();
 						Yii::app()->user->setFlash('success', "Photo Uploaded Successfully");

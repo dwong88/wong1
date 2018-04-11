@@ -2,7 +2,9 @@
 class FileUpload
 {
 	const PROPERTY_PHOTO_PATH = 1;
-
+	const PROPERTY_PHOTO_THUMBS_PATH = 2;
+	const ROOM_PHOTO_PATH = 3;
+	const ROOM_PHOTO_THUMBS_PATH = 4;
 
 	/***
 	 * Untuk dapatin file path untuk upload file. "C:\xampp\htdocs\del\upload\foto\file.ext"
@@ -17,7 +19,16 @@ class FileUpload
 			case FileUpload::PROPERTY_PHOTO_PATH: // Untuk file Client_PO pada menu SO. (tdpso)
 				$pathFile = Yii::app()->basePath.'/../upload/property_photo/'.$fileName;
 				break;
-		}
+			case FileUpload::PROPERTY_PHOTO_THUMBS_PATH: // Untuk file Client_PO pada menu SO. (tdpso)
+				$pathFile = Yii::app()->basePath.'/../upload/property_photo/thumbs/'.$fileName;
+				break;
+			case FileUpload::ROOM_PHOTO_PATH: // Untuk file Client_PO pada menu SO. (tdpso)
+				$pathFile = Yii::app()->basePath.'/../upload/room_photo/'.$fileName;
+				break;
+			case FileUpload::ROOM_PHOTO_THUMBS_PATH: // Untuk file Client_PO pada menu SO. (tdpso)
+				$pathFile = Yii::app()->basePath.'/../upload/room_photo/thumbs/'.$fileName;
+				break;
+	}
 		return $pathFile;
 	}
 
@@ -35,7 +46,19 @@ class FileUpload
 				$pathFile = CHtml::normalizeUrl(array('/download','id'=>$id,'const'=>$constPath));
 				//Yii::app()->baseUrl.'/upload/client_po/'.$fileName;
 				break;
-		}
+			case FileUpload::PROPERTY_PHOTO_THUMBS_PATH: // Untuk foto biodata
+				$pathFile = CHtml::normalizeUrl(array('/download','id'=>$id,'const'=>$constPath));
+				//Yii::app()->baseUrl.'/upload/client_po/'.$fileName;
+				break;
+			case FileUpload::ROOM_PHOTO_THUMBS_PATH: // Untuk foto biodata
+				$pathFile = CHtml::normalizeUrl(array('/download','id'=>$id,'const'=>$constPath));
+				//Yii::app()->baseUrl.'/upload/client_po/'.$fileName;
+				break;
+			case FileUpload::ROOM_PHOTO_THUMBS_PATH: // Untuk foto biodata
+				$pathFile = CHtml::normalizeUrl(array('/download','id'=>$id,'const'=>$constPath));
+				//Yii::app()->baseUrl.'/upload/client_po/'.$fileName;
+				break;
+}
 
 		return $pathFile;
 	}
