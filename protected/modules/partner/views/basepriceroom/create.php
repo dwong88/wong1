@@ -1,6 +1,6 @@
 <?php
 $this->breadcrumbs=array(
-	'Propertyfeatures'=>array('index'),
+	'Basepricerooms'=>array('index'),
 	'Create',
 );
 

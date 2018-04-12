@@ -1,6 +1,6 @@
 <?php
 
-class RoomtypeController extends Controller
+class BasepriceroomController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -23,22 +23,20 @@ class RoomtypeController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate($id)
+	public function actionCreate()
 	{
-		$mProperty = Property::model()->findByPk($id);
-        if($mProperty===null)
-            throw new CHttpException(404,'The requested page does not exist.');
-
-        $model=new Roomtype;
-        $model->property_id = $mProperty->property_id;
+		$model=new Basepriceroom;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Roomtype']))
+		if(isset($_POST['Basepriceroom']))
 		{
-			$model->attributes=$_POST['Roomtype'];
-			if($model->save()) {
+			$model->attributes=$_POST['Basepriceroom'];
+
+			if(isset($_POST['Basepriceroom']))
+			{
+				//print_r($_POST['Basepriceroom']);
 				foreach (Basepriceroom::$publicTypePrice as $key => $PriceType) {
 					$mDescTac = new Basepriceroom(); #declare $mDescTac menggunakan table Propertydesc
 					$mDescTac->attributes=$_POST['Basepriceroom'];
@@ -49,14 +47,16 @@ class RoomtypeController extends Controller
 					//echo $mDescTac->price = $model->$PriceType;
 					$mDescTac->save(false); #save(false)--> save tidak validasi
 				}
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('/partner/property/index'));
+				//$this->redirect(array('index'));
 			}
+			/*if($model->save()) {
+				Yii::app()->user->setFlash('success', "Create Successfully");
+				$this->redirect(array('index'));
+			}*/
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
-            'mProperty'=>$mProperty
 		));
 	}
 
@@ -67,24 +67,37 @@ class RoomtypeController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-		$model=$this->loadModel($id);
-        $mProperty = Property::model()->findByPk($model->property_id);
+		//$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Roomtype']))
+		$mRoomtype = Roomtype::model()->findByPk($id);
+		$model= new Basepriceroom; #$modeldesc panggil model Propertydesc
+		#Set descripsi Propertydesc
+		foreach (Basepriceroom::$publicTypePrice as $key => $value) {
+			//echo "string";
+			 $model->$value = $this->loadModelprice($id, $value)->price;
+		}
+		#proses update descripsi
+		if(isset($_POST['Basepriceroom']))
 		{
-			$model->attributes=$_POST['Roomtype'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Update Successfully");
-                $this->redirect(array('/partner/property/index'));
+			$model->attributes = $_POST['Basepriceroom'];
+			foreach (Basepriceroom::$publicTypePrice as $key => $value)
+			{
+				$mSaveDesc = $this->loadModelprice($id, $value);
+				$mSaveDesc->price = $model->$value;
+				//echo ("UPDATE tghbasepriceroom SET price='".$_POST['Basepriceroom'][$value]."'  WHERE room_type_id = '".$id."' AND hours = '".$value."';");
+				$mUp = DAO::executeSql("UPDATE tghbasepriceroom SET price='".$_POST['Basepriceroom'][$value]."'  WHERE room_type_id = '".$id."' AND hours = '".$value."' ");
+				//Yii::app()->end();
+				//$mSaveDesc->save(false);
 			}
+			//print_r($model);
+				$this->redirect(array('property/index'));
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
-            'mProperty'=>$mProperty
+			'mRoomtype'=>$mRoomtype,
 		));
 	}
 
@@ -113,10 +126,10 @@ class RoomtypeController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$model=new Roomtype('search');
+		$model=new Basepriceroom('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Roomtype']))
-			$model->attributes=$_GET['Roomtype'];
+		if(isset($_GET['Basepriceroom']))
+			$model->attributes=$_GET['Basepriceroom'];
 
 		$this->render('index',array(
 			'model'=>$model,
@@ -127,10 +140,18 @@ class RoomtypeController extends Controller
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Roomtype the loaded model
+	 * @return Basepriceroom the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
+	{
+		$model=Basepriceroom::model()->findByPk($id);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+
+	public function loadModelRoomtype($id)
 	{
 		$model=Roomtype::model()->findByPk($id);
 		if($model===null)
@@ -138,13 +159,22 @@ class RoomtypeController extends Controller
 		return $model;
 	}
 
+	#load model untuk tabel property price
+	public function loadModelprice($id,$type)
+	{
+		$model=Basepriceroom::model()->find('room_type_id=:pid AND hours = :ty', array(':pid'=>$id, ':ty'=>$type));
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+
 	/**
 	 * Performs the AJAX validation.
-	 * @param Roomtype $model the model to be validated
+	 * @param Basepriceroom $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='roomtype-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='basepriceroom-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

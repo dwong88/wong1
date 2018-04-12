@@ -26,7 +26,7 @@ class GridViewProperty extends CGridView
                     echo "<th>Rack Rate</th>";
                     echo "<th>Max. Occupants</th>";
                     echo "<th>Rooms</th>";
-                    echo "<th class='button-column' style='width: 100px;'></th>";
+                    echo "<th class='button-column' style='width: 150px;'></th>";
                 echo "</tr>";
                     foreach ($qRoomType as $vRoomType) {
                         echo "<tr>";
@@ -39,6 +39,7 @@ class GridViewProperty extends CGridView
                             echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/bed.png', 'Bed'), array('/master/roomtypebed/update', 'id'=>$vRoomType['room_type_id']), array('title'=>'Bed')).'&nbsp;';
                             echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/features.png', 'Features'), array('/master/roomtypefeatures/create', 'id'=>$vRoomType['room_type_id']), array('title'=>'Features')).'&nbsp;';
                             echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/Camera.png', 'Photo'), array('/master/roomphoto/create', 'id'=>$vRoomType['room_type_id']), array('title'=>'Photo')).'&nbsp;';
+                            echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/price.png', 'Price'), array('/partner/Basepriceroom/update', 'id'=>$vRoomType['room_type_id']), array('title'=>'Price')).'&nbsp;';
                             echo CHtml::link(CHtml::image($this->baseScriptUrl.'/update.png', 'view'), array('/master/roomtype/update', 'id'=>$vRoomType['room_type_id']), array('title'=>'Update')).'&nbsp;';
                             echo CHtml::link(CHtml::image($this->baseScriptUrl.'/delete.png', 'view'), array('/master/roomtype/delete', 'id'=>$vRoomType['room_type_id']), array('class'=>'delete', 'title'=>'Delete'));
                         echo "</td>";
