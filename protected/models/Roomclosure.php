@@ -1,27 +1,29 @@
 <?php
 
 /**
- * This is the model class for table "tghroom".
+ * This is the model class for table "tghroomclosure".
  *
- * The followings are the available columns in table 'tghroom':
- * @property string $room_id
- * @property integer $room_type_id
- * @property string $room_floor
- * @property string $room_name
- * @property string $room_status
+ * The followings are the available columns in table 'tghroomclosure':
+ * @property string $id
+ * @property integer $room_id
+ * @property string $start_date
+ * @property string $end_date
+ * @property integer $status
  * @property string $create_dt
  * @property integer $create_by
  * @property string $update_dt
  * @property integer $update_by
  */
-class Room extends ActiveRecord
+class Roomclosure extends ActiveRecord
 {
+	public $property_id;
+	public $room_name;
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'tghroom';
+		return 'tghroomclosure';
 	}
 
 	public function __construct($scenario = 'insert')
@@ -29,6 +31,7 @@ class Room extends ActiveRecord
         parent::__construct($scenario);
         $this->logRecord=true;
     }
+
 
 	/**
 	 * @return array validation rules for model attributes.
@@ -38,14 +41,14 @@ class Room extends ActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('room_type_id', 'required'),
-			array('room_type_id', 'numerical', 'integerOnly'=>true),
-			array('room_floor', 'length', 'max'=>30),
-			array('room_name', 'length', 'max'=>50),
-			array('room_status', 'length', 'max'=>100),
+			array('start_date', 'application.components.validator.DatePickerSwitcherValidator'),
+			array('end_date', 'application.components.validator.DatePickerSwitcherValidator'),
+			array('room_id, start_date, end_date', 'required'),
+			array('status', 'length', 'max'=>11),
+			array('room_id, create_by, update_by', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('room_id, room_type_id, room_floor, room_name, room_status, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
+			array('id, room_id, start_date, end_date, status, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -59,7 +62,7 @@ class Room extends ActiveRecord
 		return array(
 			'refUsercreate' => array(self::BELONGS_TO, 'User', 'create_by'),
       'refUserupdate' => array(self::BELONGS_TO, 'User', 'update_by'),
-      'refRoomtype' => array(self::BELONGS_TO, 'Roomtype', 'room_type_id'),
+      'refRoom' => array(self::BELONGS_TO, 'Room', 'room_id'),
 		);
 	}
 
@@ -69,14 +72,14 @@ class Room extends ActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'id' => 'ID',
 			'room_id' => 'Room',
-			'room_type_id' => 'Room Type',
-			'room_floor' => 'Room Floor',
-			'room_name' => 'Room Name',
-			'room_status' => 'Room Status',
-			'create_dt' => 'Create Date',
+			'start_date' => 'Start Date',
+			'end_date' => 'End Date',
+			'status' => 'Status',
+			'create_dt' => 'Create Dt',
 			'create_by' => 'Create By',
-			'update_dt' => 'Update Date',
+			'update_dt' => 'Update Dt',
 			'update_by' => 'Update By',
 		);
 	}
@@ -99,12 +102,15 @@ class Room extends ActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('room_id',$this->room_id,true);
-		$criteria->compare('room_type_id',$this->room_type_id);
-		$criteria->compare('room_floor',$this->room_floor,true);
-		$criteria->compare('room_name',$this->room_name,true);
-		$criteria->compare('room_status',$this->room_status,true);
-
+		$criteria->compare('id',$this->id,true);
+		$criteria->compare('room_id',$this->room_id);
+		$criteria->compare('start_date',$this->start_date,true);
+		$criteria->compare('end_date',$this->end_date,true);
+		$criteria->compare('status',$this->status);
+		$criteria->compare('create_dt',$this->create_dt,true);
+		$criteria->compare('create_by',$this->create_by);
+		$criteria->compare('update_dt',$this->update_dt,true);
+		$criteria->compare('update_by',$this->update_by);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -115,7 +121,7 @@ class Room extends ActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Room the static model class
+	 * @return Roomclosure the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

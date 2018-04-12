@@ -63,6 +63,33 @@ class GlobalsettingController extends Controller
 		   echo CHtml::tag('option', array('value'=>$value),CHtml::encode($city_name),true);
 		}
 
+		public function actionLoadroomtype()
+		{
+			//echo "string1";
+
+		   $data=Roomtype::model()->findAll('property_id=:property_id',array(':property_id'=>(int) $_POST['property_id']));
+
+		   $data=CHtml::listData($data,'room_type_id','room_type_name');
+
+		   echo "<option value=''>Select Room Type</option>";
+		   foreach($data as $value=>$room_type_name)
+		   echo CHtml::tag('option', array('value'=>$value),CHtml::encode($room_type_name),true);
+
+		}
+
+		public function actionLoadroom()
+		{
+			//echo "string1";
+
+		   $data=Room::model()->findAll('room_type_id=:room_type_id',array(':room_type_id'=>(int) $_POST['room_type_id']));
+		   $data=CHtml::listData($data,'room_id','room_name');
+
+		   echo "<option value=''>Select Room</option>";
+		   foreach($data as $value=>$room_name)
+		   echo CHtml::tag('option', array('value'=>$value),CHtml::encode($room_name),true);
+
+		}
+
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.

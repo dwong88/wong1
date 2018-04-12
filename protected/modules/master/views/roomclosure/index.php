@@ -1,6 +1,6 @@
 <?php
 $this->breadcrumbs=array(
-	'Basepricerooms',
+	'Roomclosures',
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -9,7 +9,7 @@ $('#srcbutton').click(function(){
 	return false;
 });
 $('.search-form form').submit(function(){
-	$('#basepriceroom-grid').yiiGridView('update', {
+	$('#roomclosure-grid').yiiGridView('update', {
 		data: $(this).serialize()
 	});
 	$('.search-form').hide();
@@ -33,19 +33,24 @@ $buttonBar->render();
 </div><!-- search-form -->
 
 <?php $this->widget('application.extensions.widget.GridView', array(
-	'id'=>'basepriceroom-grid',
+	'id'=>'roomclosure-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'filterPosition'=>'',
 	'columns'=>array(
-		//array('name'=>'refRoomtype.room_type_name', 'header'=>'Room'),
-		'room_type_id',
-		'hours',
-		'price',
+		'id',
+		array('name'=>'refRoom.room_name', 'header'=>'Room'),
+		'start_date',
+		'end_date',
+		'status',
+		array('name'=>'refUsercreate.user_name', 'header'=>'Create By'),
+		/*
+		'create_by',
+		'update_dt',
+		'update_by',
+		*/
 		array(
-      'class'=>'CButtonColumn',
-      'template'=>'{update}',
-			'updateButtonUrl'=>'CHtml::normalizeUrl(array("Basepriceroom/update", "id"=>$data->room_type_id))',
+			'class'=>'application.extensions.widget.ButtonColumn',
 		),
 	),
 )); ?>
