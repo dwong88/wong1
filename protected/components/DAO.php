@@ -1,5 +1,5 @@
 <?php
-class DAO 
+class DAO
 {
 	/**
 	 * Executes the SQL statement.
@@ -18,7 +18,7 @@ class DAO
 	{
 		return Yii::app()->db->createCommand($sql)->execute($params);
 	}
-	
+
 	/**
 	* Executes the SQL statement and returns query result.
 	* This method is for executing an SQL query that returns result set.
@@ -35,7 +35,7 @@ class DAO
 	{
 		return Yii::app()->db->createCommand($sql)->query($params);
 	}
-	
+
 	/**
 	* Executes the SQL statement and returns all rows.
 	* @param String $sql the Sql Sintax want to run
@@ -54,7 +54,7 @@ class DAO
 	{
 		return Yii::app()->db->createCommand($sql)->queryAll($fetchAssociative, $params);
 	}
-	
+
 	/**
 	* Executes the SQL statement and returns the first row of the result.
 	* This is a convenient method of {@link query} when only the first row of data is needed.
@@ -73,5 +73,5 @@ class DAO
 	{
 		return Yii::app()->db->createCommand($sql)->queryRow($fetchAssociative, $params);
 	}
-	
+
 }

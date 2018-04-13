@@ -7,6 +7,21 @@ $('#room_id').change(function() {
 	var thisvalue = this.value;
 	$('#Roomclosure_room_id').text(thisvalue);
 });
+			$('#Roomclosure_start_date').datepicker({
+				});
+			$('#Roomclosure_end_date').datepicker({
+           onSelect: function () {
+              myfunc();
+      			}
+				});
+
+       function myfunc(){
+	      var start= $('#Roomclosure_start_date').datepicker('getDate');
+	    	var end= $('#Roomclosure_end_date').datepicker('getDate');
+	   		days = (end- start) / (1000 * 60 * 60 * 24);
+       	console.log(Math.round(days));
+       }
+
 							",
 CClientScript::POS_READY
 );

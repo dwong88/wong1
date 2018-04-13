@@ -9,13 +9,29 @@
  * @property string $date
  * @property integer $hours
  * @property double $price
- * @property string $create_dt
- * @property integer $create_by
- * @property string $update_dt
- * @property integer $update_by
  */
-class Roompriceflexible extends CActiveRecord
+class Roompriceflexible extends ActiveRecord
 {
+	public static $publicTypePrice = array('hr24','hr0','hr1', 'hr2', 'hr3', 'hr4', 'hr5', 'hr6', 'hr7', 'hr8', 'hr9', 'hr10', 'hr11', 'hr12');
+	public $hr24;
+	public $hr0;
+	public $hr1;
+	public $hr2;
+	public $hr3;
+	public $hr4;
+	public $hr5;
+	public $hr6;
+	public $hr7;
+	public $hr8;
+	public $hr9;
+	public $hr10;
+	public $hr11;
+	public $hr12;
+	public $start_date;
+	public $end_date;
+	public $property_id;
+	public $room_type_id;
+	public $room_id;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -32,12 +48,13 @@ class Roompriceflexible extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('room_type_id, date, hours, price', 'required'),
-			array('room_type_id, hours, create_by, update_by', 'numerical', 'integerOnly'=>true),
+			//array('date', 'application.components.validator.DatePickerSwitcherValidator'),
+			array('date', 'required'),
+			array('room_type_id', 'numerical', 'integerOnly'=>true),
 			array('price', 'numerical'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('price_id, room_type_id, date, hours, price, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
+			array('price_id, room_type_id, date, hours, price', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -49,6 +66,7 @@ class Roompriceflexible extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'refRoomtype' => array(self::BELONGS_TO, 'Roomtype', 'room_type_id'),
 		);
 	}
 
@@ -58,15 +76,23 @@ class Roompriceflexible extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'price_id' => 'Price',
-			'room_type_id' => 'Room Type',
-			'date' => 'Date',
+			'hr24'=> '24 Hours',
+			'hr0'=> '1 Night',
+			'hr1'=> '1 Hours',
+			'hr2'=> '2 Hours',
+			'hr3'=> '3 Hours',
+			'hr4'=> '4 Hours',
+			'hr5'=> '5 Hours',
+			'hr6'=> '6 Hours',
+			'hr7'=> '7 Hours',
+			'hr8'=> '8 Hours',
+			'hr9'=> '9 Hours',
+			'hr10'=> '10 Hours',
+			'hr11'=> '11 Hours',
+			'hr12'=> '12 Hours',
+			'room_type_id' => 'Room',
 			'hours' => 'Hours',
 			'price' => 'Price',
-			'create_dt' => 'Create Dt',
-			'create_by' => 'Create By',
-			'update_dt' => 'Update Dt',
-			'update_by' => 'Update By',
 		);
 	}
 
@@ -88,15 +114,10 @@ class Roompriceflexible extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('price_id',$this->price_id,true);
 		$criteria->compare('room_type_id',$this->room_type_id);
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('hours',$this->hours);
 		$criteria->compare('price',$this->price);
-		$criteria->compare('create_dt',$this->create_dt,true);
-		$criteria->compare('create_by',$this->create_by);
-		$criteria->compare('update_dt',$this->update_dt,true);
-		$criteria->compare('update_by',$this->update_by);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

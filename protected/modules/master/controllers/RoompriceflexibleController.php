@@ -30,13 +30,67 @@ class RoompriceflexibleController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Roompriceflexible']))
+		/*if(isset($_POST['Roompriceflexible']))
 		{
 			$model->attributes=$_POST['Roompriceflexible'];
-			if($model->save()) {
+
+
+				//print_r($_POST['Basepriceroom']);
+				$mDescTac = new Roompriceflexible(); #declare $mDescTac menggunakan table Propertydesc
+				$mDescTac->attributes=$_POST['Roompriceflexible'];
+				foreach (Roompriceflexible::$publicTypePrice as $key => $PriceType) {
+					$mDescTac = new Roompriceflexible(); #declare $mDescTac menggunakan table Propertydesc
+					$mDescTac->attributes=$_POST['Roompriceflexible'];
+					$mDescTac->room_type_id = $model->room_type_id;
+					$mDescTac->hours = $PriceType;
+					$mDescTac->price = '';
+					//echo $mDescTac->price;
+					//echo $mDescTac->price = $model->$PriceType;
+					$mDescTac->save(false); #save(false)--> save tidak validasi
+				}
+				//$this->redirect(array('index'));
+			}
+			*/
+
+		if(isset($_POST['Roompriceflexible']))
+		{
+			print_r($_POST);
+			$model->attributes=$_POST['Roompriceflexible'];
+			foreach (Roompriceflexible::$publicTypePrice as $key => $PriceType) {
+				$mDescTac = new Roompriceflexible(); #declare $mDescTac menggunakan table Propertydesc
+				$mDescTac->attributes=$_POST['Roompriceflexible'];
+				$mDescTac->room_type_id = $model->room_type_id=$_POST['roomtype_id'];
+				$mDescTac->hours = $PriceType;
+				$mDescTac->price = $_POST['Roompriceflexible'][$PriceType];
+				$tgl=$_POST['Roompriceflexible']['date'];
+				$format = '%d/%m/%Y';
+				$date = $tgl;
+				$parsed = strptime($date , $format);
+
+				if(is_array($parsed))
+				{
+				    $y = (int)$parsed['tm_year'] + 1900;
+
+				    $m = (int)$parsed['tm_mon'] + 1;
+				    $m = sprintf("%02d", $m);
+
+				    $d = (int)$parsed['tm_mday'];
+				    $d = sprintf("%02d", $d);
+
+				    $iso_date = "$y-$m-$d";
+				}
+
+				$iso_date; //outputs 2012-05-25
+				$date=date_create($iso_date);
+				$mDescTac->date=date_format($date,"Y/m/d H:i:s");
+				//echo $mDescTac->price = $model->$PriceType;
+				$mDescTac->save(); #save(false)--> save tidak validasi
+			}
+			//$model->room_type_id=$_POST['Roompriceflexible']['roomtype_id'];
+			/*if($model->save()) {
 				Yii::app()->user->setFlash('success', "Create Successfully");
 				$this->redirect(array('index'));
-			}
+			}*/
 		}
 
 		$this->render('create',array(

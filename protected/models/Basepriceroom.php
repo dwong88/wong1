@@ -64,7 +64,7 @@ class Basepriceroom extends CActiveRecord
 			'refUsercreate' => array(self::BELONGS_TO, 'User', 'create_by'),
 			'refUserupdate' => array(self::BELONGS_TO, 'User', 'update_by'),
 			'refRoomtype' => array(self::BELONGS_TO, 'Roomtype', 'room_type_id'),
-);
+		);
 	}
 
 	/**

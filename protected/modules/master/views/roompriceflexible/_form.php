@@ -1,3 +1,17 @@
+<?php
+#fungsi input value ajax city state country
+Yii::app()->clientScript->registerScript(
+					    '__inPageScript',
+					    "
+$('#roomtype_id').change(function() {
+	var thisvalue = this.value;
+	$('#Roompriceflexible_room_type_id').text(thisvalue);
+	console.log(thisvalue);
+});
+							",
+CClientScript::POS_READY
+);
+?>
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -14,29 +28,51 @@
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
 
 	<?php Helper::showFlash(); ?>
+	<?php echo $form->dropDownList($model,'property_id', CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),array(
+	'prompt'=>'Select Property',
+	'ajax' => array(
+	'type'=>'POST',
+	'url'=>Yii::app()->createUrl('core/globalsetting/loadroomtype'), //or $this->createUrl('loadcities') if '$this' extends CController
+	'update'=>'#roomtype_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
+	'data'=>array('property_id'=>'js:this.value'),
+	))); ?>
+	<?php
+		echo $form->labelEx($model,'room_type_id');
+		echo CHtml::dropDownList('roomtype_id',$select_st,
+		array($select_st=>$mStatec[0]['state_name']),
+		array(
+			'prompt'=>'Select Room Type',
+			'ajax' => array(
+			'type'=>'POST',
+			'url'=>Yii::app()->createUrl('core/globalsetting/loadroom'), //or $this->createUrl('loadcities') if '$this' extends CController
+			'update'=>'#room_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
+		'data'=>array('room_type_id'=>'js:this.value'),
+		)));
+	?>
 	<div class="row">
-		<?php echo $form->labelEx($model,'room_type_id'); ?>
-		<?php echo $form->textField($model,'room_type_id'); ?>
-		<?php echo $form->error($model,'room_type_id'); ?>
+		<?php echo $form->hiddenField($model,'room_type_id',array('value'=>''));?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'date'); ?>
-		<?php echo $form->textField($model,'date'); ?>
+		<?php $this->widget('application.extensions.widget.JuiDatePicker', array(
+				                        'model'=>$model,
+				                        'attribute'=>'date',
+		                                ));?>
 		<?php echo $form->error($model,'date'); ?>
 	</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'hours'); ?>
-		<?php echo $form->textField($model,'hours'); ?>
-		<?php echo $form->error($model,'hours'); ?>
-	</div>
+	<?php
 
+	foreach (Roompriceflexible::$publicTypePrice as $key => $value) {
+	?>
 	<div class="row">
-		<?php echo $form->labelEx($model,'price'); ?>
-		<?php echo $form->textField($model,'price'); ?>
-		<?php echo $form->error($model,'price'); ?>
+		<?php echo $form->labelEx($model,$value); ?>
+		<?php echo $form->textField($model,$value); ?>
 	</div>
+	<?php
+	}
+	?>
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

@@ -22,7 +22,14 @@ $model->room_type_id=$_GET['id'];
 	<br><h1><?php echo $mRoomtype->room_type_name; ?></h1><br/>
 	<div class="row">
 		<?php echo $form->labelEx($model,'room_type_id'); ?>
-		<?php echo $form->textField($mRoomtype,'room_type_name',array('readonly'=>'readonly')); ?>
+		<?php
+		if($mRoomtype!=NULL){
+			echo $form->textField($mRoomtype,'room_type_name',array('readonly'=>'readonly'));
+		}
+		else {
+			echo $form->textField($model,'room_type_id',array('readonly'=>'readonly'));
+		}
+		 ?>
 		<?php echo $form->error($model,'room_type_id'); ?>
 	</div>
 

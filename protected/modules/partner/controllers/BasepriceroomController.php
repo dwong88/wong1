@@ -43,7 +43,7 @@ class BasepriceroomController extends Controller
 					$mDescTac->room_type_id = $model->room_type_id;
 					$mDescTac->hours = $PriceType;
 					$mDescTac->price = "";
-					$mDescTac->price = "";
+
 					//echo $mDescTac->price = $model->$PriceType;
 					$mDescTac->save(false); #save(false)--> save tidak validasi
 				}
