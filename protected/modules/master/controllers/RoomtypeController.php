@@ -40,13 +40,13 @@ class RoomtypeController extends Controller
 			$model->attributes=$_POST['Roomtype'];
 			if($model->save()) {
 				foreach (Basepriceroom::$publicTypePrice as $key => $PriceType) {
-					$mDescTac = new Basepriceroom(); #declare $mDescTac menggunakan table Propertydesc
-					$mDescTac->attributes=$_POST['Basepriceroom'];
-					$mDescTac->room_type_id = $model->room_type_id;
-					$mDescTac->hours = $PriceType;
-					$mDescTac->price = "";
-					//echo $mDescTac->price = $model->$PriceType;
-					$mDescTac->save(false); #save(false)--> save tidak validasi
+					$mSaveRoomPrice = new Basepriceroom(); #declare $mSaveRoomPrice menggunakan table Propertydesc
+					$mSaveRoomPrice->attributes=$_POST['Basepriceroom'];
+					$mSaveRoomPrice->room_type_id = $model->room_type_id;
+					$mSaveRoomPrice->hours = $PriceType;
+					$mSaveRoomPrice->price = "";
+					//echo $mSaveRoomPrice->price = $model->$PriceType;
+					$mSaveRoomPrice->save(false); #save(false)--> save tidak validasi
 				}
 				Yii::app()->user->setFlash('success', "Create Successfully");
 				$this->redirect(array('/partner/property/index'));

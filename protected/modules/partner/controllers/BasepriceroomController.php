@@ -38,14 +38,14 @@ class BasepriceroomController extends Controller
 			{
 				//print_r($_POST['Basepriceroom']);
 				foreach (Basepriceroom::$publicTypePrice as $key => $PriceType) {
-					$mDescTac = new Basepriceroom(); #declare $mDescTac menggunakan table Propertydesc
-					$mDescTac->attributes=$_POST['Basepriceroom'];
-					$mDescTac->room_type_id = $model->room_type_id;
-					$mDescTac->hours = $PriceType;
-					$mDescTac->price = "";
+					$mSaveRoomPrice = new Basepriceroom(); #declare $mSaveRoomPrice menggunakan table Propertydesc
+					$mSaveRoomPrice->attributes=$_POST['Basepriceroom'];
+					$mSaveRoomPrice->room_type_id = $model->room_type_id;
+					$mSaveRoomPrice->hours = $PriceType;
+					$mSaveRoomPrice->price = "";
 
-					//echo $mDescTac->price = $model->$PriceType;
-					$mDescTac->save(); #save(false)--> save tidak validasi
+					//echo $mSaveRoomPrice->price = $model->$PriceType;
+					$mSaveRoomPrice->save(); #save(false)--> save tidak validasi
 				}
 				//$this->redirect(array('index'));
 			}

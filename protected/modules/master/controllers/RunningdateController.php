@@ -81,10 +81,10 @@ class RunningdateController extends Controller
 
 			foreach ($period as $dt) {
 					//echo $dt->format("l Y-m-d\n")."<br>";
-					$mDescTac = new Runningdate(); #declare $mDescTac menggunakan table Propertydesc
-					$mDescTac->date_id = $dt->format("N");
-					$mDescTac->runningdate = $dt->format("Y-m-d");
-					$mDescTac->save(); #save(false)--> save tidak validasi
+					$mSaveDate = new Runningdate(); #declare $mSaveDate menggunakan table Propertydesc
+					$mSaveDate->date_id = $dt->format("N");
+					$mSaveDate->runningdate = $dt->format("Y-m-d");
+					$mSaveDate->save(); #save(false)--> save tidak validasi
 					//$this->redirect(array('index'));
 			}
 			/*if($model->save()) {

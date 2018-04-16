@@ -66,7 +66,7 @@ class RoomphotoController extends Controller
 						/*panggil component image dengan param $image*/
 						$image = Yii::app()->image->load($name);
 						/*resize gambar/thumb gambar*/
-						$image->resize(93, 0);
+						$image->resize(93, 100);
 						/*simpan thumb image kembali gambar ke
 						 *images/products/thumbs*/
 						$image->save();
