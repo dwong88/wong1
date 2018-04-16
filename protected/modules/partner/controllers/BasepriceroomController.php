@@ -45,7 +45,7 @@ class BasepriceroomController extends Controller
 					$mDescTac->price = "";
 
 					//echo $mDescTac->price = $model->$PriceType;
-					$mDescTac->save(false); #save(false)--> save tidak validasi
+					$mDescTac->save(); #save(false)--> save tidak validasi
 				}
 				//$this->redirect(array('index'));
 			}

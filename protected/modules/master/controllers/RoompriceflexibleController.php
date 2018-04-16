@@ -125,6 +125,115 @@ class RoompriceflexibleController extends Controller
 	}
 
 	/**
+	 * Updates a particular model.
+	 * If update is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $id the ID of the model to be updated
+	 */
+	public function actionUpdatebulk($id)
+	{
+		//$model=$this->loadModel($id);
+		$model=new Roompriceflexible;
+		if($model===null)
+		{
+				echo "isi";
+		}
+		else{
+			$model->attributes=$_POST['Roompriceflexible'];
+			if(isset($_POST['Roompriceflexible']))
+			{
+				$model->attributes=$_POST['Roompriceflexible'];
+				$tgl1=$_POST['Roompriceflexible']['start_date'];
+				$format = '%d/%m/%Y';
+				$date1 = $tgl1;
+				$parsed1 = strptime($date1 , $format);
+				$tgl2=$_POST['Roompriceflexible']['end_date'];
+				$format = '%d/%m/%Y';
+				$date2 = $tgl2;
+				$parsed2 = strptime($date2 , $format);
+
+				if(is_array($parsed1))
+				{
+						$y = (int)$parsed1['tm_year'] + 1900;
+
+						$m = (int)$parsed1['tm_mon'] + 1;
+						$m = sprintf("%02d", $m);
+
+						$d = (int)$parsed1['tm_mday'];
+						$d = sprintf("%02d", $d);
+
+						$iso_date1 = "$y-$m-$d";
+				}
+
+
+				if(is_array($parsed2))
+				{
+						$y = (int)$parsed2['tm_year'] + 1900;
+
+						$m = (int)$parsed2['tm_mon'] + 1;
+						$m = sprintf("%02d", $m);
+
+						$d = (int)$parsed2['tm_mday'];
+						$d = sprintf("%02d", $d);
+
+						$iso_date2 = "$y-$m-$d";
+				}
+
+				$iso_date1; //outputs 2012-05-25
+				$iso_date2; //outputs 2012-05-25
+
+				#fungsi random_id
+				$rand=(rand(1,10));
+
+				#fungsi count select checkbox days
+				$countdays=count($_POST['Roompriceflexible']['date_id']);
+				$mdate="";
+				for($dat=0;$dat<$countdays;$dat++)
+				{
+					$mdate.=$_POST['Roompriceflexible']['date_id'][$dat].",";
+				}
+				$tampung= rtrim($mdate,',');
+				$room_type_ids=$_GET['id'];
+
+				$BulkDel = DAO::executeSql("DELETE FROM tghroompriceflexible
+								WHERE
+								 		room_type_id=$room_type_ids
+										and date IN
+								  ( SELECT u.runningdate FROM
+								    tghrunningdate u
+								    WHERE
+								    u.`runningdate` between '".$iso_date1."' and '".$iso_date2."' and
+								    u.date_id IN ($tampung));");
+				#INSERT TEMPPRICEROOM
+				foreach (Temproomprice::$publicTypePrice as $key => $PriceType) {
+					$mDescTac = new Temproomprice(); #declare $mDescTac menggunakan table Propertydesc
+					$mDescTac->attributes=$_POST['Roompriceflexible'];
+					$mDescTac->random_id = $rand;
+					$mDescTac->hours = $PriceType;
+					$mDescTac->price = $_POST['Roompriceflexible'][$PriceType];
+
+					//echo $mDescTac->price = $model->$PriceType;
+					$mDescTac->save(); #save(false)--> save tidak validasi
+				}
+				#insert update bulks
+				$updatebulks = DAO::executeSql("INSERT INTO `tghroompriceflexible` (room_type_id, date,hours, price)
+				select $room_type_ids,tgl.runningdate,price.hours,price.price  FROM
+				(select hours,price,random_id from `tghtemproomprice` where random_id='$rand') as price,
+				(select runningdate from tghrunningdate where runningdate between '".$iso_date1."' and '".$iso_date2."' AND date_id IN ($tampung)) as tgl");
+
+				$truntempprice=DAO::executeSql("TRUNCATE TABLE `tghtemproomprice`;");
+			}
+		}
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
+
+
+
+		$this->render('updatebulk',array(
+			'model'=>$model,
+		));
+	}
+
+	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
@@ -168,7 +277,8 @@ class RoompriceflexibleController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=Roompriceflexible::model()->findByPk($id);
+		//$model=Roompriceflexible::model()->findByPk($id);
+		$model=Roompriceflexible::model()->find('room_type_id=:pid', array(':pid'=>$id));
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;

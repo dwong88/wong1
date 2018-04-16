@@ -31,7 +31,7 @@
 
         <?php echo $form->labelEx($model,'room_features_id'); ?>
         <tr>
-		<td colspan="3">
+		    <td colspan="3">
             <ul id="ul-features">
                 <?php echo $form->checkBoxList($model,'room_features_id', CHtml::listData(Roomfeatures::model()->findAll(), 'room_features_id', 'room_features_name'),array('prompt'=>'', 'template'=>'<li>{input} {label}</li>')); ?>
             </ul>

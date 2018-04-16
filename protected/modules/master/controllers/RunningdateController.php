@@ -1,6 +1,6 @@
 <?php
 
-class RoomtypeController extends Controller
+class RunningdateController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -23,39 +23,78 @@ class RoomtypeController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate($id)
+	public function actionCreate()
 	{
-		$mProperty = Property::model()->findByPk($id);
-        if($mProperty===null)
-            throw new CHttpException(404,'The requested page does not exist.');
-
-        $model=new Roomtype;
-        $model->property_id = $mProperty->property_id;
+		$model=new Runningdate;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Roomtype']))
+		if(isset($_POST['Runningdate']))
 		{
-			$model->attributes=$_POST['Roomtype'];
-			if($model->save()) {
-				foreach (Basepriceroom::$publicTypePrice as $key => $PriceType) {
-					$mDescTac = new Basepriceroom(); #declare $mDescTac menggunakan table Propertydesc
-					$mDescTac->attributes=$_POST['Basepriceroom'];
-					$mDescTac->room_type_id = $model->room_type_id;
-					$mDescTac->hours = $PriceType;
-					$mDescTac->price = "";
-					//echo $mDescTac->price = $model->$PriceType;
-					$mDescTac->save(false); #save(false)--> save tidak validasi
-				}
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('/partner/property/index'));
+			$model->attributes=$_POST['Runningdate'];
+			$tgl1=$_POST['Runningdate']['start_date'];
+			$format = '%d/%m/%Y';
+			$date1 = $tgl1;
+			$parsed1 = strptime($date1 , $format);
+			$tgl2=$_POST['Runningdate']['end_date'];
+			$format = '%d/%m/%Y';
+			$date2 = $tgl2;
+			$parsed2 = strptime($date2 , $format);
+
+			if(is_array($parsed1))
+			{
+					$y = (int)$parsed1['tm_year'] + 1900;
+
+					$m = (int)$parsed1['tm_mon'] + 1;
+					$m = sprintf("%02d", $m);
+
+					$d = (int)$parsed1['tm_mday'];
+					$d = sprintf("%02d", $d);
+
+					$iso_date1 = "$y-$m-$d";
 			}
+
+
+			if(is_array($parsed2))
+			{
+					$y = (int)$parsed2['tm_year'] + 1900;
+
+					$m = (int)$parsed2['tm_mon'] + 1;
+					$m = sprintf("%02d", $m);
+
+					$d = (int)$parsed2['tm_mday'];
+					$d = sprintf("%02d", $d);
+
+					$iso_date2 = "$y-$m-$d";
+			}
+
+			$iso_date1; //outputs 2012-05-25
+			$iso_date2; //outputs 2012-05-25
+			//$date=date_create($iso_date1);
+			//echo date_format($date,"Y/m/d H:i:s");
+
+			$begin = new DateTime($iso_date1);
+			$end = new DateTime($iso_date2);
+			$interval = DateInterval::createFromDateString('1 day');
+			$period = new DatePeriod($begin, $interval, $end);
+
+			foreach ($period as $dt) {
+					//echo $dt->format("l Y-m-d\n")."<br>";
+					$mDescTac = new Runningdate(); #declare $mDescTac menggunakan table Propertydesc
+					$mDescTac->date_id = $dt->format("N");
+					$mDescTac->runningdate = $dt->format("Y-m-d");
+					$mDescTac->save(); #save(false)--> save tidak validasi
+					//$this->redirect(array('index'));
+			}
+			/*if($model->save()) {
+				Yii::app()->user->setFlash('success', "Create Successfully");
+				$this->redirect(array('index'));
+			}*/
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
-            'mProperty'=>$mProperty
 		));
 	}
 
@@ -67,23 +106,21 @@ class RoomtypeController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-        $mProperty = Property::model()->findByPk($model->property_id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Roomtype']))
+		if(isset($_POST['Runningdate']))
 		{
-			$model->attributes=$_POST['Roomtype'];
+			$model->attributes=$_POST['Runningdate'];
 			if($model->save()) {
 				Yii::app()->user->setFlash('success', "Update Successfully");
-                $this->redirect(array('/partner/property/index'));
+				$this->redirect(array('index'));
 			}
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
-            'mProperty'=>$mProperty
 		));
 	}
 
@@ -112,10 +149,10 @@ class RoomtypeController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$model=new Roomtype('search');
+		$model=new Runningdate('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Roomtype']))
-			$model->attributes=$_GET['Roomtype'];
+		if(isset($_GET['Runningdate']))
+			$model->attributes=$_GET['Runningdate'];
 
 		$this->render('index',array(
 			'model'=>$model,
@@ -126,12 +163,12 @@ class RoomtypeController extends Controller
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Roomtype the loaded model
+	 * @return Runningdate the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=Roomtype::model()->findByPk($id);
+		$model=Runningdate::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -139,11 +176,11 @@ class RoomtypeController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param Roomtype $model the model to be validated
+	 * @param Runningdate $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='roomtype-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='runningdate-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

@@ -40,6 +40,7 @@ class GridViewProperty extends CGridView
                             echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/features.png', 'Features'), array('/master/roomtypefeatures/create', 'id'=>$vRoomType['room_type_id']), array('title'=>'Features')).'&nbsp;';
                             echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/Camera.png', 'Photo'), array('/master/roomphoto/create', 'id'=>$vRoomType['room_type_id']), array('title'=>'Photo')).'&nbsp;';
                             echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/price.png', 'Price'), array('/partner/Basepriceroom/update', 'id'=>$vRoomType['room_type_id']), array('title'=>'Price')).'&nbsp;';
+                            echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/bulk.png', 'Bulk'), array('/master/Roompriceflexible/updatebulk', 'id'=>$vRoomType['room_type_id']), array('title'=>'Bulk')).'&nbsp;';
                             echo CHtml::link(CHtml::image($this->baseScriptUrl.'/update.png', 'view'), array('/master/roomtype/update', 'id'=>$vRoomType['room_type_id']), array('title'=>'Update')).'&nbsp;';
                             echo CHtml::link(CHtml::image($this->baseScriptUrl.'/delete.png', 'view'), array('/master/roomtype/delete', 'id'=>$vRoomType['room_type_id']), array('class'=>'delete', 'title'=>'Delete'));
                         echo "</td>";

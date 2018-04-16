@@ -3,6 +3,7 @@ class Helper
 {
 	public static $listLanguage = array('en'=>'English', 'id'=>'Indonesia');
 	public static $listDay = array('senin'=>'Senin', 'selasa'=>'Selasa', 'rabu'=>'Rabu', 'kamis'=>'Kamis', 'jumat'=>'Jumat', 'sabtu'=>'Sabtu', 'minggu'=>'Minggu');
+	public static $listDays = array('1'=>'Senin', '2'=>'Selasa', '3'=>'Rabu', '4'=>'Kamis', '5'=>'Jumat', '6'=>'Sabtu', '7'=>'Minggu');
 	public static function showFlash()
 	{
 		Yii::app()->clientScript->registerScript(

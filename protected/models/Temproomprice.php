@@ -1,16 +1,14 @@
 <?php
 
 /**
- * This is the model class for table "tghroompriceflexible".
+ * This is the model class for table "tghtemproomprice".
  *
- * The followings are the available columns in table 'tghroompriceflexible':
- * @property string $price_id
- * @property integer $room_type_id
- * @property string $date
- * @property integer $hours
- * @property double $price
+ * The followings are the available columns in table 'tghtemproomprice':
+ * @property string $random_id
+ * @property string $hours
+ * @property integer $price
  */
-class Roompriceflexible extends ActiveRecord
+class Temproomprice extends ActiveRecord
 {
 	public static $publicTypePrice = array('hr24','hr0','hr1', 'hr2', 'hr3', 'hr4', 'hr5', 'hr6', 'hr7', 'hr8', 'hr9', 'hr10', 'hr11', 'hr12');
 	public $hr24;
@@ -27,18 +25,13 @@ class Roompriceflexible extends ActiveRecord
 	public $hr10;
 	public $hr11;
 	public $hr12;
-	public $start_date;
-	public $end_date;
-	public $property_id;
-	public $room_type_id;
-	public $room_id;
-	public $date_id;
+
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'tghroompriceflexible';
+		return 'tghtemproomprice';
 	}
 
 	/**
@@ -49,25 +42,12 @@ class Roompriceflexible extends ActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			//array('date', 'application.components.validator.DatePickerSwitcherValidator'),
-			array('date', 'required'),
-			array('room_type_id', 'numerical', 'integerOnly'=>true),
-			array('price', 'numerical'),
+			array('hours, price', 'required'),
+			array('price', 'numerical', 'integerOnly'=>true),
+			array('hours', 'length', 'max'=>5),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('price_id, room_type_id, date, hours, price', 'safe', 'on'=>'search'),
-		);
-	}
-
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-			'refRoomtype' => array(self::BELONGS_TO, 'Roomtype', 'room_type_id'),
+			array('random_id, hours, price', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -91,11 +71,11 @@ class Roompriceflexible extends ActiveRecord
 			'hr10'=> '10 Hours',
 			'hr11'=> '11 Hours',
 			'hr12'=> '12 Hours',
-			'room_type_id' => 'Room',
 			'hours' => 'Hours',
 			'price' => 'Price',
 		);
 	}
+
 
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
@@ -115,9 +95,8 @@ class Roompriceflexible extends ActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('room_type_id',$this->room_type_id);
-		$criteria->compare('date',$this->date,true);
-		$criteria->compare('hours',$this->hours);
+		$criteria->compare('random_id',$this->random_id,true);
+		$criteria->compare('hours',$this->hours,true);
 		$criteria->compare('price',$this->price);
 
 		return new CActiveDataProvider($this, array(
@@ -129,7 +108,7 @@ class Roompriceflexible extends ActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Roompriceflexible the static model class
+	 * @return Temproomprice the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

@@ -1,3 +1,11 @@
+<style>
+	div.form label{
+		display: inline;
+	}
+	ul {
+  list-style-type: none;
+	}
+</style>
 <?php
 #fungsi input value ajax city state country
 Yii::app()->clientScript->registerScript(
@@ -26,47 +34,27 @@ CClientScript::POS_READY
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
-	<?php
-	if($_GET['id']!=NULL){
-		echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/bed.png', 'Bed'), array('/master/roomtypebed/update', 'id'=>$vRoomType['room_type_id']), array('title'=>'Bed')).'&nbsp;';
-	}
-	?>
-	<br>
 	<?php Helper::showFlash(); ?>
-	<?php echo $form->dropDownList($model,'property_id', CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),array(
-	'prompt'=>'Select Property',
-	'ajax' => array(
-	'type'=>'POST',
-	'url'=>Yii::app()->createUrl('core/globalsetting/loadroomtype'), //or $this->createUrl('loadcities') if '$this' extends CController
-	'update'=>'#roomtype_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
-	'data'=>array('property_id'=>'js:this.value'),
-	))); ?>
-	<?php
-		echo $form->labelEx($model,'room_type_id');
-		echo CHtml::dropDownList('roomtype_id',$select_st,
-		array($select_st=>$mStatec[0]['state_name']),
-		array(
-			'prompt'=>'Select Room Type',
-			'ajax' => array(
-			'type'=>'POST',
-			'url'=>Yii::app()->createUrl('core/globalsetting/loadroom'), //or $this->createUrl('loadcities') if '$this' extends CController
-			'update'=>'#room_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
-		'data'=>array('room_type_id'=>'js:this.value'),
-		)));
-	?>
 	<div class="row">
-		<?php echo $form->hiddenField($model,'room_type_id',array('value'=>''));?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'date'); ?>
+		<?php echo $form->labelEx($model,'start_date'); ?>
 		<?php $this->widget('application.extensions.widget.JuiDatePicker', array(
 				                        'model'=>$model,
-				                        'attribute'=>'date',
+				                        'attribute'=>'start_date',
 		                                ));?>
-		<?php echo $form->error($model,'date'); ?>
+		<?php echo $form->error($model,'start_date'); ?>
+	</div>
+	<div class="row">
+		<?php echo $form->labelEx($model,'end_date'); ?>
+		<?php $this->widget('application.extensions.widget.JuiDatePicker', array(
+				                        'model'=>$model,
+				                        'attribute'=>'end_date',
+		                                ));?>
+		<?php echo $form->error($model,'end_date'); ?>
 	</div>
 
+	<div class="row">
+		<?php echo $form->checkBoxList($model, 'date_id', Helper::$listDays, array('prompt'=>'')); ?>
+	</div>
 	<?php
 
 	foreach (Roompriceflexible::$publicTypePrice as $key => $value) {
