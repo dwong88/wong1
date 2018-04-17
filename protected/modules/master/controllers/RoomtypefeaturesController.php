@@ -30,8 +30,8 @@ class RoomtypefeaturesController extends Controller
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-        
-        $mSelf = DAO::queryAllSql("SELECT room_features_id FROM `tghroomtypefeatures`WHERE room_type_id = '".$id."'");
+
+    $mSelf = DAO::queryAllSql("SELECT room_features_id FROM `tghroomtypefeatures`WHERE room_type_id = '".$id."'");
 		//$mSavef->prop_features_id = $temp_f;
 		#print_r($mSelf);
 		$countselect=count($mSelf);

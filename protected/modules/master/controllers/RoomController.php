@@ -33,9 +33,20 @@ class RoomController extends Controller
 		if(isset($_POST['Room']))
 		{
 			$model->attributes=$_POST['Room'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
+			if($model->validate()) {
+			  #$transaction mulai transaksi
+			  $transaction = Yii::app()->db->beginTransaction();
+			  try{
+			    $model->save();
+			    #jika tidak ada error transaksi proses di commit
+			    $transaction->commit();
+			    Yii::app()->user->setFlash('success', "Create Successfully");
+			    $this->redirect(array('index'));
+			  }
+			    catch(exception $e) {
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  }
 			}
 		}
 

@@ -38,7 +38,11 @@ class RoomtypeController extends Controller
 		if(isset($_POST['Roomtype']))
 		{
 			$model->attributes=$_POST['Roomtype'];
-			if($model->save()) {
+			if($model->validate()) {
+			  #$transaction mulai transaksi
+			  $transaction = Yii::app()->db->beginTransaction();
+			  try{
+			    $model->save();
 				foreach (Basepriceroom::$publicTypePrice as $key => $PriceType) {
 					$mSaveRoomPrice = new Basepriceroom(); #declare $mSaveRoomPrice menggunakan table Propertydesc
 					$mSaveRoomPrice->attributes=$_POST['Basepriceroom'];
@@ -48,9 +52,16 @@ class RoomtypeController extends Controller
 					//echo $mSaveRoomPrice->price = $model->$PriceType;
 					$mSaveRoomPrice->save(false); #save(false)--> save tidak validasi
 				}
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('/partner/property/index'));
-			}
+				$transaction->commit();
+		    Yii::app()->user->setFlash('success', "Create Successfully");
+		    $this->redirect(array('/partner/property/index'));
+		  }
+		    catch(exception $e) {
+		      $transaction->rollback();
+		      throw new CHttpException(500, $e->getMessage());
+		  }
+		}
+
 		}
 
 		$this->render('create',array(

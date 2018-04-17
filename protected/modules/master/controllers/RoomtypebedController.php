@@ -38,9 +38,20 @@ class RoomtypebedController extends Controller
 		if(isset($_POST['Roomtypebed']))
 		{
 			$model->attributes=$_POST['Roomtypebed'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
+			if($model->validate()) {
+			  #$transaction mulai transaksi
+			  $transaction = Yii::app()->db->beginTransaction();
+			  try{
+			    $model->save();
+			    #jika tidak ada error transaksi proses di commit
+			    $transaction->commit();
+			    Yii::app()->user->setFlash('success', "Create Successfully");
+			    $this->redirect(array('index'));
+			  }
+			    catch(exception $e) {
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  }
 			}
 		}
 
@@ -108,10 +119,22 @@ class RoomtypebedController extends Controller
 
         if (isset($_POST['Roomtypebed'])) {
             $model->attributes = $_POST['Roomtypebed'];
-            if ($model->save()) {
-                Yii::app()->user->setFlash('success', "Create Successfully");
-                $this->redirect(array('update','id'=>$model->room_type_id));
-            }
+						if($model->validate()) {
+						  #$transaction mulai transaksi
+						  $transaction = Yii::app()->db->beginTransaction();
+						  try{
+						    $model->save();
+						    #jika tidak ada error transaksi proses di commit
+						    $transaction->commit();
+						    Yii::app()->user->setFlash('success', "Create Successfully");
+						      $this->redirect(array('update','id'=>$model->room_type_id));
+						  }
+						    catch(exception $e) {
+						      $transaction->rollback();
+						      throw new CHttpException(500, $e->getMessage());
+						  }
+						}
+
         }
 
 		$this->render('update',array(

@@ -35,9 +35,20 @@ class CityController extends Controller
 			//echo $_POST['state_id'];
 			$model->attributes=$_POST['City'];
 			$model->state_id = $_POST['state_id'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
+			if($model->validate()) {
+			  #$transaction mulai transaksi
+			  $transaction = Yii::app()->db->beginTransaction();
+			  try{
+			    $model->save();
+			    #jika tidak ada error transaksi proses di commit
+			    $transaction->commit();
+			    Yii::app()->user->setFlash('success', "Create Successfully");
+			    $this->redirect(array('index'));
+			  }
+			    catch(exception $e) {
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  }
 			}
 		}
 
@@ -64,9 +75,21 @@ class CityController extends Controller
 		if(isset($_POST['City']))
 		{
 			$model->attributes=$_POST['City'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Update Successfully");
-				$this->redirect(array('index'));
+			$model->state_id = $_POST['state_id'];
+			if($model->validate()) {
+			  #$transaction mulai transaksi
+			  $transaction = Yii::app()->db->beginTransaction();
+			  try{
+			    $model->save();
+			    #jika tidak ada error transaksi proses di commit
+			    $transaction->commit();
+			    Yii::app()->user->setFlash('success', "Update Successfully");
+			    $this->redirect(array('index'));
+			  }
+			    catch(exception $e) {
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  }
 			}
 		}
 

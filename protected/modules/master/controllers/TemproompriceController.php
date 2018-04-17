@@ -34,20 +34,26 @@ class TemproompriceController extends Controller
 		{
 			$rand=(rand(1,10));
 			$model->attributes=$_POST['Temproomprice'];
-			foreach (Temproomprice::$publicTypePrice as $key => $PriceType) {
-				$mDescTac = new Temproomprice(); #declare $mDescTac menggunakan table Propertydesc
-				$mDescTac->attributes=$_POST['Temproomprice'];
-				$mDescTac->random_id = $rand;
-				$mDescTac->hours = $PriceType;
-				$mDescTac->price = $_POST['Temproomprice'][$PriceType];
+			$transaction = Yii::app()->db->beginTransaction();
+			try{
+					foreach (Temproomprice::$publicTypePrice as $key => $PriceType) {
+						$mTemPrice = new Temproomprice(); #declare $mTemPrice menggunakan table Propertydesc
+						$mTemPrice->attributes=$_POST['Temproomprice'];
+						$mTemPrice->random_id = $rand;
+						$mTemPrice->hours = $PriceType;
+						$mTemPrice->price = $_POST['Temproomprice'][$PriceType];
 
-				//echo $mDescTac->price = $model->$PriceType;
-				$mDescTac->save(); #save(false)--> save tidak validasi
-			}
-			Yii::app()->user->setFlash('success', "Create Successfully");
-			$this->redirect(array('index'));
+						$mTemPrice->save(); #save(false)--> save tidak validasi
+					}
+					$transaction->commit();
+			    Yii::app()->user->setFlash('success', "Create Successfully");
+			    $this->redirect(array('index'));
+			  }
+			    catch(exception $e) {
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  }
 		}
-
 		$this->render('create',array(
 			'model'=>$model,
 		));

@@ -78,15 +78,24 @@ class RunningdateController extends Controller
 			$end = new DateTime($iso_date2);
 			$interval = DateInterval::createFromDateString('1 day');
 			$period = new DatePeriod($begin, $interval, $end);
-
-			foreach ($period as $dt) {
-					//echo $dt->format("l Y-m-d\n")."<br>";
-					$mSaveDate = new Runningdate(); #declare $mSaveDate menggunakan table Propertydesc
-					$mSaveDate->date_id = $dt->format("N");
-					$mSaveDate->runningdate = $dt->format("Y-m-d");
-					$mSaveDate->save(); #save(false)--> save tidak validasi
-					//$this->redirect(array('index'));
-			}
+			$transaction = Yii::app()->db->beginTransaction();
+			try{
+					foreach ($period as $dt) {
+							//echo $dt->format("l Y-m-d\n")."<br>";
+							$mSaveDate = new Runningdate(); #declare $mSaveDate menggunakan table Propertydesc
+							$mSaveDate->date_id = $dt->format("N");
+							$mSaveDate->runningdate = $dt->format("Y-m-d");
+							$mSaveDate->save(); #save(false)--> save tidak validasi
+							//$this->redirect(array('index'));
+					}
+					$transaction->commit();
+			    Yii::app()->user->setFlash('success', "Create Successfully");
+			    $this->redirect(array('index'));
+			  }
+			    catch(exception $e) {
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  }
 			/*if($model->save()) {
 				Yii::app()->user->setFlash('success', "Create Successfully");
 				$this->redirect(array('index'));

@@ -30,38 +30,16 @@ class RoompriceflexibleController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		/*if(isset($_POST['Roompriceflexible']))
-		{
-			$model->attributes=$_POST['Roompriceflexible'];
-
-
-				//print_r($_POST['Basepriceroom']);
-				$mDescTac = new Roompriceflexible(); #declare $mDescTac menggunakan table Propertydesc
-				$mDescTac->attributes=$_POST['Roompriceflexible'];
-				foreach (Roompriceflexible::$publicTypePrice as $key => $PriceType) {
-					$mDescTac = new Roompriceflexible(); #declare $mDescTac menggunakan table Propertydesc
-					$mDescTac->attributes=$_POST['Roompriceflexible'];
-					$mDescTac->room_type_id = $model->room_type_id;
-					$mDescTac->hours = $PriceType;
-					$mDescTac->price = '';
-					//echo $mDescTac->price;
-					//echo $mDescTac->price = $model->$PriceType;
-					$mDescTac->save(false); #save(false)--> save tidak validasi
-				}
-				//$this->redirect(array('index'));
-			}
-			*/
-
 		if(isset($_POST['Roompriceflexible']))
 		{
-			print_r($_POST);
+			//print_r($_POST);
 			$model->attributes=$_POST['Roompriceflexible'];
 			foreach (Roompriceflexible::$publicTypePrice as $key => $PriceType) {
-				$mDescTac = new Roompriceflexible(); #declare $mDescTac menggunakan table Propertydesc
-				$mDescTac->attributes=$_POST['Roompriceflexible'];
-				$mDescTac->room_type_id = $model->room_type_id=$_POST['roomtype_id'];
-				$mDescTac->hours = $PriceType;
-				$mDescTac->price = $_POST['Roompriceflexible'][$PriceType];
+				$mFlexPrice = new Roompriceflexible(); #declare $mFlexPrice menggunakan table Propertydesc
+				$mFlexPrice->attributes=$_POST['Roompriceflexible'];
+				$mFlexPrice->room_type_id = $model->room_type_id=$_POST['roomtype_id'];
+				$mFlexPrice->hours = $PriceType;
+				$mFlexPrice->price = $_POST['Roompriceflexible'][$PriceType];
 				$tgl=$_POST['Roompriceflexible']['date'];
 				$format = '%d/%m/%Y';
 				$date = $tgl;
@@ -82,9 +60,9 @@ class RoompriceflexibleController extends Controller
 
 				$iso_date; //outputs 2012-05-25
 				$date=date_create($iso_date);
-				$mDescTac->date=date_format($date,"Y/m/d H:i:s");
-				//echo $mDescTac->price = $model->$PriceType;
-				$mDescTac->save(); #save(false)--> save tidak validasi
+				$mFlexPrice->date=date_format($date,"Y/m/d H:i:s");
+				//echo $mFlexPrice->price = $model->$PriceType;
+				$mFlexPrice->save(); #save(false)--> save tidak validasi
 			}
 			//$model->room_type_id=$_POST['Roompriceflexible']['roomtype_id'];
 			/*if($model->save()) {
@@ -203,16 +181,18 @@ class RoompriceflexibleController extends Controller
 								    WHERE
 								    u.`runningdate` between '".$iso_date1."' and '".$iso_date2."' and
 								    u.date_id IN ($tampung));");
+			$transaction = Yii::app()->db->beginTransaction();
+		  try{
 				#INSERT TEMPPRICEROOM
 				foreach (Temproomprice::$publicTypePrice as $key => $PriceType) {
-					$mDescTac = new Temproomprice(); #declare $mDescTac menggunakan table Propertydesc
-					$mDescTac->attributes=$_POST['Roompriceflexible'];
-					$mDescTac->random_id = $rand;
-					$mDescTac->hours = $PriceType;
-					$mDescTac->price = $_POST['Roompriceflexible'][$PriceType];
+					$mFlexPrice = new Temproomprice(); #declare $mFlexPrice menggunakan table Propertydesc
+					$mFlexPrice->attributes=$_POST['Roompriceflexible'];
+					$mFlexPrice->random_id = $rand;
+					$mFlexPrice->hours = $PriceType;
+					$mFlexPrice->price = $_POST['Roompriceflexible'][$PriceType];
 
-					//echo $mDescTac->price = $model->$PriceType;
-					$mDescTac->save(); #save(false)--> save tidak validasi
+					//echo $mFlexPrice->price = $model->$PriceType;
+					$mFlexPrice->save(); #save(false)--> save tidak validasi
 				}
 				#insert update bulks
 				$updatebulks = DAO::executeSql("INSERT INTO `tghroompriceflexible` (room_type_id, date,hours, price)
@@ -220,7 +200,15 @@ class RoompriceflexibleController extends Controller
 				(select hours,price,random_id from `tghtemproomprice` where random_id='$rand') as price,
 				(select runningdate from tghrunningdate where runningdate between '".$iso_date1."' and '".$iso_date2."' AND date_id IN ($tampung)) as tgl");
 
-				$truntempprice=DAO::executeSql("TRUNCATE TABLE `tghtemproomprice`;");
+					$truntempprice=DAO::executeSql("DELETE FROM `tghtemproomprice` WHERE random_id='".$rand."';");
+					$transaction->commit();
+					Yii::app()->user->setFlash('success', "Create Successfully");
+					$this->redirect(array('index'));
+				}
+					catch(exception $e) {
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  }
 			}
 		}
 		// Uncomment the following line if AJAX validation is needed

@@ -35,9 +35,20 @@ class PropertyphototypeController extends Controller
 			print_r($_POST);
 			Yii::app()->end();
 			$model->attributes=$_POST['Propertyphototype'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
+			if($model->validate()) {
+			  #$transaction mulai transaksi
+			  $transaction = Yii::app()->db->beginTransaction();
+			  try{
+			    $model->save();
+			    #jika tidak ada error transaksi proses di commit
+			    $transaction->commit();
+			    Yii::app()->user->setFlash('success', "Create Successfully");
+			    $this->redirect(array('index'));
+			  }
+			    catch(exception $e) {
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  }
 			}
 		}
 
@@ -61,9 +72,20 @@ class PropertyphototypeController extends Controller
 		if(isset($_POST['Propertyphototype']))
 		{
 			$model->attributes=$_POST['Propertyphototype'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Update Successfully");
-				$this->redirect(array('index'));
+			if($model->validate()) {
+			  #$transaction mulai transaksi
+			  $transaction = Yii::app()->db->beginTransaction();
+			  try{
+			    $model->save();
+			    #jika tidak ada error transaksi proses di commit
+			    $transaction->commit();
+			    Yii::app()->user->setFlash('success', "Update Successfully");
+			    $this->redirect(array('index'));
+			  }
+			    catch(exception $e) {
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  }
 			}
 		}
 
