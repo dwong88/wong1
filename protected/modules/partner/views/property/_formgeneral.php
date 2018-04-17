@@ -234,8 +234,16 @@ $default='-6.214626,106.84513';
   function initialize() {
 	var gmaps1 = document.getElementById('gmaps_lat').value;
 	var gmaps2 = document.getElementById('gmaps_lng').value;
-  var myLatlng = new google.maps.LatLng(gmaps1,gmaps2);
-alert(myLatlng);
+	//alert(gmaps1);
+	if(gmaps1 != 0){
+
+		var myLatlng = new google.maps.LatLng(gmaps1,gmaps2);
+	}
+  else{
+		//var myLatlng = new google.maps.LatLng(gmaps1,gmaps2);
+		var myLatlng = new google.maps.LatLng(-6.214626,106.84513);
+	}
+	//alert (myLatlng);
   var myOptions = {
      zoom: 8,
      center: myLatlng,

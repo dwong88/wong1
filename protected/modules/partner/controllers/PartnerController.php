@@ -35,13 +35,29 @@ class PartnerController extends Controller
 		{
 			$model->attributes=$_POST['Partner'];
 			$model1->attributes=$_POST['Partnerlogin'];
-			if($model->save()) {
-				$model1->partner_id = $model->partner_id;
-				$model1->password=Encryption::encrypt($model1->password);
-				$model1->save();
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
-			}
+			#fungsi validasi proses
+			if($model->validate()) {
+				#$transaction mulai transaksi
+				$transaction = Yii::app()->db->beginTransaction();
+				try{
+							$model->save();
+							$model1->partner_id = $model->partner_id;
+							$model1->password=Encryption::encrypt($model1->password);
+							$model1->save();
+							if($model->validate()) {
+								 $model1->save();
+							}
+							#jika tidak ada error transaksi proses di commit
+							$transaction->commit();
+							Yii::app()->user->setFlash('success', "Create Partner Successfully");
+							$this->redirect(array('index'));
+					}
+						catch(exception $e) {
+							$transaction->rollback();
+							throw new CHttpException(500, $e->getMessage());
+					}
+				}
+
 		}
 
 		$this->render('create',array(
@@ -61,20 +77,29 @@ class PartnerController extends Controller
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
 		if(isset($_POST['Partner']))
 		{
 			$model->attributes=$_POST['Partner'];
-			if($model->save()) {
-				$model1->save();
-				Yii::app()->user->setFlash('success', "Update Successfully");
-				$this->redirect(array('index'));
-			}
+			if($model->validate()) {
+			  #$transaction mulai transaksi
+			  $transaction = Yii::app()->db->beginTransaction();
+			  try{
+						$model->save();
+						$model1->save();
+						$transaction->commit();
+				    Yii::app()->user->setFlash('success', "Updated Successfully");
+				    $this->redirect(array('index'));
+				  }
+				    catch(exception $e) {
+				      $transaction->rollback();
+				      throw new CHttpException(500, $e->getMessage());
+				  }
 		}
-
+		}
 		$this->render('update',array(
 			'model'=>$model,'model1'=>$model1
 		));
+
 	}
 
 	/**

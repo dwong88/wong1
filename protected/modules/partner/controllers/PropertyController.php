@@ -39,26 +39,37 @@ class PropertyController extends Controller
 			$model->available_cleaning_start =$_POST['Property']['start_hours'].":".$_POST['Property']['start_minutes'];
 			$model->available_cleaning_end =$_POST['Property']['end_hours'].":".$_POST['Property']['end_minutes'];
 			//Yii::app()->end();
-			if($model->save()) {
-				#looping tipe policies ex:toc,payment,cancel
-				foreach (Propertydesc::$publicTypeDesc as $descType) {
-					#looping tipe languange
-					foreach (Helper::$listLanguage as $lng=>$lngText) { #fungsi helper panggil list language
-						$mDescTac = new Propertydesc(); #declare $mDescTac menggunakan table Propertydesc
-						$mDescTac->property_id = $model->property_id;
-						$mDescTac->lang = $lng;
-						$mDescTac->type = $descType;
-						$mDescTac->desc = "";
-						$mDescTac->save(false); #save(false)--> save tidak validasi
-					}
-				}
+			if($model->validate()) {
+			  #$transaction mulai transaksi
+			  $transaction = Yii::app()->db->beginTransaction();
+			  try{
+						$model->save();
+						#looping tipe policies ex:toc,payment,cancel
+						foreach (Propertydesc::$publicTypeDesc as $descType) {
+							#looping tipe languange
+							foreach (Helper::$listLanguage as $lng=>$lngText) { #fungsi helper panggil list language
+								$mDescTac = new Propertydesc(); #declare $mDescTac menggunakan table Propertydesc
+								$mDescTac->property_id = $model->property_id;
+								$mDescTac->lang = $lng;
+								$mDescTac->type = $descType;
+								$mDescTac->desc = "";
+								$mDescTac->save(false); #save(false)--> save tidak validasi
+							}
+						}
 
-				#proces property features
-				$modelfeat->property_id = $model->property_id;
-				$modelfeat->prop_features_id = "";
-				$modelfeat->save(false); #save(false)--> save tidak validasi
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
+						#proces property features
+						$modelfeat->property_id = $model->property_id;
+						$modelfeat->prop_features_id = "";
+						$modelfeat->save(false); #save(false)--> save tidak validasi
+						$transaction->commit();
+				    Yii::app()->user->setFlash('success', "Create Successfully");
+				    $this->redirect(array('index'));
+		  	}
+			    catch(exception $e)
+					{
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  	}
 			}
 		}
 
@@ -77,18 +88,18 @@ class PropertyController extends Controller
 		$model=$this->loadModel($id); #panggil fungsi loadmodel property
 
 		#explode
+		#start hour and minutes
 		$str1 = $model->available_cleaning_start;
-		//print_r (explode(":",$str1));
 		$model->start_hours = $str1[0];
 		$model->start_minutes = $str1[2];
+		#end hour and minutes
 		$str2 = $model->available_cleaning_start;
-		//print_r (explode(":",$str2));
 		$model->end_hours = $str2[0];
 		$model->end_minutes = $str2[2];
 
 		#state and city_id
 		$mStatec = DAO::queryAllSql("SELECT st.state_name,st.state_id,ct.city_id,ct.city_name,p.property_id FROM `tghproperty` as p,`tghstate` as st,`tghcity` as ct WHERE  p.state_id=st.state_id AND p.city_id=ct.city_id AND p.property_id = '".$id."'");
-
+	
 		$modelphoto= new Propertyphoto; #declare use model propertyphoto
 		$modelphoto->property_id=$id;
 		$modelphoto->propertyphototype_id =$_POST['Propertyphoto']['propertyphototype_id'];
@@ -124,7 +135,7 @@ class PropertyController extends Controller
 						/*panggil component image dengan param $image*/
 						$image = Yii::app()->image->load($name);
 						/*resize gambar/thumb gambar*/
-						$image->resize(93, 0);
+						$image->resize(93, 100);
 						/*simpan thumb image kembali gambar ke
 						 *images/products/thumbs*/
 						$image->save();
@@ -158,14 +169,28 @@ class PropertyController extends Controller
 		#proses update descripsi
 		if(isset($_POST['Propertydesc']))
 		{
+
 			$modeldesc->attributes = $_POST['Propertydesc'];
-			foreach (Propertydesc::$publicTypeDesc as $key => $value)
-			{
-				$mSaveDesc = $this->loadModeldesc($id, $lng, $value);
-				$mSaveDesc->desc = $modeldesc->$value;
-				//Yii::app()->end();
-				$mSaveDesc->save();
-			}
+				#$transaction mulai transaksi
+				$transaction = Yii::app()->db->beginTransaction();
+				try
+					{
+					foreach (Propertydesc::$publicTypeDesc as $key => $value)
+					{
+						$mSaveDesc = $this->loadModeldesc($id, $lng, $value);
+						$mSaveDesc->desc = $modeldesc->$value;
+						//Yii::app()->end();
+						$mSaveDesc->save();
+					}
+
+					$transaction->commit();
+					Yii::app()->user->setFlash('success', "Update Successfully");
+					//$this->redirect(array('index'));
+				}
+					catch(exception $e) {
+						$transaction->rollback();
+						throw new CHttpException(500, $e->getMessage());
+				}
 		}
 
 		/*bagian features*/
@@ -174,14 +199,15 @@ class PropertyController extends Controller
 
 		if(isset($_POST['propfeat']))
 		{
-				$loop=$_POST['propfeat'];
-				$mDel = DAO::executeSql("DELETE FROM tghpropertyfeatures WHERE property_id = '".$id."'");
-				foreach ($loop as $key => $value) {
-					$mSavefeatures = new Propertyfeatures;
-					$mSavefeatures->prop_features_id = $value;
-					$mSavefeatures->property_id = $id;
-					$mSavefeatures->save(false);
-				}
+
+					$loop=$_POST['propfeat'];
+					$mDel = DAO::executeSql("DELETE FROM tghpropertyfeatures WHERE property_id = '".$id."'");
+					foreach ($loop as $key => $value) {
+						$mSavefeatures = new Propertyfeatures;
+						$mSavefeatures->prop_features_id = $value;
+						$mSavefeatures->property_id = $id;
+						$mSavefeatures->save(false);
+					}
 		}
 		#hasil $mSelf masing multidimensi array
 		$mSelf = DAO::queryAllSql("SELECT property_id,prop_features_id FROM tghpropertyfeatures WHERE property_id = '".$id."'");
@@ -197,10 +223,22 @@ class PropertyController extends Controller
 		/*bagian update property general */
 		if(isset($_POST['Property']))
 		{
-			$model->attributes=$_POST['Property'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Update Successfully");
-				$this->redirect(array('index'));
+				$model->attributes=$_POST['Property'];
+				if($model->validate()) {
+				  #$transaction mulai transaksi
+				  $transaction = Yii::app()->db->beginTransaction();
+				  try
+						{
+							$model->save();
+							$transaction->commit();
+							Yii::app()->user->setFlash('success', "Update Successfully");
+							$this->redirect(array('index'));
+						}
+						catch(exception $e)
+						{
+								$transaction->rollback();
+								throw new CHttpException(500, $e->getMessage());
+						}
 			}
 		}
 		$this->render('update',array(

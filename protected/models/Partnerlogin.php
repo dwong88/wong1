@@ -9,7 +9,7 @@
  * @property string $roles
  * @property string $password
  */
-class Partnerlogin extends CActiveRecord
+class Partnerlogin extends ActiveRecord
 {
 	/**
 	 * @return string the associated database table name
@@ -19,6 +19,12 @@ class Partnerlogin extends CActiveRecord
 		return 'tghpartnerlogin';
 	}
 
+	public function __construct($scenario = 'insert')
+	{
+		parent::__construct($scenario);
+		$this->logRecord=true;
+	}
+	
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -43,6 +49,8 @@ class Partnerlogin extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'refUsercreate' => array(self::BELONGS_TO, 'User', 'create_by'),
+			'refUserupdate' => array(self::BELONGS_TO, 'User', 'update_by'),
 		);
 	}
 
