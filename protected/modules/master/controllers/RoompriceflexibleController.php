@@ -172,7 +172,7 @@ class RoompriceflexibleController extends Controller
 				$tampung= rtrim($mdate,',');
 				$room_type_ids=$_GET['id'];
 
-				$BulkDel = DAO::executeSql("DELETE FROM tghroompriceflexible
+				/*$BulkDel = DAO::executeSql("DELETE FROM tghroompriceflexible
 								WHERE
 								 		room_type_id=$room_type_ids
 										and date IN
@@ -180,7 +180,12 @@ class RoompriceflexibleController extends Controller
 								    tghrunningdate u
 								    WHERE
 								    u.`runningdate` between '".$iso_date1."' and '".$iso_date2."' and
-								    u.date_id IN ($tampung));");
+								    u.date_id IN ($tampung));");*/
+			$BulkDel = DAO::executeSql("DELETE w
+																	FROM `tghroompriceflexible` w
+																	INNER JOIN tghrunningdate` e
+																	  ON e.runningdate=w.date
+																	WHERE w.room_type_id=$room_type_ids AND e.runningdate between '".$iso_date1."' and '".$iso_date2."' and e.date_id IN ($tampung)");
 			$transaction = Yii::app()->db->beginTransaction();
 		  try{
 				#INSERT TEMPPRICEROOM
@@ -204,6 +209,7 @@ class RoompriceflexibleController extends Controller
 					$transaction->commit();
 					Yii::app()->user->setFlash('success', "Create Successfully");
 					$this->redirect(array('index'));
+					//$this->redirect(array('../partner/property/index'));
 				}
 					catch(exception $e) {
 			      $transaction->rollback();
