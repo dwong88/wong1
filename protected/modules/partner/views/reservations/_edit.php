@@ -3,16 +3,16 @@
 Yii::app()->clientScript->registerScript(
 					    '__inPageScript',
 					    "
-							function close() {
+							function close(result) {
 									if (parent && parent.DayPilot && parent.DayPilot.ModalStatic) {
-											parent.DayPilot.ModalStatic.close();
+											parent.DayPilot.ModalStatic.close(result);
 									}
 							}
-							$('#edit-form').submit(function () {
+							$('#edit-form').submit(function (result) {
 							    var g = $('#edit-form');
-							    $.post(g.attr('action'), g.serialize(), function () {
+							    $.post(g.attr('action'), g.serialize(), function (result) {
 											//console.log(eval(result));
-							        close();
+							        close(eval(result));
 							    });
 							    return false;
 							});
@@ -61,17 +61,7 @@ CClientScript::POS_READY
 		<?php echo $form->dropDownList($model,'room_id', CHtml::listData(Room::model()->findAll(), 'room_id', 'room_name'),array('prompt'=>'Pilih kamar')); ?>
 		<?php echo $form->error($model,'room_id'); ?>
 	</div>
-	<div class="row">
-		<?php echo $form->labelEx($model,'status'); ?>
-		<?php echo $form->dropDownList($model, 'status', array('New'=>'New','Confirm'=>'Confirm', 'Arrived'=>'Arrived','CheckedOut'=>'Checked Out'), array('prompt'=>'Pilih')); ?>
-		<?php echo $form->error($model,'status'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'paid'); ?>
-		<?php echo $form->dropDownList($model, 'paid', array('0'=>'0%','50'=>'50%', '100'=>'100%'), array('prompt'=>'Pilih')); ?>
-		<?php echo $form->error($model,'paid'); ?>
-	</div>
+	
 	<?php echo $form->hiddenField($model,'reservations_id',array('value'=>''));?>
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

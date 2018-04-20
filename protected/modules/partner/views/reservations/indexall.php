@@ -156,6 +156,7 @@
 			]});
 
 			dp.treeEnabled = true;
+			dp.treePreventParentUsage = true;
 			dp.rowHeaderWidth = 200;
 
 			dp.eventHoverHandling = "Bubble";
@@ -167,7 +168,6 @@
 			// event moving
 			dp.onEventMoved = function (args) {
 				//$.post("backend_move.php",
-					alert(args.newStart.toString());
 				$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadmovedevent')?>&start="+args.newStart.toString()+"&end="+args.newEnd.toString()+"&id="+args.e.id()+"&resource="+args.newResource,
 				{
 

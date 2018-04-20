@@ -3,16 +3,16 @@
 Yii::app()->clientScript->registerScript(
 					    '__inPageScript',
 					    "
-							function close() {
+							function close(result) {
 							    if (parent && parent.DayPilot && parent.DayPilot.ModalStatic) {
-							        parent.DayPilot.ModalStatic.close();
+							        parent.DayPilot.ModalStatic.close(result);
 							    }
 							}
 
 							$('#reservations-form').submit(function () {
 							    var f = $('#reservations-form');
-							    $.post(f.attr('action'), f.serialize(), function () {
-							        close();
+							    $.post(f.attr('action'), f.serialize(), function (result) {
+							        close(eval(result));
 							    });
 							    return false;
 							});
@@ -22,14 +22,22 @@ CClientScript::POS_READY
 ?>
 <div class="form">
 
-<?php $form=$this->beginWidget('CActiveForm', array(
+<?php
+		if($model->isNewRecord){
+		 $actions[]='create';
+		}
+		else{
+			$id=$model->reservations_id;
+			$actions[]='update&id='.$id;
+		}
+	$form=$this->beginWidget('CActiveForm', array(
 	'id'=>'reservations-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
-	'action'=>array('create'),
+	'action'=>$actions,
 )); ?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
@@ -59,6 +67,26 @@ CClientScript::POS_READY
 		<?php echo $form->dropDownList($model,'room_id', CHtml::listData(Room::model()->findAll(), 'room_id', 'room_name'),array('prompt'=>'Pilih kamar')); ?>
 		<?php echo $form->error($model,'room_id'); ?>
 	</div>
+	<?php
+		if($model->isNewRecord){
+
+		}
+		else{
+			?>
+			<div class="row">
+				<?php echo $form->labelEx($model,'status'); ?>
+				<?php echo $form->dropDownList($model, 'status', array('New'=>'New','Confirm'=>'Confirm', 'Arrived'=>'Arrived','CheckedOut'=>'Checked Out'), array('prompt'=>'Pilih')); ?>
+				<?php echo $form->error($model,'status'); ?>
+			</div>
+
+			<div class="row">
+				<?php echo $form->labelEx($model,'paid'); ?>
+				<?php echo $form->dropDownList($model, 'paid', array('0'=>'0%','50'=>'50%', '100'=>'100%'), array('prompt'=>'Pilih')); ?>
+				<?php echo $form->error($model,'paid'); ?>
+			</div>
+			<?php
+		}
+	?>
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>
