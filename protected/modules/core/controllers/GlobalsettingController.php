@@ -1,5 +1,6 @@
 <?php
-
+class Roomtes{
+}
 class GlobalsettingController extends Controller
 {
 	/**
@@ -48,7 +49,7 @@ class GlobalsettingController extends Controller
 
 		}
 
-		public function actionLoadcities()
+		public function actionLoadcities($start)
 		{
 				//echo "string2";
 
@@ -61,6 +62,7 @@ class GlobalsettingController extends Controller
 		   echo "<option value=''>Select City</option>";
 		   foreach($data as $value=>$city_name)
 		   echo CHtml::tag('option', array('value'=>$value),CHtml::encode($city_name),true);
+			 $this->renderPartial('_testing');
 		}
 
 		public function actionLoadroomtype()
@@ -88,6 +90,76 @@ class GlobalsettingController extends Controller
 		   foreach($data as $value=>$room_name)
 		   echo CHtml::tag('option', array('value'=>$value),CHtml::encode($room_name),true);
 
+		}
+
+		public function actionLoadcreateevent()
+		{
+			 //Yii::app()->end();
+				$start;
+
+				/*$stmt = $db->prepare("select r.room_id as id, r.`room_name` as name,rt.room_type_id as parent_id,rt.room_type_name as parent_name,rt.`room_type_room_size` as capacity from tghroom as r
+				inner join `tghroomtype` as rt on r.`room_type_id` = rt.`room_type_id`
+				GROUP BY rt.room_type_id
+				ORDER BY rt.room_type_id");
+				$stmt->bindParam(':capacity', $_POST['capacity']);
+				$stmt->execute();
+				$rooms = $stmt->fetchAll();*/
+				$room1 = DAO::queryAllSql("select r.room_id as id, r.`room_name` as name,rt.room_type_id as parent_id,rt.room_type_name as parent_name,rt.`room_type_room_size` as capacity from tghroom as r
+				inner join `tghroomtype` as rt on r.`room_type_id` = rt.`room_type_id`
+				GROUP BY rt.room_type_id
+				ORDER BY rt.room_type_id");
+
+
+				$result = array();
+				$c=0;
+				foreach($room1 as $room) {
+				  $r = new Roomtes();
+				  $r->id = $room['parent_id'];
+				  $r->name = $room['parent_name'];
+				  $r->capacity = $room['capacity'];
+				  //$r->status = $room['status'];
+				  $c=$c+1;
+				  if($c==1){
+				    $r->expanded = true;
+				  }
+				  else{
+				    $r->expanded = false;
+				  }
+				  $r->children = array();
+				  $roomsp =DAO::queryAllSql("SELECT room_name as name, room_id as id FROM tghroom WHERE room_type_id = ".$room['parent_id']." ORDER BY name");
+				  foreach($roomsp as $value) {
+				    $children = new stdClass;
+				    $children->name = $value['name'];
+				    $children->id = $value['id'];
+				    $r->children[] = $children;
+				  }
+
+
+				  $result[] = $r;
+
+				}
+
+
+				//initialize array
+				$myArray = array();
+
+				//set up the nested associative arrays using literal array notation
+				$firstArray = array("id" => 1,"name" => 'room1', "data" => 45);
+				$secondArray = array("id" => 3,"name" => 'room2', "data" => 54);
+
+				//push items onto main array with bracket notation (this will result in numbered indexes)
+				$myArray[] = $firstArray;
+				$myArray[] = $secondArray;
+
+
+				//convert to json
+				//$json = json_encode($myArray);
+				header('Content-Type: application/json');
+				echo json_encode($myArray);
+				//convert to json
+				//$json = json_encode($myArray);
+				//header('Content-Type: application/json');
+				//echo json_encode($result);
 		}
 
 	/**
