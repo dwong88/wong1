@@ -21,7 +21,19 @@ $('#room_id').change(function() {
 	   		days = (end- start) / (1000 * 60 * 60 * 24);
        	console.log(Math.round(days));
        }
+			 function close(result) {
+			 		if (parent && parent.DayPilot && parent.DayPilot.ModalStatic) {
+			 				parent.DayPilot.ModalStatic.close(result);
+			 		}
+			 }
 
+			 $('#roomclosure-form').submit(function () {
+			 		var f = $('#roomclosure-form');
+			 		$.post(f.attr('action'), f.serialize(), function (result) {
+			 				close(eval(result));
+			 		});
+			 		return false;
+			 });
 							",
 CClientScript::POS_READY
 );
@@ -42,31 +54,8 @@ CClientScript::POS_READY
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
 
 	<?php Helper::showFlash(); ?>
-	<?php echo $form->dropDownList($model,'property_id', CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),array(
-	'prompt'=>'Select Property',
-	'ajax' => array(
-	'type'=>'POST',
-	'url'=>Yii::app()->createUrl('core/globalsetting/loadroomtype'), //or $this->createUrl('loadcities') if '$this' extends CController
-	'update'=>'#roomtype_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
-	'data'=>array('property_id'=>'js:this.value'),
-	))); ?>
-	<?php
-		echo CHtml::dropDownList('roomtype_id',$select_st,
-		array($select_st=>$mStatec[0]['state_name']),
-		array(
-			'prompt'=>'Select Room Type',
-			'ajax' => array(
-			'type'=>'POST',
-			'url'=>Yii::app()->createUrl('core/globalsetting/loadroom'), //or $this->createUrl('loadcities') if '$this' extends CController
-			'update'=>'#room_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
-		'data'=>array('room_type_id'=>'js:this.value'),
-		)));
-			echo $form->labelEx($model,'room_id');
-			echo CHtml::dropDownList('room_id',$select_ct,
-			array($select_ct=>$mStatec[0]['room_name']), array('prompt'=>'Select Room'));
-	?>
 	<div class="row">
-		<?php echo $form->hiddenField($model,'room_id',array('value'=>''));?>
+		<?php echo $form->hiddenField($model,'room_id');?>
 		<?php echo $form->error($model,'room_id'); ?>
 	</div>
 

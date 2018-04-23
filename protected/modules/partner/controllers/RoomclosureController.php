@@ -1,5 +1,5 @@
 <?php
-
+class Resultec {} #create
 class RoomclosureController extends Controller
 {
 	/**
@@ -37,7 +37,7 @@ class RoomclosureController extends Controller
 		if(isset($_POST['Roomclosure']))
 		{
 			$model->attributes=$_POST['Roomclosure'];
-			$model->room_id = $_POST['room_id'];
+			$model->room_id=$resource;
 			if($model->validate()) {
 			  #$transaction mulai transaksi
 			  $transaction = Yii::app()->db->beginTransaction();
@@ -45,8 +45,14 @@ class RoomclosureController extends Controller
 			    $model->save();
 			    #jika tidak ada error transaksi proses di commit
 			    $transaction->commit();
-			    Yii::app()->user->setFlash('success', "Create Successfully");
-			    $this->redirect(array('index'));
+			    //Yii::app()->user->setFlash('success', "Create Successfully");
+			    //$this->redirect(array('index'));
+
+					$response = new Resultec();
+					$response->result = 'OK';
+					$response->message = 'Create successful';
+
+					Yii::app()->end();
 			  }
 			    catch(exception $e) {
 			      $transaction->rollback();

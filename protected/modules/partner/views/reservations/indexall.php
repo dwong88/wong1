@@ -74,7 +74,14 @@
 				<div id="dp"></div>
 
 		</div>
-
+<?php
+	$subs=substr($_GET['r'],21)."<br>";
+	$myText = (string)$subs;
+	if($subs='indexall')
+	{
+		$idtype=1;
+	}
+?>
 <script type="text/javascript">
 		var nav = new DayPilot.Navigator("nav");
 		nav.selectMode = "month";
@@ -234,9 +241,6 @@
 		dp.onTimeRangeSelected = function (args) {
 		//var name = prompt("New event name:", "Event");
 
-		var r = confirm("Press a button!");
-		if (r == true)
-		{
 		var modal = new DayPilot.Modal();
 		modal.closed = function() {
 			dp.clearSelection();
@@ -248,23 +252,8 @@
 			}
 		};
 
-			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadcreateevent')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource);
-		}
-		else {
-			alert('closure');
-			var modal = new DayPilot.Modal();
-			modal.closed = function() {
-				dp.clearSelection();
+			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadpages')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource+ "&idtype=" + <?php echo $idtype;?>);
 
-				// reload all events
-				var data = this.result;
-				if (data && data.result === "OK") {
-					loadEvents();
-				}
-			};
-
-				modal.showUrl("<?php echo Yii::app()->createUrl('master/roomclosure/create')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource);
-		}
 		};
 
 		dp.onEventClicked = function(args) {
@@ -277,7 +266,7 @@
 				}
 			};
 			//modal.showUrl("edit.php?id=" + args.e.id());
-			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadeditevent')?>&id=" + args.e.id());
+			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadeditevent')?>&id=" + args.e.id()+ "&idtype=" + <?php echo $idtype;?>);
 		};
 
 		dp.onEventDeleted = function(args) {
@@ -420,7 +409,8 @@
 				loadResources();
 			});
 		});
-dp.scrollTo("2013-03-24T16:00:00");
+//dp.scrollTo("2013-03-24T16:00:00");
+dp.scrollTo(new DayPilot.Date());
 
 </script>
 

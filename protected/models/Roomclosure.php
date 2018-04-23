@@ -43,7 +43,7 @@ class Roomclosure extends ActiveRecord
 		return array(
 			array('start_date', 'application.components.validator.DatePickerSwitcherValidator'),
 			array('end_date', 'application.components.validator.DatePickerSwitcherValidator'),
-			array('room_id, start_date, end_date', 'required'),
+			array('start_date, end_date', 'required'),
 			array('status', 'length', 'max'=>11),
 			array('room_id, create_by, update_by', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().

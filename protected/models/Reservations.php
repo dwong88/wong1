@@ -10,6 +10,7 @@
  * @property string $end_date
  * @property string $room_id
  * @property string $status
+ * @property string $type
  * @property integer $paid
  * @property string $create_dt
  * @property integer $create_by
@@ -32,7 +33,7 @@ class Reservations extends ActiveRecord
 		parent::__construct($scenario);
 		$this->logRecord=true;
 	}
-	
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -44,10 +45,10 @@ class Reservations extends ActiveRecord
 			array('customer_name, start_date, end_date', 'required'),
 			array('room_id,paid, create_by, update_by', 'numerical', 'integerOnly'=>true),
 			array('customer_name', 'length', 'max'=>50),
-			array('status', 'length', 'max'=>30),
+			array('status,type', 'length', 'max'=>30),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('reservations_id, customer_name, start_date, end_date,room_id , status, paid, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
+			array('reservations_id, customer_name, start_date, end_date,room_id , type, status, paid, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -74,6 +75,7 @@ class Reservations extends ActiveRecord
 			'customer_name' => 'Customer Name',
 			'start_date' => 'Start Date',
 			'end_date' => 'End Date',
+			'type' => 'Type',
 			'status' => 'Status',
 			'paid' => 'Paid',
 			'create_dt' => 'Create Dt',
@@ -105,6 +107,7 @@ class Reservations extends ActiveRecord
 		$criteria->compare('customer_name',$this->customer_name,true);
 		$criteria->compare('start_date',$this->start_date,true);
 		$criteria->compare('end_date',$this->end_date,true);
+		$criteria->compare('type',$this->type,true);
 		$criteria->compare('status',$this->status,true);
 		$criteria->compare('paid',$this->paid);
 		$criteria->compare('create_dt',$this->create_dt,true);

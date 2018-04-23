@@ -23,8 +23,9 @@ CClientScript::POS_READY
 <div class="form">
 
 <?php
+
 		if($model->isNewRecord){
-		 $actions[]='create';
+		 $actions[]='loadcreateevent&start='.$start."&end=".$end."&resource".$room_id;
 		}
 		else{
 			$id=$model->reservations_id;
@@ -68,6 +69,21 @@ CClientScript::POS_READY
 		<?php echo $form->error($model,'room_id'); ?>
 	</div>
 	<?php
+	if($idtype==1)
+	{
+	?>
+	<div class="row">
+		<?php echo $form->labelEx($model,'type'); ?>
+		<?php echo $form->dropDownList($model, 'type', array('regular'=>'Regular','onenight'=>'24 Hours'), array('prompt'=>'Pilih')); ?>
+		<?php echo $form->error($model,'type'); ?>
+	</div>
+	<?php
+	}
+	else {
+			echo $form->hiddenField($model,'type',array('value'=>'flexible'));
+	}
+?>
+<?php
 		if($model->isNewRecord){
 
 		}

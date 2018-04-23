@@ -39,7 +39,14 @@
 				<div id="dp"></div>
 
 		</div>
-
+<?php
+$subs=substr($_GET['r'],21)."<br>";
+$myText = (string)$subs;
+if($subs='index')
+{
+	$idtype=0;
+}
+?>
 <script type="text/javascript">
 		var nav = new DayPilot.Navigator("nav");
 		nav.selectMode = "month";
@@ -183,7 +190,8 @@
 		};
 		//alert(args.resource);
 		//modal.showUrl("new.php?start=" + args.start + "&end=" + args.end + "&resource=" + args.resource);
-		modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadcreateevent')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource);
+		//modal.showUrl("<?php //echo Yii::app()->createUrl('partner/reservations/loadcreateevent')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource);
+		modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadpages')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource+ "&idtype=" + <?php echo $idtype;?>);
 		//dp.events.add(e);
 		//dp.message("Created");
 		};
@@ -198,7 +206,7 @@
 				}
 			};
 			//modal.showUrl("edit.php?id=" + args.e.id());
-			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadeditevent')?>&id=" + args.e.id());
+			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadeditevent')?>&id=" + args.e.id()+ "&idtype=" + <?php echo $idtype;?>);
 		};
 
 		dp.onEventDeleted = function(args) {
