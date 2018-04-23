@@ -5,41 +5,6 @@
 <link type="text/css" rel="stylesheet" href="icons/style.css" />
 
 <style type="text/css">
-		.icon {
-				font-size: 14px;
-				text-align: center;
-				line-height: 14px;
-				vertical-align: middle;
-
-				cursor: pointer;
-		}
-
-		.scheduler_default_rowheader_inner
-		{
-				border-right: 1px solid #ccc;
-		}
-		.scheduler_default_rowheadercol2
-		{
-				background: White;
-		}
-		.scheduler_default_rowheadercol2 .scheduler_default_rowheader_inner
-		{
-				top: 2px;
-				bottom: 2px;
-				left: 2px;
-				background-color: transparent;
-				border-left: 5px solid #38761d; /* green */
-				border-right: 0px none;
-		}
-		.status_dirty.scheduler_default_rowheadercol2 .scheduler_default_rowheader_inner
-		{
-				border-left: 5px solid #cc0000; /* red */
-		}
-		.status_cleanup.scheduler_default_rowheadercol2 .scheduler_default_rowheader_inner
-		{
-				border-left: 5px solid #e69138; /* orange */
-		}
-
 		.scheduler_default_corner div:nth-of-type(2) {
 				display: none !important;
 		}
@@ -143,6 +108,7 @@
 			// bubble, sync loading
 			// see also DayPilot.Event.data.staticBubbleHTML property
 			dp.eventHeight = 60;
+			dp.eventStackingLineHeight = 30;
 			dp.bubble = new DayPilot.Bubble();
 
 			dp.contextMenu = new DayPilot.Menu({items: [
@@ -249,9 +215,6 @@
 		dp.onTimeHeaderClick = function(args) {
 			alert("clicked: " + args.header.start);
 		};
-
-		dp.snapToGrid = false;
-		dp.useEventBoxes = "Never";
 
 		dp.onEventMoving = function(args) {
 		var offset = args.start.getMinutes() % 5;

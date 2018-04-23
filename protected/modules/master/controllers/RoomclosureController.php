@@ -23,10 +23,14 @@ class RoomclosureController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
+	//public function actionCreate()
+	public function actionCreate($start,$end,$resource)
 	{
+		$this->layout = '//layouts/iframe1';
 		$model=new Roomclosure;
-
+		$model->room_id=$resource;
+		$model->start_date=$start;
+		$model->end_date=$end;
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 

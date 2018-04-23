@@ -140,7 +140,14 @@
 			];
 
 			dp.eventHeight = 60;
-			dp.bubble = new DayPilot.Bubble({});
+			dp.eventStackingLineHeight = 30;
+			//dp.bubble = new DayPilot.Bubble({});
+			dp.bubble = new DayPilot.Bubble({
+        onLoad: function(args) {
+            var ev = args.source;
+            args.html = "testing bubble for: " + ev.text();
+        }
+    });
 
 			dp.contextMenu = new DayPilot.Menu({items: [
 			{text:"Show event ID", onclick: function() {alert("Event value: " + this.source.value());} },
@@ -161,9 +168,33 @@
 
 			dp.eventHoverHandling = "Bubble";
 
-			dp.onBeforeEventRender = function(args) {
+			/*dp.onBeforeEventRender = function(args) {
 			args.e.bubbleHtml = args.e.start + " " + args.e.end;
-			};
+		};*/
+
+		dp.onBeforeCellRender = function(args) {
+			console.log(args.cell.resource);
+			if (args.cell.start < DayPilot.Date.today() || args.cell.resource === "D") {
+					args.cell.disabled = true;
+					args.cell.backColor = "#ccc";
+			}
+
+			var row = dp.rows.find(args.cell.resource);
+			var unavailable = row.data.unavailable;
+			if (!unavailable) {
+					return;
+			}
+			var matches = unavailable.some(function(range) {
+					var start = new DayPilot.Date(range.start);
+					var end = new DayPilot.Date(range.end).addDays(1);
+					return DayPilot.Util.overlaps(start, end, args.cell.start, args.cell.end);
+			});
+
+			if (matches) {
+					args.cell.disabled = true;
+					args.cell.backColor = "#ea9999";
+			}
+	};
 
 			// event moving
 			dp.onEventMoved = function (args) {
@@ -202,6 +233,10 @@
 		// event creating
 		dp.onTimeRangeSelected = function (args) {
 		//var name = prompt("New event name:", "Event");
+
+		var r = confirm("Press a button!");
+		if (r == true)
+		{
 		var modal = new DayPilot.Modal();
 		modal.closed = function() {
 			dp.clearSelection();
@@ -214,7 +249,22 @@
 		};
 
 			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadcreateevent')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource);
+		}
+		else {
+			alert('closure');
+			var modal = new DayPilot.Modal();
+			modal.closed = function() {
+				dp.clearSelection();
 
+				// reload all events
+				var data = this.result;
+				if (data && data.result === "OK") {
+					loadEvents();
+				}
+			};
+
+				modal.showUrl("<?php echo Yii::app()->createUrl('master/roomclosure/create')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource);
+		}
 		};
 
 		dp.onEventClicked = function(args) {
