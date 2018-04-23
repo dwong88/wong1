@@ -72,6 +72,18 @@
 				</div>
 
 				<div id="dp"></div>
+				<div class="space">
+				    Format:
+				    <select id="format">
+				        <option value="svg">SVG</option>
+				        <option value="png">PNG</option>
+				        <option value="jpg">JPG</option>
+				    </select>
+
+				</div>
+				<div class="space">
+				    <a href="#" id="print-button">Print</a>
+				</div>
 
 		</div>
 <?php
@@ -79,7 +91,7 @@
 	$myText = (string)$subs;
 	if($subs='indexall')
 	{
-		$idtype=1;
+		$idtype=1; #penanda untuk reservation 24 hours
 	}
 ?>
 <script type="text/javascript">
@@ -152,7 +164,7 @@
 			dp.bubble = new DayPilot.Bubble({
         onLoad: function(args) {
             var ev = args.source;
-            args.html = "testing bubble for: " + ev.text();
+            //args.html = "testing bubble for: " + ev.text();
         }
     });
 
@@ -200,6 +212,7 @@
 			if (matches) {
 					args.cell.disabled = true;
 					args.cell.backColor = "#ea9999";
+					args.cell.html = "<div style='position:absolute;right:2px;bottom:2px;font-size:8pt;color:#666;'>Unavailable</div>";
 			}
 	};
 
@@ -356,6 +369,8 @@
 						{ bottom: 10, right: 4, html: "<div style='color:" + paidColor + "; font-size: 8pt;'>Paid: " + paid + "%</div>", v: "Visible"},
 						{ left: 4, bottom: 8, right: 4, height: 2, html: "<div style='background-color:" + paidColor + "; height: 100%; width:" + paid + "%'></div>", v: "Visible" }
 				];
+				//args.e.bubbleHtml = "<div><b>" + args.e.text + "</b></div><div>Start: " + new DayPilot.Date(args.e.start).toString("M/d/yyyy") + "</div><div>End: " + new DayPilot.Date(args.e.end).toString("M/d/yyyy") + "</div>";
+        args.e.bubbleHtml = "<div><b>" + args.e.text + "</b></div><div>Start: " + new DayPilot.Date(args.e.start).toString() + "</div><div>End: " + new DayPilot.Date(args.e.end).toString() + "</div>";
 
 		};
 
@@ -408,6 +423,12 @@
 			$("#filter").change(function() {
 				loadResources();
 			});
+			$("#print-button").click(function(ev) {
+            ev.preventDefault();
+            var format = $("#format").val();
+            dp.exportAs(format).print();
+        });
+
 		});
 //dp.scrollTo("2013-03-24T16:00:00");
 dp.scrollTo(new DayPilot.Date());
