@@ -38,30 +38,31 @@ class RoomtypeController extends Controller
 		if(isset($_POST['Roomtype']))
 		{
 			$model->attributes=$_POST['Roomtype'];
-			if($model->validate()) {
+			if($model->validate())
+			{
 			  #$transaction mulai transaksi
 			  $transaction = Yii::app()->db->beginTransaction();
-			  try{
-			    $model->save();
-				foreach (Basepriceroom::$publicTypePrice as $key => $PriceType) {
-					$mSaveRoomPrice = new Basepriceroom(); #declare $mSaveRoomPrice menggunakan table Propertydesc
-					$mSaveRoomPrice->attributes=$_POST['Basepriceroom'];
-					$mSaveRoomPrice->room_type_id = $model->room_type_id;
-					$mSaveRoomPrice->hours = $PriceType;
-					$mSaveRoomPrice->price = "";
-					//echo $mSaveRoomPrice->price = $model->$PriceType;
-					$mSaveRoomPrice->save(false); #save(false)--> save tidak validasi
-				}
-				$transaction->commit();
-		    Yii::app()->user->setFlash('success', "Create Successfully");
-		    $this->redirect(array('/partner/property/index'));
-		  }
+			  try
+				{
+				  $model->save();
+					foreach (Basepriceroom::$publicTypePrice as $key => $PriceType)
+					{
+						$mSaveRoomPrice = new Basepriceroom(); #declare $mSaveRoomPrice menggunakan table Propertydesc
+						$mSaveRoomPrice->attributes=$_POST['Basepriceroom'];
+						$mSaveRoomPrice->room_type_id = $model->room_type_id;
+						$mSaveRoomPrice->hours = $PriceType;
+						$mSaveRoomPrice->price = "";
+						$mSaveRoomPrice->save(false); #save(false)--> save tidak validasi
+					}
+					$transaction->commit();
+			    Yii::app()->user->setFlash('success', "Create Successfully");
+			    $this->redirect(array('/partner/property/index'));
+		  	}
 		    catch(exception $e) {
 		      $transaction->rollback();
 		      throw new CHttpException(500, $e->getMessage());
-		  }
-		}
-
+		  	}
+			}
 		}
 
 		$this->render('create',array(
@@ -85,11 +86,11 @@ class RoomtypeController extends Controller
 
 		if(isset($_POST['Roomtype']))
 		{
-			$model->attributes=$_POST['Roomtype'];
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Update Successfully");
-                $this->redirect(array('/partner/property/index'));
-			}
+				$model->attributes=$_POST['Roomtype'];
+				if($model->save()) {
+					Yii::app()->user->setFlash('success', "Update Successfully");
+					$this->redirect(array('/partner/property/index'));
+				}
 		}
 
 		$this->render('update',array(
@@ -109,6 +110,11 @@ class RoomtypeController extends Controller
 		{
 			// we only allow deletion via POST request
 			$this->loadModel($id)->delete();
+			$this->loadModelbaseprice($id)->delete(); #untuk delete Basepriceroom
+			$this->loadModelroomphoto($id)->delete(); #untuk delete room type photo
+			$BulkDel = DAO::executeSql("DELETE w
+																	FROM `tghroompriceflexible` w
+																	WHERE w.room_type_id=$id"); #untuk delete bulk delete tghroompriceflexible
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
@@ -143,6 +149,22 @@ class RoomtypeController extends Controller
 	public function loadModel($id)
 	{
 		$model=Roomtype::model()->findByPk($id);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+
+	public function loadModelbaseprice($id)
+	{
+		$model=Basepriceroom::model()->findByPk($id);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+
+	public function loadModelroomphoto($id)
+	{
+		$model=Roomphoto::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;

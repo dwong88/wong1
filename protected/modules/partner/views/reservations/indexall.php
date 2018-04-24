@@ -70,7 +70,9 @@
 								<label for="autocellwidth"><input type="checkbox" id="autocellwidth">Auto Cell Width</label>
 						</div>
 				</div>
-
+				<div class="space">
+				    Filter: <input id="filtersearch" /> <a href="#" id="clear">Clear</a>
+				</div>
 				<div id="dp"></div>
 				<div class="space">
 				    Format:
@@ -79,13 +81,11 @@
 				        <option value="png">PNG</option>
 				        <option value="jpg">JPG</option>
 				    </select>
-
 				</div>
 				<div class="space">
 				    <a href="#" id="print-button">Print</a>
 				</div>
-
-		</div>
+			</div>
 <?php
 	$subs=substr($_GET['r'],21)."<br>";
 	$myText = (string)$subs;
@@ -94,6 +94,7 @@
 		$idtype=1; #penanda untuk reservation 24 hours
 	}
 ?>
+<!--script untuk calendar navigasi-->
 <script type="text/javascript">
 		var nav = new DayPilot.Navigator("nav");
 		nav.selectMode = "month";
@@ -130,43 +131,40 @@
 				dp.cellWidthSpec = $(this).is(":checked") ? "Auto" : "Fixed";
 				dp.update();
 		});
-
-		$("#add-room").click(function(ev) {
-				ev.preventDefault();
-				var modal = new DayPilot.Modal();
-				modal.onClosed = function(args) {
-						loadResources();
-				};
-				modal.showUrl("room_new.php");
-		});
 </script>
+<!--script untuk Scheduler-->
 <script type="text/javascript">
 
 			var dp = new DayPilot.Scheduler("dp");
 
 			//dp.allowEventOverlap = false;
-
 			//dp.scale = "Day";
 			//dp.startDate = new DayPilot.Date().firstDayOfMonth();
+
+			//dp.days untuk tentukan berapa hari di dalam calendar
 			dp.days = dp.startDate.daysInMonth();
 			loadTimeline(DayPilot.Date.today().firstDayOfMonth());
 
 			dp.eventDeleteHandling = "Update";
 
 			dp.timeHeaders = [
-					{ groupBy: "Month", format: "MMMM yyyy" },
-					{ groupBy: "Day", format: "d" }
+					//{ groupBy: "Month", format: "MMMM yyyy" },
+					//{ groupBy: "Day", format: "d" }
+					{ groupBy: "Month", format: "MMM yyyy" },
+        	{ groupBy: "Cell", format: "ddd d" }
 			];
 
-			dp.eventHeight = 60;
+			dp.eventHeight = 80;
 			dp.eventStackingLineHeight = 30;
 			//dp.bubble = new DayPilot.Bubble({});
+
+			//bubbleHtml untuk toolTip
 			dp.bubble = new DayPilot.Bubble({
         onLoad: function(args) {
             var ev = args.source;
             //args.html = "testing bubble for: " + ev.text();
         }
-    });
+    	});
 
 			dp.contextMenu = new DayPilot.Menu({items: [
 			{text:"Show event ID", onclick: function() {alert("Event value: " + this.source.value());} },
@@ -187,33 +185,36 @@
 
 			dp.eventHoverHandling = "Bubble";
 
-			/*dp.onBeforeEventRender = function(args) {
-			args.e.bubbleHtml = args.e.start + " " + args.e.end;
-		};*/
 
-		dp.onBeforeCellRender = function(args) {
-			if (args.cell.start < DayPilot.Date.today() || args.cell.resource === "D") {
-					args.cell.disabled = true;
-					args.cell.backColor = "#ccc";
-			}
+			dp.onBeforeCellRender = function(args) {
+				//console.log(args.cell.events());
+				if (args.cell.start < DayPilot.Date.today() || args.cell.resource === "D") {
+						args.cell.disabled = true;
+						args.cell.backColor = "#ccc";
+				}
+				if (args.cell.start.getDay() === 1) { // first day of month
+						args.cell.backColor = "#ffffd5";
+						args.cell.html = "<div style='position:absolute;right:2px;bottom:2px;font-size:8pt;color:#666;'>Maintenance</div>";
+						args.cell.properties.status = "Under Maintenance";
+				}
 
-			var row = dp.rows.find(args.cell.resource);
-			var unavailable = row.data.unavailable;
-			if (!unavailable) {
-					return;
-			}
-			var matches = unavailable.some(function(range) {
-					var start = new DayPilot.Date(range.start);
-					var end = new DayPilot.Date(range.end).addDays(1);
-					return DayPilot.Util.overlaps(start, end, args.cell.start, args.cell.end);
-			});
+				var row = dp.rows.find(args.cell.resource);
+				var unavailable = row.data.unavailable;
+				if (!unavailable) {
+						return;
+				}
+				var matches = unavailable.some(function(range) {
+						var start = new DayPilot.Date(range.start);
+						var end = new DayPilot.Date(range.end).addDays(1);
+						return DayPilot.Util.overlaps(start, end, args.cell.start, args.cell.end);
+				});
 
-			if (matches) {
-					args.cell.disabled = true;
-					args.cell.backColor = "#ea9999";
-					args.cell.html = "<div style='position:absolute;right:2px;bottom:2px;font-size:8pt;color:#666;'>Unavailable</div>";
-			}
-	};
+				if (matches) {
+						args.cell.disabled = true;
+						args.cell.backColor = "#ea9999";
+						args.cell.html = "<div style='position:absolute;right:2px;bottom:2px;font-size:8pt;color:#666;'>Unavailable</div>";
+				}
+			};
 
 			// event moving
 			dp.onEventMoved = function (args) {
@@ -263,11 +264,10 @@
 				loadEvents();
 			}
 		};
-
 			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadpages')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource+ "&idtype=" + <?php echo $idtype;?>);
 
 		};
-
+		//module edit events
 		dp.onEventClicked = function(args) {
 		var modal = new DayPilot.Modal();
 			modal.closed = function() {
@@ -280,7 +280,7 @@
 			//modal.showUrl("edit.php?id=" + args.e.id());
 			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadeditevent')?>&id=" + args.e.id()+ "&idtype=" + <?php echo $idtype;?>);
 		};
-
+		//module delete events
 		dp.onEventDeleted = function(args) {
         //$.post("backend_delete.php",
 				$.post("<?php echo Yii::app()->createUrl('partner/reservations/delete')?>&id="+args.e.id(),
@@ -297,7 +297,8 @@
 		};
 
 
-		dp.cellWidth = 60;
+		//dp.cellWidth = 60;
+		dp.cellWidth = 100;
 
 		dp.onIncludeTimeCell = function(args) {
 
@@ -363,16 +364,36 @@
 
 				var paid = args.e.paid;
 				var paidColor = "#aaaaaa";
-
-				args.e.areas = [
+				args.data.areas = [
+            {
+                onClick: function(args) { DayPilot.Modal.alert("<b>Event name:</b><br>" + args.source.text()); },
+                height:17,
+                width:20,
+								visibility: "Hover",
+		 						css: "event_action_delete",
+                html:"info",
+                top:36,
+                right:2,
+                style: "border: 1px solid #ccc; border-radius: 5px; font-size: 10px; box-sizing: border-box; padding: 1px; background-color: #fff;"
+            },
 						{ bottom: 10, right: 4, html: "<div style='color:" + paidColor + "; font-size: 8pt;'>Paid: " + paid + "%</div>", v: "Visible"},
 						{ left: 4, bottom: 8, right: 4, height: 2, html: "<div style='background-color:" + paidColor + "; height: 100%; width:" + paid + "%'></div>", v: "Visible" }
-				];
+        ];
+
+				/*args.e.areas = [
+						{ bottom: 10, right: 4, html: "<div style='color:" + paidColor + "; font-size: 8pt;'>Paid: " + paid + "%</div>", v: "Visible"},
+						{ left: 4, bottom: 8, right: 4, height: 2, html: "<div style='background-color:" + paidColor + "; height: 100%; width:" + paid + "%'></div>", v: "Visible" }
+
+				];*/
 				//args.e.bubbleHtml = "<div><b>" + args.e.text + "</b></div><div>Start: " + new DayPilot.Date(args.e.start).toString("M/d/yyyy") + "</div><div>End: " + new DayPilot.Date(args.e.end).toString("M/d/yyyy") + "</div>";
         args.e.bubbleHtml = "<div><b>" + args.e.text + "</b></div><div>Start: " + new DayPilot.Date(args.e.start).toString() + "</div><div>End: " + new DayPilot.Date(args.e.end).toString() + "</div>";
 
 		};
-
+			dp.onRowFilter = function(args) {
+					if (args.row.name.toUpperCase().indexOf(args.filter.toUpperCase()) === -1) {
+							args.visible = false;
+					}
+			};
 			dp.init();
 
 			loadResources();
@@ -389,24 +410,24 @@
 					dp.update();
 			}
 
-				function loadEvents() {
-					var start = dp.visibleStart();
-					var end = dp.visibleEnd();
-					//alert(start);
-					//$.post("backend_events.php",
-					$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadevents')?>&start="+start+"&end="+end,
-					{
-						start: start.toString(),
-						end: end.toString(),
-						id: DayPilot.guid()
-						},
-						function(data) {
-							dp.events.list = data;
-							//console.log(data);
-							dp.update();
-					}
-					);
+			function loadEvents() {
+				var start = dp.visibleStart();
+				var end = dp.visibleEnd();
+				//alert(start);
+				//$.post("backend_events.php",
+				$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadevents')?>&start="+start+"&end="+end,
+				{
+					start: start.toString(),
+					end: end.toString(),
+					id: DayPilot.guid()
+					},
+					function(data) {
+						dp.events.list = data;
+						//console.log(data);
+						dp.update();
 				}
+				);
+			}
 
 		function loadResources() {
 				//$.post("backend_rooms.php",
@@ -430,6 +451,18 @@
             var format = $("#format").val();
             dp.exportAs(format).print();
         });
+			//buat filter search
+			$("#filtersearch").keyup(function() {
+            var query = $(this).val();
+            dp.rows.filter(query); // see dp.onRowFilter below
+        });
+
+        $("#clear").click(function() {
+
+            $("#filter").val("");
+            dp.rows.filter(null);
+            return false;
+        });
 
 		});
 //dp.scrollTo("2013-03-24T16:00:00");
@@ -438,10 +471,7 @@ dp.scrollTo(new DayPilot.Date());
 </script>
 
 <!-- bottom -->
-</div>
-</div>
-</div>
-</div>
+
 <script type="text/javascript">
 $(document).ready(function() {
 var url = window.location.href;

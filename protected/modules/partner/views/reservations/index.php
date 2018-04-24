@@ -35,7 +35,9 @@
 								<label for="autocellwidth"><input type="checkbox" id="autocellwidth">Auto Cell Width</label>
 						</div>
 				</div>
-
+				<div class="space">
+						Filter: <input id="filtersearch" /> <a href="#" id="clear">Clear</a>
+				</div>
 				<div id="dp"></div>
 				<div class="space">
 				    Format:
@@ -224,7 +226,6 @@ if($subs='index')
 
 			};
 
-
 			dp.onBeforeCellRender = function(args) {
 				console.log(args.cell.resource);
 				if (args.cell.start < DayPilot.Date.today() || args.cell.resource === "D") {
@@ -249,39 +250,39 @@ if($subs='index')
 						args.cell.html = "<div style='position:absolute;right:2px;bottom:2px;font-size:8pt;color:#666;'>Unavailable</div>";
 				}
 		};
-			// event moving
-			dp.onEventMoved = function (args) {
+		// event moving
+		dp.onEventMoved = function (args) {
 			//$.post("backend_move.php",
 			$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadmovedevent')?>&start="+args.newStart.toString()+"&end="+args.newEnd.toString()+"&id="+args.e.id()+"&resource="+args.newResource,
 			{
 
-			id: args.e.id(),
-			newStart: args.newStart.toString(),
-			newEnd: args.newEnd.toString(),
-			newResource: args.newResource
+				id: args.e.id(),
+				newStart: args.newStart.toString(),
+				newEnd: args.newEnd.toString(),
+				newResource: args.newResource
 			},
 			function(data) {
-			dp.message(data.message);
+				dp.message(data.message);
 			});
-			};
+		};
 
-			// event resizing
-	    dp.onEventResized = function (args) {
-	      var r = confirm("Press a button!");
-	      if (r == true)
-	      {
-	        //$.post("backend_resize.php",
-					$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadresizedevent')?>&start="+args.newStart.toString()+"&end="+args.newEnd.toString()+"&id="+args.e.id(),
-	        {
-	            id: args.e.id(),
-	            newStart: args.newStart.toString(),
-	            newEnd: args.newEnd.toString()
-	        },
-	        function() {
-	            dp.message("Resized.");
-	        });
-	      }
-	    };
+		// event resizing
+    dp.onEventResized = function (args) {
+      var r = confirm("Press a button!");
+      if (r == true)
+      {
+        //$.post("backend_resize.php",
+				$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadresizedevent')?>&start="+args.newStart.toString()+"&end="+args.newEnd.toString()+"&id="+args.e.id(),
+        {
+            id: args.e.id(),
+            newStart: args.newStart.toString(),
+            newEnd: args.newEnd.toString()
+        },
+        function() {
+            dp.message("Resized.");
+        });
+      }
+    };
 
 		// event creating
 		dp.onTimeRangeSelected = function (args) {
@@ -296,12 +297,7 @@ if($subs='index')
 				loadEvents();
 			}
 		};
-		//alert(args.resource);
-		//modal.showUrl("new.php?start=" + args.start + "&end=" + args.end + "&resource=" + args.resource);
-		//modal.showUrl("<?php //echo Yii::app()->createUrl('partner/reservations/loadcreateevent')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource);
 		modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadpages')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource+ "&idtype=" + <?php echo $idtype;?>);
-		//dp.events.add(e);
-		//dp.message("Created");
 		};
 
 		dp.onEventClicked = function(args) {
@@ -356,7 +352,7 @@ if($subs='index')
 				var today = DayPilot.Date.today();
 				var now = new DayPilot.Date();
 
-				args.e.html = args.e.text + " (" + start.toString("M/d/yyyy") + " - " + end.toString("M/d/yyyy") + ")";
+				args.e.html = args.e.text + " (" + start.toString("d MMMM yyyy") + " - " + end.toString("d MMMM yyyy") + ")";
 
 				switch (args.e.status) {
 						case "New":
@@ -417,43 +413,48 @@ if($subs='index')
 
 		};
 
-			dp.init();
-
-			loadResources();
-			loadEvents();
-
-			function loadTimeline(date) {
-				//alert(date);
-				// dp.scale = "Hour";
-				// dp.timeline = [];
-
-				dp.startDate = new DayPilot.Date(date);
-				/*
-				var start = date.getDatePart().addHours(12);
-
-				for (var i = 0; i < dp.days; i++) {
-				dp.timeline.push({start: start.addDays(i), end: start.addDays(i+1)});
+		dp.onRowFilter = function(args) {
+				if (args.row.name.toUpperCase().indexOf(args.filter.toUpperCase()) === -1) {
+						args.visible = false;
 				}
-				*/
+		};
+		dp.init();
+
+		loadResources();
+		loadEvents();
+
+		function loadTimeline(date) {
+			//alert(date);
+			// dp.scale = "Hour";
+			// dp.timeline = [];
+
+			dp.startDate = new DayPilot.Date(date);
+			/*
+			var start = date.getDatePart().addHours(12);
+
+			for (var i = 0; i < dp.days; i++) {
+			dp.timeline.push({start: start.addDays(i), end: start.addDays(i+1)});
+			}
+			*/
+			dp.update();
+		}
+
+		function loadEvents() {
+			var start = dp.visibleStart();
+			var end = dp.visibleEnd();
+			//alert(start);
+			//$.post("backend_events.php",
+			$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadevents')?>&start="+start+"&end="+end,
+			{
+				start: start.toString(),
+				end: end.toString()
+				},
+				function(data) {
+				dp.events.list = data;
 				dp.update();
 			}
-
-				function loadEvents() {
-					var start = dp.visibleStart();
-					var end = dp.visibleEnd();
-					//alert(start);
-					//$.post("backend_events.php",
-					$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadevents')?>&start="+start+"&end="+end,
-					{
-						start: start.toString(),
-						end: end.toString()
-						},
-						function(data) {
-						dp.events.list = data;
-						dp.update();
-					}
-					);
-				}
+			);
+		}
 
 		function loadResources() {
 				//$.post("backend_rooms.php",
@@ -476,16 +477,26 @@ if($subs='index')
             var format = $("#format").val();
             dp.exportAs(format).print();
         });
+				//buat filter search
+				$("#filtersearch").keyup(function() {
+	            var query = $(this).val();
+	            dp.rows.filter(query); // see dp.onRowFilter below
+	        });
+
+        $("#clear").click(function() {
+
+            $("#filtersearch").val("");
+            dp.rows.filter(null);
+            return false;
+        });
+
 		});
 dp.scrollTo(new DayPilot.Date());
 
 </script>
 
 <!-- bottom -->
-</div>
-</div>
-</div>
-</div>
+
 <script type="text/javascript">
 $(document).ready(function() {
 var url = window.location.href;

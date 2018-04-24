@@ -1,5 +1,5 @@
 <?php
-class Resultec {} #create
+class Resultec {} #declare new class untuk return dari fungsi create
 class RoomclosureController extends Controller
 {
 	/**
@@ -24,7 +24,47 @@ class RoomclosureController extends Controller
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
 	//public function actionCreate()
-	public function actionCreate($start,$end,$resource)
+	public function actionCreate()
+	{
+		//$this->layout = '//layouts/iframe1';
+		$model=new Roomclosure;
+
+		if(isset($_POST['Roomclosure']))
+		{
+			$model->attributes=$_POST['Roomclosure'];
+			$model->room_id=$resource;
+			if($model->validate()) {
+			  #$transaction mulai transaksi
+			  $transaction = Yii::app()->db->beginTransaction();
+			  try{
+			    $model->save();
+			    #jika tidak ada error transaksi proses di commit
+			    $transaction->commit();
+
+					$response = new Resultec();
+					$response->result = 'OK';
+					$response->message = 'Create successful';
+
+					Yii::app()->end();
+			  }
+			    catch(exception $e) {
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  }
+			}
+		}
+
+		$this->render('create',array(
+			'model'=>$model,
+		));
+	}
+
+	/**
+	 * Creates a new model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 */
+	//public function actionCreate untuk di calendar()
+	public function actionCreatecal($start,$end,$resource)
 	{
 		$this->layout = '//layouts/iframe1';
 		$model=new Roomclosure;

@@ -64,11 +64,6 @@ class RoompriceflexibleController extends Controller
 				//echo $mFlexPrice->price = $model->$PriceType;
 				$mFlexPrice->save(); #save(false)--> save tidak validasi
 			}
-			//$model->room_type_id=$_POST['Roompriceflexible']['roomtype_id'];
-			/*if($model->save()) {
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
-			}*/
 		}
 
 		$this->render('create',array(
@@ -129,6 +124,7 @@ class RoompriceflexibleController extends Controller
 				$date2 = $tgl2;
 				$parsed2 = strptime($date2 , $format);
 
+				#parsing format start_date
 				if(is_array($parsed1))
 				{
 						$y = (int)$parsed1['tm_year'] + 1900;
@@ -142,7 +138,7 @@ class RoompriceflexibleController extends Controller
 						$iso_date1 = "$y-$m-$d";
 				}
 
-
+				#parsing format end_date
 				if(is_array($parsed2))
 				{
 						$y = (int)$parsed2['tm_year'] + 1900;
@@ -172,56 +168,45 @@ class RoompriceflexibleController extends Controller
 				$tampung= rtrim($mdate,',');
 				$room_type_ids=$_GET['id'];
 
-				/*$BulkDel = DAO::executeSql("DELETE FROM tghroompriceflexible
-								WHERE
-								 		room_type_id=$room_type_ids
-										and date IN
-								  ( SELECT u.runningdate FROM
-								    tghrunningdate u
-								    WHERE
-								    u.`runningdate` between '".$iso_date1."' and '".$iso_date2."' and
-								    u.date_id IN ($tampung));");*/
-			$BulkDel = DAO::executeSql("DELETE w
-																	FROM `tghroompriceflexible` w
-																	INNER JOIN tghrunningdate` e
-																	  ON e.runningdate=w.date
-																	WHERE w.room_type_id=$room_type_ids AND e.runningdate between '".$iso_date1."' and '".$iso_date2."' and e.date_id IN ($tampung)");
-			$transaction = Yii::app()->db->beginTransaction();
-		  try{
-				#INSERT TEMPPRICEROOM
-				foreach (Temproomprice::$publicTypePrice as $key => $PriceType) {
-					$mFlexPrice = new Temproomprice(); #declare $mFlexPrice menggunakan table Propertydesc
-					$mFlexPrice->attributes=$_POST['Roompriceflexible'];
-					$mFlexPrice->random_id = $rand;
-					$mFlexPrice->hours = $PriceType;
-					$mFlexPrice->price = $_POST['Roompriceflexible'][$PriceType];
+				$BulkDel = DAO::executeSql("DELETE w
+																		FROM `tghroompriceflexible` w
+																		INNER JOIN tghrunningdate` e
+																		  ON e.runningdate=w.date
+																		WHERE w.room_type_id=$room_type_ids AND e.runningdate between '".$iso_date1."' and '".$iso_date2."' and e.date_id IN ($tampung)");
+				$transaction = Yii::app()->db->beginTransaction();
+			  try{
+						#INSERT TEMPPRICEROOM
+						foreach (Temproomprice::$publicTypePrice as $key => $PriceType)
+						{
+								$mFlexPrice = new Temproomprice(); #declare $mFlexPrice menggunakan table Propertydesc
+								$mFlexPrice->attributes=$_POST['Roompriceflexible'];
+								$mFlexPrice->random_id = $rand;
+								$mFlexPrice->hours = $PriceType;
+								$mFlexPrice->price = $_POST['Roompriceflexible'][$PriceType];
 
-					//echo $mFlexPrice->price = $model->$PriceType;
-					$mFlexPrice->save(); #save(false)--> save tidak validasi
-				}
-				#insert update bulks
-				$updatebulks = DAO::executeSql("INSERT INTO `tghroompriceflexible` (room_type_id, date,hours, price)
-				select $room_type_ids,tgl.runningdate,price.hours,price.price  FROM
-				(select hours,price,random_id from `tghtemproomprice` where random_id='$rand') as price,
-				(select runningdate from tghrunningdate where runningdate between '".$iso_date1."' and '".$iso_date2."' AND date_id IN ($tampung)) as tgl");
+								//echo $mFlexPrice->price = $model->$PriceType;
+								$mFlexPrice->save(); #save(false)--> save tidak validasi
+						}
+						#insert update bulks
+						$updatebulks = DAO::executeSql("INSERT INTO `tghroompriceflexible` (room_type_id, date,hours, price)
+						select $room_type_ids,tgl.runningdate,price.hours,price.price  FROM
+						(select hours,price,random_id from `tghtemproomprice` where random_id='$rand') as price,
+						(select runningdate from tghrunningdate where runningdate between '".$iso_date1."' and '".$iso_date2."' AND date_id IN ($tampung)) as tgl");
 
-					$truntempprice=DAO::executeSql("DELETE FROM `tghtemproomprice` WHERE random_id='".$rand."';");
-					$transaction->commit();
-					Yii::app()->user->setFlash('success', "Create Successfully");
-					$this->redirect(array('index'));
-					//$this->redirect(array('../partner/property/index'));
+						$truntempprice=DAO::executeSql("DELETE FROM `tghtemproomprice` WHERE random_id='".$rand."';");
+						$transaction->commit();
+						Yii::app()->user->setFlash('success', "Create Successfully");
+						$this->redirect(array('index'));
+						//$this->redirect(array('../partner/property/index'));
+					}
+						catch(exception $e) {
+				      $transaction->rollback();
+				      throw new CHttpException(500, $e->getMessage());
+				  }
 				}
-					catch(exception $e) {
-			      $transaction->rollback();
-			      throw new CHttpException(500, $e->getMessage());
-			  }
-			}
 		}
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
-
-
-
 		$this->render('updatebulk',array(
 			'model'=>$model,
 		));

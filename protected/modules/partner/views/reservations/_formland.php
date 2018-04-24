@@ -1,5 +1,4 @@
 <div class="form">
-
 <?php
 $room_id = $model->room_id;
 $start = $model->start_date;
@@ -25,7 +24,7 @@ $id_type = $model->type;
 		<tr>
 				<td><?php
 					//echo $model->room_id;
-					echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/bed.png', 'Bed'),array('roomclosure/create',
+					echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/bed.png', 'Bed'),array('roomclosure/createcal',
 				                                         'start'=>$start,'end'=>$end,'resource'=>$room_id)); ?> Room Closure</td>
 			 <td><?php
 					//echo $model->room_id;

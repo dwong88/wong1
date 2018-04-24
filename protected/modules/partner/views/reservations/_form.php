@@ -1,5 +1,5 @@
 <?php
-#fungsi input value ajax city state country
+#fungsi close iframe saat onsubmit
 Yii::app()->clientScript->registerScript(
 					    '__inPageScript',
 					    "
@@ -20,6 +20,7 @@ Yii::app()->clientScript->registerScript(
 CClientScript::POS_READY
 );
 ?>
+
 <div class="form">
 
 <?php
@@ -28,13 +29,13 @@ $start = $model->start_date;
 $end = $model->end_date;
 $id_type = $model->type;
 
-		if($model->isNewRecord){
-		 $actions[]='loadcreateevent&start='.$start."&end=".$end."&resource=".$room_id."&idtype=".$id_type;
-		}
-		else{
-			$id=$model->reservations_id;
-			$actions[]='update&id='.$id;
-		}
+if($model->isNewRecord){
+ 		$actions[]='loadcreateevent&start='.$start."&end=".$end."&resource=".$room_id."&idtype=".$id_type;
+}
+else{
+		$id=$model->reservations_id;
+		$actions[]='loadeditevent&id='.$id."&idtype=".$id_type;
+}
 	$form=$this->beginWidget('CActiveForm', array(
 	'id'=>'reservations-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
@@ -73,6 +74,7 @@ $id_type = $model->type;
 		<?php echo $form->error($model,'room_id'); ?>
 	</div>
 	<?php
+	#fungsi cek tipe reservation regular atau flexible
 	if($idtype==1)
 	{
 	?>
@@ -89,7 +91,7 @@ $id_type = $model->type;
 ?>
 <?php
 		if($model->isNewRecord){
-
+			#kosong
 		}
 		else{
 			?>

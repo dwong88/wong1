@@ -1,11 +1,9 @@
 <?php
-class Roomres{
-}
-class Children{
-}
+class Roomres{}
+class Children{} # class children or sub room
 class Eventes {}
 class Resulted {} #edit
-class Resultsm {}
+class Resultsm {} #moveevent
 class Resulter {} #resize
 class Resultec {} #create
 class ReservationsController extends Controller
@@ -104,6 +102,7 @@ class ReservationsController extends Controller
 	/**
 	 * Lists all models.
 	 */
+	 #index untuk flexible
 	public function actionIndex()
 	{
 		$model=new Reservations('search');
@@ -119,20 +118,7 @@ class ReservationsController extends Controller
 	/**
 	 * Lists all models.
 	 */
-	public function actionIndex1()
-	{
-		$model=new Reservations('search');
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Reservations']))
-			$model->attributes=$_GET['Reservations'];
-
-		$this->render('index1',array(
-			'model'=>$model,
-		));
-	}
-	/**
-	 * Lists all models.
-	 */
+	 #index untuk regular dan 1 night
 	public function actionIndexall()
 	{
 		$model=new Reservations('search');
@@ -145,6 +131,7 @@ class ReservationsController extends Controller
 		));
 	}
 
+	#fungsi load room
 	public function actionLoadroom($capacity)
 	{
 			$room1 = DAO::queryAllSql("select r.room_id as id, r.`room_name` as name,rt.room_type_id as parent_id,rt.room_type_name as parent_name,rt.`room_type_room_size` as capacity from tghroom as r
@@ -152,7 +139,6 @@ class ReservationsController extends Controller
 			WHERE rt.room_type_room_size = ".$capacity." OR ".$capacity." = '0'
 			GROUP BY rt.room_type_id
 			ORDER BY rt.room_type_id");
-
 
 			$result = array();
 			$c=0;
@@ -192,10 +178,10 @@ class ReservationsController extends Controller
 			header('Content-Type: application/json');
 			echo json_encode($result);
 	}
-
+	#fungsi load events
 	public function actionLoadevents($start,$end)
 	{
-		 //Yii::app()->end();
+
 		 	$events = array();
 			$result = DAO::queryAllSql("select rev.reservations_id as id, rev.customer_name as name, rev.start_date as start, rev.end_date as end,rev.status,rev.paid,rm.room_id as room_id,rm.room_name from tghreservations as rev
 			inner join `tghroom` as rm on rm.room_id = rev.room_id
@@ -226,7 +212,7 @@ class ReservationsController extends Controller
 			header('Content-Type: application/json');
 			echo json_encode($events);
 	}
-
+	#fungsi load landing pages iframe
 	public function actionLoadpages($start,$end,$resource,$idtype)
 	{
 			$this->layout = '//layouts/iframe1';
@@ -242,33 +228,42 @@ class ReservationsController extends Controller
 			));
 	}
 
+	#fungsi untuk create event/reservation
 	public function actionLoadcreateevent($start,$end,$resource,$idtype)
 	{
 			$this->layout = '//layouts/iframe1';
-		 //Yii::app()->end();
+		 	//Yii::app()->end();
 			$model=new Reservations;
 			$model->room_id=$resource;
 			$model->start_date=$start;
 			$model->end_date=$end;
-			//convert to json
-			//header('Content-Type: application/json');
-			//echo json_encode($result);
 
 			if(isset($_POST['Reservations']))
 			{
 				$model->attributes=$_POST['Reservations'];
 				$model->status="new";
 				$model->paid="";
-				if($model->save()) {
-					//Yii::app()->user->setFlash('success', "Create Successfully");
+				if($model->validate()) {
+				  #$transaction mulai transaksi
+				  $transaction = Yii::app()->db->beginTransaction();
+				  try{
+						$model->save();
+						#jika tidak ada error transaksi proses di commit
+						$transaction->commit();
+						//Yii::app()->user->setFlash('success', "Create Successfully");
 
-					$response = new Resultec();
-					$response->result = 'OK';
-					$response->message = 'Create successful';
+						$response = new Resultec();
+						$response->result = 'OK';
+						$response->message = 'Create successful';
 
-					header('Content-Type: application/json');
-					echo json_encode($response);
-					Yii::app()->end();
+						header('Content-Type: application/json');
+						echo json_encode($response);
+						Yii::app()->end();
+					}
+					catch(exception $e) {
+				      $transaction->rollback();
+				      throw new CHttpException(500, $e->getMessage());
+				  }
 				}
 			}
 			$this->render('_form',array(
@@ -277,6 +272,7 @@ class ReservationsController extends Controller
 			));
 	}
 
+	#fungsi untuk edit event/reservation
 	public function actionLoadeditevent($id,$idtype)
 	{
 			$this->layout = '//layouts/iframe1';
@@ -284,25 +280,40 @@ class ReservationsController extends Controller
 			$model=$this->loadModel($id);
 			$model->reservations_id=$id;
 
-			//convert to json
-			//header('Content-Type: application/json');
-			//echo json_encode($result);
+			if(isset($_POST['Reservations']))
+			{
+				$model->attributes=$_POST['Reservations'];
+				if($model->validate())
+				{
+				  #$transaction mulai transaksi
+				  $transaction = Yii::app()->db->beginTransaction();
+				  try{
+							$model->save();
+							#jika tidak ada error transaksi proses di commit
+							$transaction->commit();
+							$response = new Resulted();
+							$response->result = 'OK';
+							$response->message = 'Update successful';
+
+							header('Content-Type: application/json');
+							echo json_encode($response);
+							Yii::app()->end();
+					}
+					catch(exception $e) {
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  	}
+				}
+			}
 			$this->render('_form',array(
 				'model'=>$model,
 				'idtype'=>$idtype,
 			));
 	}
 
+	#fungsi untuk move events
 	public function actionLoadmovedevent($id,$start,$end,$resource)
 	{
-			//$this->layout = '//layouts/iframe1';
-		 	//Yii::app()->end();
-
-
-			/*$hasil = DAO::queryAllSql("select rev.reservations_id as id, rev.customer_name as name, rev.start_date as start, rev.end_date as end,rev.status,rev.paid,rm.room_id as room_id,rm.room_name from tghreservations as rev
-			inner join `tghroom` as rm on rm.room_id = rev.room_id
-			WHERE NOT (rev.end_date <= '".$start."') OR (rev.start_date >='".$end."') AND rev.reservations_id<>$id AND rm.room_id=$resource");
-			$overlaps=count($hasil);*/
 			$hasil = DAO::queryAllSql("select rev.reservations_id as id, rev.customer_name as name, rev.start_date as start, rev.end_date as end,rev.status,rev.paid from tghreservations as rev
 			WHERE NOT ((rev.end_date <= '".$start."') OR (rev.start_date >='".$end."')) AND rev.reservations_id<>$id AND rev.room_id=$resource");
 			$overlaps=count($hasil);
@@ -316,14 +327,6 @@ class ReservationsController extends Controller
 			    exit;
 			}
 
-
-			/*$stmt = $db->prepare("UPDATE reservations SET start = :start, end = :end, room_id = :resource WHERE id = :id");
-			$stmt->bindParam(':id', $_POST['id']);
-			$stmt->bindParam(':start', $_POST['newStart']);
-			$stmt->bindParam(':end', $_POST['newEnd']);
-			$stmt->bindParam(':resource', $_POST['newResource']);
-			$stmt->execute();*/
-
 			$hasil1 = DAO::executeSql("UPDATE tghreservations SET start_date='".$start."',end_date='".$end."',room_id=$resource where reservations_id=$id");
 			$response = new Resultsm();
 			$response->result = 'OK';
@@ -336,22 +339,16 @@ class ReservationsController extends Controller
 	#module resize
 	public function actionLoadresizedevent($start,$end,$id)
 	{
+		$hasil = DAO::executeSql("UPDATE tghreservations SET start_date='".$start."',end_date='".$end."' where reservations_id=$id");
 
-	/*$stmt = $db->prepare("UPDATE reservations SET start = :start, end = :end WHERE id = :id");
-	$stmt->bindParam(':id', $_POST['id']);
-	$stmt->bindParam(':start', $_POST['newStart']);
-	$stmt->bindParam(':end', $_POST['newEnd']);
-	$stmt->execute();*/
+		$response = new Resulter();
+		$response->result = 'OK';
+		$response->message = 'Update successful';
 
-	$hasil = DAO::executeSql("UPDATE tghreservations SET start_date='".$start."',end_date='".$end."' where reservations_id=$id");
-
-	$response = new Resulter();
-	$response->result = 'OK';
-	$response->message = 'Update successful';
-
-	header('Content-Type: application/json');
-	echo json_encode($response);
+		header('Content-Type: application/json');
+		echo json_encode($response);
 	}
+	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
