@@ -192,7 +192,6 @@
 		};*/
 
 		dp.onBeforeCellRender = function(args) {
-			console.log(args.cell.resource);
 			if (args.cell.start < DayPilot.Date.today() || args.cell.resource === "D") {
 					args.cell.disabled = true;
 					args.cell.backColor = "#ccc";
@@ -398,11 +397,13 @@
 					$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadevents')?>&start="+start+"&end="+end,
 					{
 						start: start.toString(),
-						end: end.toString()
+						end: end.toString(),
+						id: DayPilot.guid()
 						},
 						function(data) {
-						dp.events.list = data;
-						dp.update();
+							dp.events.list = data;
+							//console.log(data);
+							dp.update();
 					}
 					);
 				}
@@ -415,6 +416,7 @@
 				{ capacity: $("#filter").val() },
 					function(data) {
 					dp.resources = data;
+					console.log(data);
 					dp.update();
 				});
 		}

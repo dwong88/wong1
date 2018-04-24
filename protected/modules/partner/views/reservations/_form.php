@@ -23,9 +23,13 @@ CClientScript::POS_READY
 <div class="form">
 
 <?php
+$room_id = $model->room_id;
+$start = $model->start_date;
+$end = $model->end_date;
+$id_type = $model->type;
 
 		if($model->isNewRecord){
-		 $actions[]='loadcreateevent&start='.$start."&end=".$end."&resource".$room_id;
+		 $actions[]='loadcreateevent&start='.$start."&end=".$end."&resource=".$room_id."&idtype=".$id_type;
 		}
 		else{
 			$id=$model->reservations_id;

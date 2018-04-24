@@ -37,7 +37,18 @@
 				</div>
 
 				<div id="dp"></div>
+				<div class="space">
+				    Format:
+				    <select id="format">
+				        <option value="svg">SVG</option>
+				        <option value="png">PNG</option>
+				        <option value="jpg">JPG</option>
+				    </select>
 
+				</div>
+				<div class="space">
+				    <a href="#" id="print-button">Print</a>
+				</div>
 		</div>
 <?php
 $subs=substr($_GET['r'],21)."<br>";
@@ -116,7 +127,13 @@ if($subs='index')
 			// see also DayPilot.Event.data.staticBubbleHTML property
 			dp.eventHeight = 60;
 			dp.eventStackingLineHeight = 30;
-			dp.bubble = new DayPilot.Bubble();
+			//dp.bubble = new DayPilot.Bubble({});
+			dp.bubble = new DayPilot.Bubble({
+        onLoad: function(args) {
+            var ev = args.source;
+            //args.html = "testing bubble for: " + ev.text();
+        }
+    });
 
 			dp.contextMenu = new DayPilot.Menu({items: [
 			{text:"Show event ID", onclick: function() {alert("Event value: " + this.source.value());} },
@@ -138,9 +155,100 @@ if($subs='index')
 			dp.eventHoverHandling = "Bubble";
 
 			dp.onBeforeEventRender = function(args) {
-			args.e.bubbleHtml = args.e.start + " " + args.e.end;
+					var start = new DayPilot.Date(args.e.start);
+					var end = new DayPilot.Date(args.e.end);
+
+					var today = DayPilot.Date.today();
+					var now = new DayPilot.Date();
+
+					args.e.html = args.e.text + " (" + start.toString("M/d/yyyy") + " - " + end.toString("M/d/yyyy") + ")";
+
+					switch (args.e.status) {
+							case "New":
+									var in2days = today.addDays(1);
+
+									if (start < in2days) {
+											args.e.barColor = 'red';
+											args.e.toolTip = 'Expired (not confirmed in time)';
+									}
+									else {
+											args.e.barColor = 'orange';
+											args.e.toolTip = 'New';
+									}
+									break;
+							case "Confirmed":
+									var arrivalDeadline = today.addHours(18);
+
+									if (start < today || (start.getDatePart() === today.getDatePart() && now > arrivalDeadline)) { // must arrive before 6 pm
+											args.e.barColor = "#f41616";  // red
+											args.e.toolTip = 'Late arrival';
+									}
+									else {
+											args.e.barColor = "green";
+											args.e.toolTip = "Confirmed";
+									}
+									break;
+							case 'Arrived': // arrived
+									var checkoutDeadline = today.addHours(10);
+
+									if (end < today || (end.getDatePart() === today.getDatePart() && now > checkoutDeadline)) { // must checkout before 10 am
+											args.e.barColor = "#f41616";  // red
+											args.e.toolTip = "Late checkout";
+									}
+									else
+									{
+											args.e.barColor = "#1691f4";  // blue
+											args.e.toolTip = "Arrived";
+									}
+									break;
+							case 'CheckedOut': // checked out
+									args.e.barColor = "gray";
+									args.e.toolTip = "Checked out";
+									break;
+							default:
+									args.e.toolTip = "Unexpected state";
+									break;
+					}
+
+					args.e.html = args.e.html + "<br /><span style='color:gray'>" + args.e.toolTip + "</span>";
+
+					var paid = args.e.paid;
+					var paidColor = "#aaaaaa";
+
+					args.e.areas = [
+							{ bottom: 10, right: 4, html: "<div style='color:" + paidColor + "; font-size: 8pt;'>Paid: " + paid + "%</div>", v: "Visible"},
+							{ left: 4, bottom: 8, right: 4, height: 2, html: "<div style='background-color:" + paidColor + "; height: 100%; width:" + paid + "%'></div>", v: "Visible" }
+					];
+					//args.e.bubbleHtml = "<div><b>" + args.e.text + "</b></div><div>Start: " + new DayPilot.Date(args.e.start).toString("M/d/yyyy") + "</div><div>End: " + new DayPilot.Date(args.e.end).toString("M/d/yyyy") + "</div>";
+	        args.e.bubbleHtml = "<div><b>" + args.e.text + "</b></div><div>Start: " + new DayPilot.Date(args.e.start).toString() + "</div><div>End: " + new DayPilot.Date(args.e.end).toString() + "</div>";
+
 			};
 
+
+			dp.onBeforeCellRender = function(args) {
+				console.log(args.cell.resource);
+				if (args.cell.start < DayPilot.Date.today() || args.cell.resource === "D") {
+						args.cell.disabled = true;
+						args.cell.backColor = "#ccc";
+				}
+
+				var row = dp.rows.find(args.cell.resource);
+				var unavailable = row.data.unavailable;
+				if (!unavailable) {
+						return;
+				}
+				var matches = unavailable.some(function(range) {
+						var start = new DayPilot.Date(range.start);
+						var end = new DayPilot.Date(range.end).addDays(1);
+						return DayPilot.Util.overlaps(start, end, args.cell.start, args.cell.end);
+				});
+
+				if (matches) {
+						args.cell.disabled = true;
+						args.cell.backColor = "#ea9999";
+						args.cell.html = "<div style='position:absolute;right:2px;bottom:2px;font-size:8pt;color:#666;'>Unavailable</div>";
+				}
+		};
 			// event moving
 			dp.onEventMoved = function (args) {
 			//$.post("backend_move.php",
@@ -363,8 +471,13 @@ if($subs='index')
 			$("#filter").change(function() {
 				loadResources();
 			});
+			$("#print-button").click(function(ev) {
+            ev.preventDefault();
+            var format = $("#format").val();
+            dp.exportAs(format).print();
+        });
 		});
-dp.scrollTo("2013-03-24T16:00:00");
+dp.scrollTo(new DayPilot.Date());
 
 </script>
 

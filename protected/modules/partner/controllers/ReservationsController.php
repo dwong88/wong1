@@ -115,6 +115,21 @@ class ReservationsController extends Controller
 			'model'=>$model,
 		));
 	}
+
+	/**
+	 * Lists all models.
+	 */
+	public function actionIndex1()
+	{
+		$model=new Reservations('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['Reservations']))
+			$model->attributes=$_GET['Reservations'];
+
+		$this->render('index1',array(
+			'model'=>$model,
+		));
+	}
 	/**
 	 * Lists all models.
 	 */
@@ -181,6 +196,7 @@ class ReservationsController extends Controller
 	public function actionLoadevents($start,$end)
 	{
 		 //Yii::app()->end();
+		 	$events = array();
 			$result = DAO::queryAllSql("select rev.reservations_id as id, rev.customer_name as name, rev.start_date as start, rev.end_date as end,rev.status,rev.paid,rm.room_id as room_id,rm.room_name from tghreservations as rev
 			inner join `tghroom` as rm on rm.room_id = rev.room_id
 			WHERE NOT (rev.end_date <= '".$start."') OR (rev.start_date >=' ".$end."')");
