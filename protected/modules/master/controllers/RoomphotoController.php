@@ -31,7 +31,7 @@ class RoomphotoController extends Controller
 		// $this->performAjaxValidation($model);
 
 		$modelphoto= new Roomphoto; #declare use model Roomphoto
-		$modelphoto->room_id=$id;
+		$modelphoto->room_type_id=$id;
 		$modelphoto->roomphototype_id =$_POST['roomphoto']['roomphototype_id'];
 
 		#proses upload file photo

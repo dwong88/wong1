@@ -44,9 +44,11 @@ class Basepriceroom extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('room_type_id, hours, price', 'required'),
+			array('room_type_id,hr0,hr1,hr2,hr3,hr4,hr5,hr6,hr7,hr8,hr9,hr10,hr11,hr12', 'required'),
+			//array('date', 'application.components.validator.DatePickerSwitcherValidator'),
+			array('price','application.components.validator.NumberSwitcherValidator'),
 			array('room_type_id, hours', 'numerical', 'integerOnly'=>true),
-			array('price', 'numerical'),
+			array('price', 'length', 'max'=>17),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('room_type_id, hours, price', 'safe', 'on'=>'search'),

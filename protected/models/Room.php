@@ -39,7 +39,6 @@ class Room extends ActiveRecord
 		// will receive user inputs.
 		return array(
 			array('room_type_id', 'required'),
-			array('room_type_id', 'numerical', 'integerOnly'=>true),
 			array('room_floor', 'length', 'max'=>30),
 			array('room_name', 'length', 'max'=>50),
 			array('room_status', 'length', 'max'=>100),

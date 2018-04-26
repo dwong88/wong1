@@ -19,6 +19,7 @@
  */
 class Reservations extends ActiveRecord
 {
+	public $property_id;
 	/**
 	 * @return string the associated database table name
 	 */

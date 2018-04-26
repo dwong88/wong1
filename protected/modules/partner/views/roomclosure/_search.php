@@ -6,8 +6,8 @@
 )); ?>
 
 	<div class="row">
-		<?php echo $form->label($model,'id'); ?>
-		<?php echo $form->textField($model,'id',array('size'=>11,'maxlength'=>11)); ?>
+		<?php echo $form->label($model,'cl_id'); ?>
+		<?php echo $form->textField($model,'cl_id',array('size'=>11,'maxlength'=>11)); ?>
 	</div>
 
 	<div class="row">
@@ -28,26 +28,6 @@
 	<div class="row">
 		<?php echo $form->label($model,'status'); ?>
 		<?php echo $form->textField($model,'status'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'create_dt'); ?>
-		<?php echo $form->textField($model,'create_dt'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'create_by'); ?>
-		<?php echo $form->textField($model,'create_by'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'update_dt'); ?>
-		<?php echo $form->textField($model,'update_dt'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'update_by'); ?>
-		<?php echo $form->textField($model,'update_by'); ?>
 	</div>
 
 	<div class="row buttons">

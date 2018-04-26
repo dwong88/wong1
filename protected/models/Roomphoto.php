@@ -5,7 +5,7 @@
  *
  * The followings are the available columns in table 'tghroomphoto':
  * @property string $photo_id
- * @property integer $room_id
+ * @property integer $room_type_id
  * @property integer $roomphototype_id
  * @property string $filename
  * @property string $create_dt
@@ -37,12 +37,12 @@ class Roomphoto extends ActiveRecord
 		// will receive user inputs.
 		return array(
 			array('doc','file','allowEmpty'=>true,'types'=>array('jpg','jpeg','png'),'maxSize'=>1024*1024*10,'tooLarge'=>'Ukuran File harus lebih kecil dari 10MB'),
-			array('room_id, roomphototype_id', 'required'),
-			array('room_id, roomphototype_id, create_by, update_by', 'numerical', 'integerOnly'=>true),
+			array('room_type_id, roomphototype_id', 'required'),
+			array('roomphototype_id, create_by, update_by', 'numerical', 'integerOnly'=>true),
 			array('filename', 'length', 'max'=>100),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('photo_id, room_id, roomphototype_id, filename, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
+			array('photo_id, room_type_id, roomphototype_id, filename, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -67,7 +67,7 @@ class Roomphoto extends ActiveRecord
 	{
 		return array(
 			'photo_id' => 'Photo',
-			'room_id' => 'Room',
+			'room_type_id' => 'Room',
 			'roomphototype_id' => 'Roomphototype',
 			'filename' => 'Filename',
 			'create_dt' => 'Create Dt',
@@ -96,7 +96,7 @@ class Roomphoto extends ActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('photo_id',$this->photo_id,true);
-		$criteria->compare('room_id',$this->room_id);
+		$criteria->compare('room_type_id',$this->room_type_id);
 		$criteria->compare('roomphototype_id',$this->roomphototype_id);
 		$criteria->compare('filename',$this->filename,true);
 		$criteria->compare('create_dt',$this->create_dt,true);

@@ -38,22 +38,27 @@ class RoomtypeController extends Controller
 		if(isset($_POST['Roomtype']))
 		{
 			$model->attributes=$_POST['Roomtype'];
+			$model->room_type_id = Pattern::generate("ROOM_TYPE_CODE");
+
 			if($model->validate())
 			{
 			  #$transaction mulai transaksi
 			  $transaction = Yii::app()->db->beginTransaction();
 			  try
 				{
-				  $model->save();
 					foreach (Basepriceroom::$publicTypePrice as $key => $PriceType)
 					{
 						$mSaveRoomPrice = new Basepriceroom(); #declare $mSaveRoomPrice menggunakan table Propertydesc
 						$mSaveRoomPrice->attributes=$_POST['Basepriceroom'];
 						$mSaveRoomPrice->room_type_id = $model->room_type_id;
 						$mSaveRoomPrice->hours = $PriceType;
-						$mSaveRoomPrice->price = "";
+						$mSaveRoomPrice->price = 0;
 						$mSaveRoomPrice->save(false); #save(false)--> save tidak validasi
 					}
+					Pattern::increase('ROOM_TYPE_CODE');
+				  $model->save();
+
+					//Yii::app()->end();
 					$transaction->commit();
 			    Yii::app()->user->setFlash('success', "Create Successfully");
 			    $this->redirect(array('/partner/property/index'));
@@ -109,13 +114,16 @@ class RoomtypeController extends Controller
 		if(Yii::app()->request->isPostRequest)
 		{
 			// we only allow deletion via POST request
-			$this->loadModel($id)->delete();
-			$this->loadModelbaseprice($id)->delete(); #untuk delete Basepriceroom
-			$this->loadModelroomphoto($id)->delete(); #untuk delete room type photo
+			//$this->loadModelbaseprice($id)->delete(); #untuk delete Basepriceroom
+			//$this->loadModelpriceflexible($id)->delete(); #untuk delete Basepriceroom
+			//$this->loadModelroomphoto($id)->delete(); #untuk delete room type photo
+			$BaseDel = DAO::executeSql("DELETE w
+																	FROM `tghbasepriceroom` w
+																	WHERE w.room_type_id='$id'"); #untuk delete bulk delete tghroompriceflexible
 			$BulkDel = DAO::executeSql("DELETE w
 																	FROM `tghroompriceflexible` w
-																	WHERE w.room_type_id=$id"); #untuk delete bulk delete tghroompriceflexible
-
+																	WHERE w.room_type_id='$id'"); #untuk delete bulk delete tghroompriceflexible
+			$this->loadModel($id)->delete();
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
 				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('index'));
@@ -157,6 +165,13 @@ class RoomtypeController extends Controller
 	public function loadModelbaseprice($id)
 	{
 		$model=Basepriceroom::model()->findByPk($id);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+	public function loadModelpriceflexible($id)
+	{
+		$model=Roompriceflexible::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;

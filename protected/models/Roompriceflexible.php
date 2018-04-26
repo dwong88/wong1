@@ -50,12 +50,14 @@ class Roompriceflexible extends ActiveRecord
 		// will receive user inputs.
 		return array(
 			//array('date', 'application.components.validator.DatePickerSwitcherValidator'),
-			array('date', 'required'),
+			array('start_date,end_date,property_id,room_type_id,date,hr24,hr0,hr1,hr2,hr3,hr4,hr5,hr6,hr7,hr8,hr9,hr10,hr11,hr12', 'required'),
+			//array('date', 'application.components.validator.DatePickerSwitcherValidator'),
+			array('price','application.components.validator.NumberSwitcherValidator'),
 			array('room_type_id', 'numerical', 'integerOnly'=>true),
-			array('price', 'numerical'),
+			array('price', 'length', 'max'=>17),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('price_id, room_type_id, date, hours, price', 'safe', 'on'=>'search'),
+			array('room_type_id, date, hours, price', 'safe', 'on'=>'search'),
 		);
 	}
 

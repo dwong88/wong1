@@ -3,10 +3,11 @@
 Yii::app()->clientScript->registerScript(
 					    '__inPageScript',
 					    "
-$('#room_id').change(function() {
-	var thisvalue = this.value;
-	$('#Roomclosure_room_id').text(thisvalue);
-});
+			$('#room_id').change(function() {
+				var thisvalue = this.value;
+				$('#Roomclosure_room_id').text(thisvalue);
+			});
+
 			$('#Roomclosure_start_date').datepicker({
 				});
 			$('#Roomclosure_end_date').datepicker({
@@ -37,7 +38,9 @@ $('#room_id').change(function() {
 							",
 CClientScript::POS_READY
 );
+Helper::registerJsKarlwei();
 ?>
+
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -54,6 +57,38 @@ CClientScript::POS_READY
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
 
 	<?php Helper::showFlash(); ?>
+	<?if($_GET['resource']!=null){
+		echo "string";
+	}else{?>
+	<?php
+	echo $form->labelEx($model,'property_id');
+	echo $form->dropDownList($model,'property_id', CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),array(
+		'prompt'=>'Select Property',
+		'ajax' => array(
+		'type'=>'POST',
+		'url'=>Yii::app()->createUrl('core/globalsetting/loadroomtype'), //or $this->createUrl('loadcities') if '$this' extends CController
+		'update'=>'#roomtype_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
+		'data'=>array('property_id'=>'js:this.value'),
+		)));
+	?>
+	<?php
+		echo $form->labelEx($model,'room_type_id');
+		echo CHtml::dropDownList('roomtype_id',$select_st,
+		array($select_st=>$mStatec[0]['state_name']),
+		array(
+			'prompt'=>'Select Room Type',
+			'ajax' => array(
+			'type'=>'POST',
+			'url'=>Yii::app()->createUrl('core/globalsetting/loadroom'), //or $this->createUrl('loadcities') if '$this' extends CController
+			'update'=>'#room_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
+		'data'=>array('room_type_id'=>'js:this.value'),
+		)));
+
+	?>
+	<div><?php 		echo CHtml::dropDownList('room_id',$select_ct,
+			array($select_ct=>$mStatec[0]['city_name']), array('prompt'=>'Select Room'));?>
+	</div>
+<?php }?>
 	<div class="row">
 		<?php echo $form->hiddenField($model,'room_id');?>
 		<?php echo $form->error($model,'room_id'); ?>
@@ -78,9 +113,9 @@ CClientScript::POS_READY
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'status'); ?>
-		<?php echo $form->textField($model,'status'); ?>
-		<?php echo $form->error($model,'status'); ?>
+		<?php echo $form->labelEx($model,'status_cl'); ?>
+		<?php echo $form->textField($model,'status_cl'); ?>
+		<?php echo $form->error($model,'status_cl'); ?>
 	</div>
 
 

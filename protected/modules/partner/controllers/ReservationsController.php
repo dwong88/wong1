@@ -132,11 +132,12 @@ class ReservationsController extends Controller
 	}
 
 	#fungsi load room
-	public function actionLoadroom($capacity)
+	public function actionLoadroom()
 	{
 			$room1 = DAO::queryAllSql("select r.room_id as id, r.`room_name` as name,rt.room_type_id as parent_id,rt.room_type_name as parent_name,rt.`room_type_room_size` as capacity from tghroom as r
 			inner join `tghroomtype` as rt on r.`room_type_id` = rt.`room_type_id`
-			WHERE rt.room_type_room_size = ".$capacity." OR ".$capacity." = '0'
+			inner join `tghproperty` as pt on rt.`property_id` = pt.`property_id`
+			WHERE rt.`property_id` = '".$_GET['pid']."' OR '".$_GET['pid']."' = '0'
 			GROUP BY rt.room_type_id
 			ORDER BY rt.room_type_id");
 
@@ -156,13 +157,14 @@ class ReservationsController extends Controller
 					$r->expanded = false;
 				}
 				$r->children = array();
-				$roomsp =DAO::queryAllSql("SELECT room_name as name, room_id as id FROM tghroom WHERE room_type_id = ".$room['parent_id']." ORDER BY name");
+				$roomsp =DAO::queryAllSql("SELECT room_name as name, room_id as id FROM tghroom WHERE room_type_id = '".$room['parent_id']."' ORDER BY is_unallocated");
 				foreach($roomsp as $value) {
 					$children = new Children;
-					$unavailable = new stdClass;
-					$roomsun =DAO::queryAllSql("SELECT start_date , end_date FROM tghroomclosure WHERE room_id = ".$value['id'].";");
+
+					$roomsun =DAO::queryAllSql("SELECT start_date , end_date FROM tghroomclosure WHERE room_id = '".$value['id']."';");
 					$children->name = $value['name'];
 					foreach($roomsun as $value1) {
+						$unavailable = new stdClass;
 						$unavailable->start = $value1['start_date'];
 			      $unavailable->end = $value1['end_date'];
 						$children->unavailable[]=$unavailable;
@@ -183,10 +185,18 @@ class ReservationsController extends Controller
 	{
 
 		 	$events = array();
+			/*$result = DAO::queryAllSql("select rev.reservations_id as id, rev.customer_name as name, rev.start_date as start, rev.end_date as end,rev.status,rev.paid,rm.room_id as room_id,rm.room_name from tghreservations as rev
+			inner join `tghroom` as rm on rm.room_id = rev.room_id
+			WHERE NOT (rev.end_date <= '".$start."') OR (rev.start_date >=' ".$end."')");*/
 			$result = DAO::queryAllSql("select rev.reservations_id as id, rev.customer_name as name, rev.start_date as start, rev.end_date as end,rev.status,rev.paid,rm.room_id as room_id,rm.room_name from tghreservations as rev
 			inner join `tghroom` as rm on rm.room_id = rev.room_id
-			WHERE NOT (rev.end_date <= '".$start."') OR (rev.start_date >=' ".$end."')");
-
+			WHERE NOT (rev.end_date <= '".$start."') OR (rev.start_date >='".$end."')
+			union
+			select c.id,c.name,c.start,c.end,'','',c.room_id,room_name from(
+			select cl.cl_id as id,cl.room_id,cl.start_date as start,cl.end_date as end, cl.status_cl as name,rm.room_name as room_name from tghroomclosure as cl
+						inner join `tghroom` as rm on rm.room_id = cl.room_id
+						WHERE NOT (end_date <= '".$start."') OR (start_date >='".$end."')
+			) as c");
 			foreach($result as $row) {
 			    $e = new Eventes();
 			    $e->id = $row['id'];
@@ -194,10 +204,56 @@ class ReservationsController extends Controller
 			    $e->start = $row['start'];
 			    $e->end = $row['end'];
 			    $e->resource = $row['room_id'];
+					$e->unavailable=1;
 
+					$e->tag = new stdClass();
+					$e->tag->unavailable=1;
 			    // additional properties
 			    $e->status = $row['status'];
 			    $e->paid = $row['paid'];
+			    $events[] = $e;
+
+			    /*
+			        int paid = Convert.ToInt32(e.DataItem["ReservationPaid"]);
+			        string paidColor = "#aaaaaa";
+
+			        e.Areas.Add(new Area().Bottom(10).Right(4).Html("<div style='color:" + paidColor + "; font-size: 8pt;'>Paid: " + paid + "%</div>").Visibility(AreaVisibility.Visible));
+			        e.Areas.Add(new Area().Left(4).Bottom(8).Right(4).Height(2).Html("<div style='background-color:" + paidColor + "; height: 100%; width:" + paid + "%'></div>").Visibility(AreaVisibility.Visible));
+			     * */
+			}
+
+			header('Content-Type: application/json');
+			echo json_encode($events);
+	}
+
+	#fungsi load events
+	public function actionLoadclosure($start,$end)
+	{
+
+		 	$events = array();
+			/*$result = DAO::queryAllSql("select cl_id as id, room_id, status as name , start_date as start, end_date as end from tghroomclosure
+			WHERE NOT (end_date <= '".$start."') OR (start_date >=' ".$end."')");*/
+			$result = DAO::queryAllSql("select rev.reservations_id as id, rev.customer_name as name, rev.start_date as start, rev.end_date as end,rev.status,rev.paid,rm.room_id as room_id,rm.room_name from tghreservations as rev
+			inner join `tghroom` as rm on rm.room_id = rev.room_id
+			WHERE NOT (rev.end_date <= '".$start."') OR (rev.start_date >='".$end."')
+			union
+			select c.id,c.name,c.start,c.end,'','',c.room_id,room_name from(
+			select cl.cl_id as id,cl.room_id,cl.start_date as start,cl.end_date as end, cl.status_cl as name,rm.room_name as room_name from tghroomclosure as cl
+						inner join `tghroom` as rm on rm.room_id = cl.room_id
+						WHERE NOT (end_date <= '".$start."') OR (start_date >='".$end."')
+			) as c");
+			foreach($result as $row) {
+			    $e = new Eventes();
+			    $e->id = $row['id'];
+					$e->text = $row['name'];
+			    $e->start = $row['start'];
+			    $e->end = $row['end'];
+			    $e->resource = $row['room_id'];
+					$e->unavailable=1;
+
+					$e->tag = new stdClass();
+					$e->tag->unavailable=1;
+			    // additional properties
 			    $events[] = $e;
 
 			    /*
@@ -311,6 +367,45 @@ class ReservationsController extends Controller
 			));
 	}
 
+	#fungsi untuk edit room closure
+	public function actionLoadeditevent1($id)
+	{
+			$this->layout = '//layouts/iframe1';
+		 //Yii::app()->end();
+			$model=$this->loadModel($id);
+			$model->reservations_id=$id;
+
+			if(isset($_POST['Reservations']))
+			{
+				$model->attributes=$_POST['Reservations'];
+				if($model->validate())
+				{
+				  #$transaction mulai transaksi
+				  $transaction = Yii::app()->db->beginTransaction();
+				  try{
+							$model->save();
+							#jika tidak ada error transaksi proses di commit
+							$transaction->commit();
+							$response = new Resulted();
+							$response->result = 'OK';
+							$response->message = 'Update successful';
+
+							header('Content-Type: application/json');
+							echo json_encode($response);
+							Yii::app()->end();
+					}
+					catch(exception $e) {
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  	}
+				}
+			}
+			$this->render('_form',array(
+				'model'=>$model,
+				'idtype'=>$idtype,
+			));
+	}
+
 	#fungsi untuk move events
 	public function actionLoadmovedevent($id,$start,$end,$resource)
 	{
@@ -348,7 +443,20 @@ class ReservationsController extends Controller
 		header('Content-Type: application/json');
 		echo json_encode($response);
 	}
-	
+
+	#module resize
+	public function actionLoadresizedclosure($start,$end,$id)
+	{
+		$hasil = DAO::executeSql("UPDATE tghroomclosure SET start_date='".$start."',end_date='".$end."' where cl_id='".$id."';");
+
+		$response = new Resulter();
+		$response->result = 'OK';
+		$response->message = 'Update successful';
+
+		header('Content-Type: application/json');
+		echo json_encode($response);
+	}
+
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.

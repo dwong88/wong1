@@ -73,23 +73,28 @@ class BasepriceroomController extends Controller
 		// $this->performAjaxValidation($model);
 		$mRoomtype = Roomtype::model()->findByPk($id);
 		$model= new Basepriceroom; #$modeldesc panggil model Propertydesc
+		$modelbase= new Basepriceroom; #$modeldesc panggil model Propertydesc
 		#Set descripsi Propertydesc
 		foreach (Basepriceroom::$publicTypePrice as $key => $value) {
 			//echo "string";
 			 $model->$value = $this->loadModelprice($id, $value)->price;
+			 //echo $model->$value;
 		}
 		#proses update descripsi
 		if(isset($_POST['Basepriceroom']))
 		{
-			$model->attributes = $_POST['Basepriceroom'];
+			$modelbase->attributes = $_POST['Basepriceroom'];
+			//print_r($_POST['Basepriceroom']);
 			foreach (Basepriceroom::$publicTypePrice as $key => $value)
 			{
 				$mSaveDesc = $this->loadModelprice($id, $value);
-				$mSaveDesc->price = $model->$value;
+				//$mSaveDesc->price = $modelbase->$value;
+				$mSaveDesc->price = $_POST['Basepriceroom'][$value];
 				//echo ("UPDATE tghbasepriceroom SET price='".$_POST['Basepriceroom'][$value]."'  WHERE room_type_id = '".$id."' AND hours = '".$value."';");
-				$mUp = DAO::executeSql("UPDATE tghbasepriceroom SET price='".$_POST['Basepriceroom'][$value]."'  WHERE room_type_id = '".$id."' AND hours = '".$value."' ");
+				//$mUp = DAO::executeSql("UPDATE tghbasepriceroom SET price='".$_POST['Basepriceroom'][$value]."'  WHERE room_type_id = '".$id."' AND hours = '".$value."' ");
 				//Yii::app()->end();
-				//$mSaveDesc->save(false);
+				$mSaveDesc->save(false);
+				//Yii::app()->end();
 			}
 			//print_r($model);
 				$this->redirect(array('property/index'));

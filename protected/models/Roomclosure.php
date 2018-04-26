@@ -4,11 +4,11 @@
  * This is the model class for table "tghroomclosure".
  *
  * The followings are the available columns in table 'tghroomclosure':
- * @property string $id
+ * @property string $cl_id
  * @property integer $room_id
  * @property string $start_date
  * @property string $end_date
- * @property integer $status
+ * @property integer $status_cl
  * @property string $create_dt
  * @property integer $create_by
  * @property string $update_dt
@@ -44,11 +44,11 @@ class Roomclosure extends ActiveRecord
 			array('start_date', 'application.components.validator.DatePickerSwitcherValidator'),
 			array('end_date', 'application.components.validator.DatePickerSwitcherValidator'),
 			array('start_date, end_date', 'required'),
-			array('status', 'length', 'max'=>11),
+			array('status_cl', 'length', 'max'=>11),
 			array('room_id, create_by, update_by', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, room_id, start_date, end_date, status, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
+			array('cl_id, room_id, start_date, end_date, status_cl, create_dt, create_by, update_dt, update_by', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -72,11 +72,11 @@ class Roomclosure extends ActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
+			'cl_id' => 'ID',
 			'room_id' => 'Room',
 			'start_date' => 'Start Date',
 			'end_date' => 'End Date',
-			'status' => 'Status',
+			'status_cl' => 'Status',
 			'create_dt' => 'Create Dt',
 			'create_by' => 'Create By',
 			'update_dt' => 'Update Dt',
@@ -102,11 +102,11 @@ class Roomclosure extends ActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id,true);
+		$criteria->compare('cl_id',$this->cl_id,true);
 		$criteria->compare('room_id',$this->room_id);
 		$criteria->compare('start_date',$this->start_date,true);
 		$criteria->compare('end_date',$this->end_date,true);
-		$criteria->compare('status',$this->status);
+		$criteria->compare('status_cl',$this->status_cl);
 		$criteria->compare('create_dt',$this->create_dt,true);
 		$criteria->compare('create_by',$this->create_by);
 		$criteria->compare('update_dt',$this->update_dt,true);

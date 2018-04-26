@@ -21,7 +21,7 @@ $('.search-form form').submit(function(){
 <?php Helper::showFlash(); ?>
 <?php
 $buttonBar = new ButtonBar('{search} {create}');
-$buttonBar->searchLinkHtmlOptions = array('id'=>'srcbutton');
+$buttonBar->searchLinkHtmlOptions = array('cl_id'=>'srcbutton');
 $buttonBar->createUrl = array('create');
 $buttonBar->render();
 ?>
@@ -38,7 +38,7 @@ $buttonBar->render();
 	'filter'=>$model,
 	'filterPosition'=>'',
 	'columns'=>array(
-		'id',
+		'cl_id',
 		array('name'=>'refRoom.room_name', 'header'=>'Room'),
 		'start_date',
 		'end_date',

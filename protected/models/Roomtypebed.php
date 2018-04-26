@@ -28,7 +28,6 @@ class Roomtypebed extends ActiveRecord
 		// will receive user inputs.
 		return array(
 			array('room_type_id', 'required'),
-			array('room_type_id', 'numerical', 'integerOnly'=>true),
 			array('master_bed_id', 'required'),
 			array('master_bed_id', 'numerical', 'integerOnly'=>true),
 			array('room_type_bed_quantity_room', 'length', 'max'=>4),

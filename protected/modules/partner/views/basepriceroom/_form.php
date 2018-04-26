@@ -1,7 +1,6 @@
 <?php
 $model->room_type_id=$_GET['id'];
-
-//$temp=(Countries::model()->findAll(), 'country_id', 'country_name');
+Helper::registerNumberField('#tnumber, .dtl-price');
 ?>
 <div class="form">
 
@@ -39,7 +38,7 @@ foreach (Basepriceroom::$publicTypePrice as $key => $value) {
 ?>
 <div class="row">
 	<?php echo $form->labelEx($model,$value); ?>
-	<?php echo $form->textField($model,$value); ?>
+	<?php echo $form->textField($model,$value,array('size'=>10,'id'=>'tnumber','class'=>'dtl-price col-right')); ?>
 </div>
 <?php
 }

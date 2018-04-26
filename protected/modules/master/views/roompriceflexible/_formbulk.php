@@ -19,6 +19,7 @@ $('#roomtype_id').change(function() {
 							",
 CClientScript::POS_READY
 );
+Helper::registerNumberField('#tnumber, .dtl-price');
 ?>
 <div class="form">
 
@@ -53,15 +54,16 @@ CClientScript::POS_READY
 	</div>
 
 	<div class="row">
-		<?php echo $form->checkBoxList($model, 'date_id', Helper::$listDays, array('prompt'=>'')); ?>
+		<?php
+		$model->date_id = array(1,2,3,4,5,6,7);
+		echo $form->checkBoxList($model, 'date_id', Helper::$listDays); ?>
 	</div>
 	<?php
-
 	foreach (Roompriceflexible::$publicTypePrice as $key => $value) {
 	?>
 	<div class="row">
 		<?php echo $form->labelEx($model,$value); ?>
-		<?php echo $form->textField($model,$value); ?>
+		<?php echo $form->textField($model,$value,array('size'=>10,'id'=>'tnumber','class'=>'dtl-price col-right')); ?>
 	</div>
 	<?php
 	}

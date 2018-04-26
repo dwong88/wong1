@@ -45,21 +45,23 @@
 		}
 </style>
 
-		<div style="width:160px; float:left;">
-				<div id="nav"></div>
-		</div>
-
-		<div style="margin-left: 160px;">
-
+		<div style="margin-left: 0px;">
+			Date: <span id="start"></span> <a href="#" onclick="picker.show(); return false;">Change</a>
 				<div class="space">
-						Show rooms:
+						<!--Show rooms:
 						<select id="filter">
 								<option value="0">All</option>
 								<option value="1">Single</option>
 								<option value="2">Double</option>
 								<option value="4">Family</option>
-						</select>
-
+						</select>-->
+						<div class="row">
+						    <?php
+						        echo CHtml::activeDropDownList($model, 'property_id',
+						        CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),
+						        array('empty'=>'Select Property','id'=>'filter'))
+						    ?>
+						</div>
 						<div class="space">
 								Time range:
 								<select id="timerange">
@@ -74,17 +76,6 @@
 				    Filter: <input id="filtersearch" /> <a href="#" id="clear">Clear</a>
 				</div>
 				<div id="dp"></div>
-				<div class="space">
-				    Format:
-				    <select id="format">
-				        <option value="svg">SVG</option>
-				        <option value="png">PNG</option>
-				        <option value="jpg">JPG</option>
-				    </select>
-				</div>
-				<div class="space">
-				    <a href="#" id="print-button">Print</a>
-				</div>
 			</div>
 <?php
 	$subs=substr($_GET['r'],21)."<br>";
@@ -96,41 +87,23 @@
 ?>
 <!--script untuk calendar navigasi-->
 <script type="text/javascript">
-		var nav = new DayPilot.Navigator("nav");
-		nav.selectMode = "month";
-		nav.showMonths = 3;
-		nav.skipMonths = 3;
-		nav.onTimeRangeSelected = function(args) {
-				loadTimeline(args.start);
-				loadEvents();
-		};
-		nav.init();
-
-		$("#timerange").change(function() {
-				switch (this.value) {
-						case "days":
-							dp.days = 1;
-							nav.selectMode = "Day";
-							nav.select(nav.selectionDay);
-							break;
-						case "week":
-								dp.days = 7;
-								nav.selectMode = "Week";
-								nav.select(nav.selectionDay);
-								break;
-						case "month":
-								dp.days = dp.startDate.daysInMonth();
-								nav.selectMode = "Month";
-								nav.select(nav.selectionDay);
-								break;
+		var picker = new DayPilot.DatePicker({
+				target: 'start',
+				pattern: 'yyyy-MM-dd',
+				onTimeRangeSelected: function(args) {
+					dp.startDate = args.start;
+					console.log(args.start);
+					loadTimeline(args.start);
+					loadEvents();
+					dp.update();
 				}
 		});
-
 		$("#autocellwidth").click(function() {
 				dp.cellWidth = 40;  // reset for "Fixed" mode
 				dp.cellWidthSpec = $(this).is(":checked") ? "Auto" : "Fixed";
 				dp.update();
 		});
+
 </script>
 <!--script untuk Scheduler-->
 <script type="text/javascript">
@@ -143,8 +116,8 @@
 
 			//dp.days untuk tentukan berapa hari di dalam calendar
 			dp.days = dp.startDate.daysInMonth();
-			loadTimeline(DayPilot.Date.today().firstDayOfMonth());
-
+			//loadTimeline(DayPilot.Date.today().firstDayOfMonth());
+			loadTimeline(new DayPilot.Date());
 			dp.eventDeleteHandling = "Update";
 
 			dp.timeHeaders = [
@@ -188,18 +161,18 @@
 
 			dp.onBeforeCellRender = function(args) {
 				//console.log(args.cell.events());
-				if (args.cell.start < DayPilot.Date.today() || args.cell.resource === "D") {
+				if (args.cell.start < DayPilot.Date.today() || args.cell.resource === "unallocated") {
 						args.cell.disabled = true;
 						args.cell.backColor = "#ccc";
 				}
 				if (args.cell.start.getDay() === 1) { // first day of month
 						args.cell.backColor = "#ffffd5";
-						args.cell.html = "<div style='position:absolute;right:2px;bottom:2px;font-size:8pt;color:#666;'>Maintenance</div>";
+						args.cell.html = "<div style='position:absolute;right:2px;bottom:2px;font-size:8pt;color:#666;'>Libur</div>";
 						args.cell.properties.status = "Under Maintenance";
 				}
 
 				var row = dp.rows.find(args.cell.resource);
-				var unavailable = row.data.unavailable;
+				/*var unavailable = row.data.unavailable;
 				if (!unavailable) {
 						return;
 				}
@@ -213,7 +186,7 @@
 						args.cell.disabled = true;
 						args.cell.backColor = "#ea9999";
 						args.cell.html = "<div style='position:absolute;right:2px;bottom:2px;font-size:8pt;color:#666;'>Unavailable</div>";
-				}
+				}*/
 			};
 
 			// event moving
@@ -234,19 +207,35 @@
 
 			// event resizing
 			dp.onEventResized = function (args) {
+				console.log(args.e.id());
 				var r = confirm("Press a button!");
 				if (r == true)
 				{
-					//$.post("backend_resize.php",
-					$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadresizedevent')?>&start="+args.newStart.toString()+"&end="+args.newEnd.toString()+"&id="+args.e.id(),
-					{
-							id: args.e.id(),
-							newStart: args.newStart.toString(),
-							newEnd: args.newEnd.toString()
-					},
-					function() {
-							dp.message("Resized.");
-					});
+					if(isNaN(args.e.id())){
+						//$.post("backend_resize.php",
+						$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadresizedclosure')?>&start="+args.newStart.toString()+"&end="+args.newEnd.toString()+"&id="+args.e.id(),
+						{
+								id: args.e.id(),
+								newStart: args.newStart.toString(),
+								newEnd: args.newEnd.toString()
+						},
+
+						function() {
+								dp.message("Resized.");
+						});
+					}
+					else{
+						$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadresizedevent')?>&start="+args.newStart.toString()+"&end="+args.newEnd.toString()+"&id="+args.e.id(),
+						{
+								id: args.e.id(),
+								newStart: args.newStart.toString(),
+								newEnd: args.newEnd.toString()
+						},
+
+						function() {
+								dp.message("Resized.");
+						});
+					}
 				}
 			};
 
@@ -267,6 +256,7 @@
 			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadpages')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource+ "&idtype=" + <?php echo $idtype;?>);
 
 		};
+
 		//module edit events
 		dp.onEventClicked = function(args) {
 		var modal = new DayPilot.Modal();
@@ -278,8 +268,16 @@
 				}
 			};
 			//modal.showUrl("edit.php?id=" + args.e.id());
-			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadeditevent')?>&id=" + args.e.id()+ "&idtype=" + <?php echo $idtype;?>);
+			console.log(JSON.stringify(args));
+			//isNaN(123)
+			if(isNaN(args.e.id())){
+				modal.showUrl("<?php echo Yii::app()->createUrl('partner/roomclosure/updatecal')?>&id=" + args.e.id());
+			}
+			else {
+				modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadeditevent')?>&id=" + args.e.id()+ "&idtype=" + <?php echo $idtype;?>);
+			}
 		};
+
 		//module delete events
 		dp.onEventDeleted = function(args) {
         //$.post("backend_delete.php",
@@ -307,7 +305,7 @@
 		dp.onBeforeEventRender = function(args) {
 				var start = new DayPilot.Date(args.e.start);
 				var end = new DayPilot.Date(args.e.end);
-
+				console.log('masuk event render');
 				var today = DayPilot.Date.today();
 				var now = new DayPilot.Date();
 
@@ -395,13 +393,13 @@
 					}
 			};
 			dp.init();
-
 			loadResources();
 			loadEvents();
 
 			function loadTimeline(date) {
 					dp.scale = "Manual";
 					dp.timeline = [];
+					dp.days = 14;
 					var start = date.getDatePart().addHours(24);
 
 					for (var i = 0; i < dp.days; i++) {
@@ -410,31 +408,32 @@
 					dp.update();
 			}
 
+			//load reservation
 			function loadEvents() {
 				var start = dp.visibleStart();
 				var end = dp.visibleEnd();
 				//alert(start);
 				//$.post("backend_events.php",
 				$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadevents')?>&start="+start+"&end="+end,
-				{
-					start: start.toString(),
-					end: end.toString(),
-					id: DayPilot.guid()
+					{
+						start: start.toString(),
+						end: end.toString(),
+						id: DayPilot.guid()
 					},
 					function(data) {
 						dp.events.list = data;
-						//console.log(data);
+						console.log(data);
 						dp.update();
 				}
 				);
 			}
 
+
 		function loadResources() {
 				//$.post("backend_rooms.php",
-				var capacity = $("#filter").val();
-				$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadroom')?>&capacity="+capacity,
-
-				{ capacity: $("#filter").val() },
+				console.log($("#filter").val());
+				var pid =$("#filter").val();
+				$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadroom')?>&pid="+pid,
 					function(data) {
 					dp.resources = data;
 					console.log(data);
@@ -446,11 +445,6 @@
 			$("#filter").change(function() {
 				loadResources();
 			});
-			$("#print-button").click(function(ev) {
-            ev.preventDefault();
-            var format = $("#format").val();
-            dp.exportAs(format).print();
-        });
 			//buat filter search
 			$("#filtersearch").keyup(function() {
             var query = $(this).val();

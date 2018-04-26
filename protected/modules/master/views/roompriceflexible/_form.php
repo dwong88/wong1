@@ -11,6 +11,7 @@ $('#roomtype_id').change(function() {
 							",
 CClientScript::POS_READY
 );
+Helper::registerNumberField('#tnumber, .dtl-price');
 ?>
 <div class="form">
 
@@ -33,14 +34,18 @@ CClientScript::POS_READY
 	?>
 	<br>
 	<?php Helper::showFlash(); ?>
-	<?php echo $form->dropDownList($model,'property_id', CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),array(
-	'prompt'=>'Select Property',
-	'ajax' => array(
-	'type'=>'POST',
-	'url'=>Yii::app()->createUrl('core/globalsetting/loadroomtype'), //or $this->createUrl('loadcities') if '$this' extends CController
-	'update'=>'#roomtype_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
-	'data'=>array('property_id'=>'js:this.value'),
-	))); ?>
+
+	<?php
+	echo $form->labelEx($model,'property_id');
+	echo $form->dropDownList($model,'property_id', CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),array(
+		'prompt'=>'Select Property',
+		'ajax' => array(
+		'type'=>'POST',
+		'url'=>Yii::app()->createUrl('core/globalsetting/loadroomtype'), //or $this->createUrl('loadcities') if '$this' extends CController
+		'update'=>'#roomtype_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
+		'data'=>array('property_id'=>'js:this.value'),
+		)));
+	?>
 	<?php
 		echo $form->labelEx($model,'room_type_id');
 		echo CHtml::dropDownList('roomtype_id',$select_st,
@@ -73,7 +78,7 @@ CClientScript::POS_READY
 	?>
 	<div class="row">
 		<?php echo $form->labelEx($model,$value); ?>
-		<?php echo $form->textField($model,$value); ?>
+		<?php echo $form->textField($model,$value,array('size'=>10,'id'=>'tnumber','class'=>'dtl-price col-right')); ?>
 	</div>
 	<?php
 	}

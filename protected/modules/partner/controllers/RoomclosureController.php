@@ -1,5 +1,6 @@
 <?php
 class Resultec {} #declare new class untuk return dari fungsi create
+class Resulted {} #edit
 class RoomclosureController extends Controller
 {
 	/**
@@ -32,19 +33,61 @@ class RoomclosureController extends Controller
 		if(isset($_POST['Roomclosure']))
 		{
 			$model->attributes=$_POST['Roomclosure'];
-			$model->room_id=$resource;
+			$model->room_id=$_POST['Roomclosure']['room_id'];
+			$model->cl_id = Pattern::generate("CLOSURE_CODE");
+			$tgl1=$_POST['Roomclosure']['start_date'];
+			$format = '%d/%m/%Y';
+			$date1 = $tgl1;
+			$parsed1 = strptime($date1 , $format);
+			$tgl2=$_POST['Roomclosure']['end_date'];
+			$format = '%d/%m/%Y';
+			$date2 = $tgl2;
+			$parsed2 = strptime($date2 , $format);
+
+			#parsing format start_date
+			if(is_array($parsed1))
+			{
+					$y = (int)$parsed1['tm_year'] + 1900;
+
+					$m = (int)$parsed1['tm_mon'] + 1;
+					$m = sprintf("%02d", $m);
+
+					$d = (int)$parsed1['tm_mday'];
+					$d = sprintf("%02d", $d);
+
+					$iso_date1 = "$y-$m-$d";
+			}
+
+			#parsing format end_date
+			if(is_array($parsed2))
+			{
+					$y = (int)$parsed2['tm_year'] + 1900;
+
+					$m = (int)$parsed2['tm_mon'] + 1;
+					$m = sprintf("%02d", $m);
+
+					$d = (int)$parsed2['tm_mday'];
+					$d = sprintf("%02d", $d);
+
+					$iso_date2 = "$y-$m-$d";
+			}
+
+			$model->start_date=$iso_date1; //outputs 2012-05-25
+			$model->end_date=$iso_date2; //outputs 2012-05-25
 			if($model->validate()) {
 			  #$transaction mulai transaksi
 			  $transaction = Yii::app()->db->beginTransaction();
 			  try{
+					Pattern::increase('CLOSURE_CODE');
 			    $model->save();
 			    #jika tidak ada error transaksi proses di commit
 			    $transaction->commit();
+					//Yii::app()->user->setFlash('success', "Create Successfully");
+					//$this->redirect(array('index'));
 
 					$response = new Resultec();
 					$response->result = 'OK';
 					$response->message = 'Create successful';
-
 					Yii::app()->end();
 			  }
 			    catch(exception $e) {
@@ -71,6 +114,7 @@ class RoomclosureController extends Controller
 		$model->room_id=$resource;
 		$model->start_date=$start;
 		$model->end_date=$end;
+		$model->cl_id = Pattern::generate("CLOSURE_CODE");
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
@@ -82,6 +126,7 @@ class RoomclosureController extends Controller
 			  #$transaction mulai transaksi
 			  $transaction = Yii::app()->db->beginTransaction();
 			  try{
+					Pattern::increase('CLOSURE_CODE');
 			    $model->save();
 			    #jika tidak ada error transaksi proses di commit
 			    $transaction->commit();
@@ -101,7 +146,7 @@ class RoomclosureController extends Controller
 			}
 		}
 
-		$this->render('create',array(
+		$this->render('_form',array(
 			'model'=>$model,
 		));
 	}
@@ -111,9 +156,9 @@ class RoomclosureController extends Controller
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdate($id)
+	public function actionUpdate($start,$end,$resource)
 	{
-		$model=$this->loadModel($id);
+		$model=$this->loadModel($resource);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -139,6 +184,46 @@ class RoomclosureController extends Controller
 		}
 
 		$this->render('update',array(
+			'model'=>$model,
+		));
+	}
+
+	public function actionUpdatecal($id)
+	{
+		$this->layout = '//layouts/iframe1';
+		$model=$this->loadModel($id);
+
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
+
+		if(isset($_POST['Roomclosure']))
+		{
+			$model->attributes=$_POST['Roomclosure'];
+			if($model->validate()) {
+				#$transaction mulai transaksi
+				$transaction = Yii::app()->db->beginTransaction();
+				try{
+					$model->save();
+					#jika tidak ada error transaksi proses di commit
+					$transaction->commit();
+					//Yii::app()->user->setFlash('success', "Update Successfully");
+					//$this->redirect(array('index'));
+					$response = new Resulted();
+					$response->result = 'OK';
+					$response->message = 'Update successful';
+
+					header('Content-Type: application/json');
+					echo json_encode($response);
+					Yii::app()->end();
+				}
+					catch(exception $e) {
+						$transaction->rollback();
+						throw new CHttpException(500, $e->getMessage());
+				}
+			}
+		}
+
+		$this->render('_formup',array(
 			'model'=>$model,
 		));
 	}

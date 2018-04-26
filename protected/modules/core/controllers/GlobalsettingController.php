@@ -49,7 +49,7 @@ class GlobalsettingController extends Controller
 
 		}
 
-		public function actionLoadcities($start)
+		public function actionLoadcities()
 		{
 				//echo "string2";
 

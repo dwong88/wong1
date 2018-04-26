@@ -99,7 +99,7 @@ class PropertyController extends Controller
 
 		#state and city_id
 		$mStatec = DAO::queryAllSql("SELECT st.state_name,st.state_id,ct.city_id,ct.city_name,p.property_id FROM `tghproperty` as p,`tghstate` as st,`tghcity` as ct WHERE  p.state_id=st.state_id AND p.city_id=ct.city_id AND p.property_id = '".$id."'");
-	
+
 		$modelphoto= new Propertyphoto; #declare use model propertyphoto
 		$modelphoto->property_id=$id;
 		$modelphoto->propertyphototype_id =$_POST['Propertyphoto']['propertyphototype_id'];

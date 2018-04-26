@@ -32,7 +32,7 @@ class RoompriceflexibleController extends Controller
 
 		if(isset($_POST['Roompriceflexible']))
 		{
-			//print_r($_POST);
+
 			$model->attributes=$_POST['Roompriceflexible'];
 			foreach (Roompriceflexible::$publicTypePrice as $key => $PriceType) {
 				$mFlexPrice = new Roompriceflexible(); #declare $mFlexPrice menggunakan table Propertydesc
@@ -62,7 +62,11 @@ class RoompriceflexibleController extends Controller
 				$date=date_create($iso_date);
 				$mFlexPrice->date=date_format($date,"Y/m/d H:i:s");
 				//echo $mFlexPrice->price = $model->$PriceType;
+				//$mFlexPrice->date=$_POST['Roompriceflexible']['date'];
 				$mFlexPrice->save(); #save(false)--> save tidak validasi
+				//Yii::app()->end();
+				Yii::app()->user->setFlash('success', "Create Successfully");
+				$this->redirect(array('index'));
 			}
 		}
 
@@ -111,6 +115,10 @@ class RoompriceflexibleController extends Controller
 				echo "isi";
 		}
 		else{
+			foreach (Basepriceroom::$publicTypePrice as $key => $value) {
+				//echo "string";
+				 $model->$value = $this->loadModelprice($id, $value)->price;
+			}
 			$model->attributes=$_POST['Roompriceflexible'];
 			if(isset($_POST['Roompriceflexible']))
 			{
@@ -189,7 +197,7 @@ class RoompriceflexibleController extends Controller
 						}
 						#insert update bulks
 						$updatebulks = DAO::executeSql("INSERT INTO `tghroompriceflexible` (room_type_id, date,hours, price)
-						select $room_type_ids,tgl.runningdate,price.hours,price.price  FROM
+						select '$room_type_ids',tgl.runningdate,price.hours,price.price  FROM
 						(select hours,price,random_id from `tghtemproomprice` where random_id='$rand') as price,
 						(select runningdate from tghrunningdate where runningdate between '".$iso_date1."' and '".$iso_date2."' AND date_id IN ($tampung)) as tgl");
 
@@ -258,6 +266,15 @@ class RoompriceflexibleController extends Controller
 	{
 		//$model=Roompriceflexible::model()->findByPk($id);
 		$model=Roompriceflexible::model()->find('room_type_id=:pid', array(':pid'=>$id));
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
+
+	#load model untuk tabel property price
+	public function loadModelprice($id,$type)
+	{
+		$model=Basepriceroom::model()->find('room_type_id=:pid AND hours = :ty', array(':pid'=>$id, ':ty'=>$type));
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
