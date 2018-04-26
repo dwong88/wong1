@@ -1,20 +1,20 @@
 <?php
-#fungsi input value ajax city state country
+#fungsi input value ajax room_id
 Yii::app()->clientScript->registerScript(
 					    '__inPageScript',
 					    "
-			$('#room_id').change(function() {
-				var thisvalue = this.value;
-				$('#Roomclosure_room_id').text(thisvalue);
-			});
+				$('#room_id').change(function() {
+					var thisvalue = this.value;
+					$('#Roomclosure_room_id').text(thisvalue);
+				});
 
-			$('#Roomclosure_start_date').datepicker({
-				});
-			$('#Roomclosure_end_date').datepicker({
-           onSelect: function () {
-              myfunc();
-      			}
-				});
+				$('#Roomclosure_start_date').datepicker({
+					});
+				$('#Roomclosure_end_date').datepicker({
+	           onSelect: function () {
+	              myfunc();
+	      			}
+					});
 
        function myfunc(){
 	      var start= $('#Roomclosure_start_date').datepicker('getDate');

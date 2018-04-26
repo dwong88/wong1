@@ -1,9 +1,9 @@
 <div class="form">
 <?php
-$room_id = $model->room_id;
-$start = $model->start_date;
-$end = $model->end_date;
-$id_type = $model->type;
+		$room_id = $model->room_id;
+		$start = $model->start_date;
+		$end = $model->end_date;
+		$id_type = $model->type;
 		if($model->isNewRecord){
 		 $actions[]='loadcreateevent&start='.$start."&end=".$end."&resource".$room_id."&idtype".$id_type;
 		}
@@ -23,16 +23,14 @@ $id_type = $model->type;
 	<table>
 		<tr>
 				<td><?php
-					//echo $model->room_id;
 					echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/bed.png', 'Bed'),array('roomclosure/createcal',
 				                                         'start'=>$start,'end'=>$end,'resource'=>$room_id)); ?> Room Closure</td>
 			 <td><?php
-					//echo $model->room_id;
 					echo CHtml::link(CHtml::image(Yii::app()->theme->baseUrl.'/images/reservation.png', 'Reservation'),array('reservations/loadcreateevent',
 				                                         'start'=>$start,'end'=>$end,'resource'=>$room_id,'idtype'=>$id_type)); ?>Room Reservation
 		  </td>
 		</tr>
-
+	</table>
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->

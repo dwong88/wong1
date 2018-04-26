@@ -82,8 +82,6 @@ class RoomclosureController extends Controller
 			    $model->save();
 			    #jika tidak ada error transaksi proses di commit
 			    $transaction->commit();
-					//Yii::app()->user->setFlash('success', "Create Successfully");
-					//$this->redirect(array('index'));
 
 					$response = new Resultec();
 					$response->result = 'OK';
@@ -130,9 +128,7 @@ class RoomclosureController extends Controller
 			    $model->save();
 			    #jika tidak ada error transaksi proses di commit
 			    $transaction->commit();
-			    //Yii::app()->user->setFlash('success', "Create Successfully");
-			    //$this->redirect(array('index'));
-
+					#response ke json
 					$response = new Resultec();
 					$response->result = 'OK';
 					$response->message = 'Create successful';

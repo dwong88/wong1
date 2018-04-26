@@ -17,7 +17,6 @@ CClientScript::POS_READY
 );
 ?>
 <?php
-//echo $model->end_minutes;
 #looping buat jam
 for($d=0;$d<=23;$d++)
 {
@@ -73,30 +72,29 @@ for($f=0;$f<=59;$f++)
 						<?php echo $form->hiddenField($model,'city_id',array('value'=>''));?>
 						</div>
 						<?php echo $form->dropDownList($model,'country_id', CHtml::listData(Countries::model()->findAll(), 'country_id', 'country_name'),array(
-						'prompt'=>'Select Country',
-						'ajax' => array(
-						'type'=>'POST',
-						'url'=>Yii::app()->createUrl('core/globalsetting/loadstates'), //or $this->createUrl('loadcities') if '$this' extends CController
-						'update'=>'#state_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
-						'data'=>array('country_id'=>'js:this.value'),
-						))); ?>
+									'prompt'=>'Select Country',
+									'ajax' => array(
+									'type'=>'POST',
+									'url'=>Yii::app()->createUrl('core/globalsetting/loadstates'), //or $this->createUrl('loadcities') if '$this' extends CController
+									'update'=>'#state_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
+									'data'=>array('country_id'=>'js:this.value'),
+									))); ?>
 						<?php
-							echo CHtml::dropDownList('state_id',$select_st,
-							array($select_st=>$mStatec[0]['state_name']),
-						  array(
-						    'prompt'=>'Select Provinsi',
-						    'ajax' => array(
-						    'type'=>'POST',
-						    'url'=>Yii::app()->createUrl('core/globalsetting/loadcities'), //or $this->createUrl('loadcities') if '$this' extends CController
-						    'update'=>'#city_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
-						  'data'=>array('state_id'=>'js:this.value'),
-						  )));
+								echo CHtml::dropDownList('state_id',$select_st,
+								array($select_st=>$mStatec[0]['state_name']),
+							  array(
+							    'prompt'=>'Select Provinsi',
+							    'ajax' => array(
+							    'type'=>'POST',
+							    'url'=>Yii::app()->createUrl('core/globalsetting/loadcities'), //or $this->createUrl('loadcities') if '$this' extends CController
+							    'update'=>'#city_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
+							  'data'=>array('state_id'=>'js:this.value'),
+							  )));
 								echo CHtml::dropDownList('city_id',$select_ct,
 								array($select_ct=>$mStatec[0]['city_name']), array('prompt'=>'Select City'));
 						?>
 						<div class="row">
 							<?php echo $form->labelEx($model,'weekend_start').'<br>'; ?>
-							<?php //echo $form->textField($model,'weekend_start',array('size'=>10,'maxlength'=>10)); ?>
 							<?php echo $form->dropDownList($model, 'weekend_start', Helper::$listDay, array('prompt'=>'Pilih', 'id'=>'id-sel-day')); ?>
 							<?php echo $form->error($model,'weekend_start'); ?>
 						</div>
@@ -176,8 +174,6 @@ for($f=0;$f<=59;$f++)
 					</div>
 					<div class="row">
 						<?php echo $form->labelEx($model,'available_cleaning_start').'<br>'; ?>
-						<?php //echo $form->dropDownList($model, 'available_cleaning_start', array('ADMIN'=>'Admin', 'Partner'=>'Partner',), array('prompt'=>'')); ?>
-						<?php //$form->dropDownList($model->myFunction())?>
 						<?php echo $form->dropDownList($model, 'start_hours',
 						 $win,array('prompt'=>'--Select Hours---')); ?>
 						 <?php echo $form->dropDownList($model, 'start_minutes',
@@ -185,8 +181,6 @@ for($f=0;$f<=59;$f++)
 					</div>
 					<div class="row">
 						<?php echo $form->labelEx($model,'available_cleaning_end').'<br>'; ?>
-						<?php //echo $form->dropDownList($model, 'available_cleaning_start', array('ADMIN'=>'Admin', 'Partner'=>'Partner',), array('prompt'=>'')); ?>
-						<?php //$form->dropDownList($model->myFunction())?>
 						<?php echo $form->dropDownList($model, 'end_hours',
 						 $win,array('prompt'=>'--Select Hours---')); ?>
 						 <?php echo $form->dropDownList($model, 'end_minutes',
@@ -236,7 +230,6 @@ $default='-6.214626,106.84513';
 	var gmaps2 = document.getElementById('gmaps_lng').value;
 	//alert(gmaps1);
 	if(gmaps1 != 0){
-
 		var myLatlng = new google.maps.LatLng(gmaps1,gmaps2);
 	}
   else{
@@ -249,13 +242,14 @@ $default='-6.214626,106.84513';
      center: myLatlng,
      mapTypeId: google.maps.MapTypeId.ROADMAP
      }
+
   map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
   var marker = new google.maps.Marker({
-  draggable: true,
-  position: myLatlng,
-  map: map,
-  title: "Your location"
+	  draggable: true,
+	  position: myLatlng,
+	  map: map,
+	  title: "Your location"
   });
 
   google.maps.event.addListener(marker, 'dragend', function (event) {
@@ -272,9 +266,10 @@ $default='-6.214626,106.84513';
 <div class="row">
   <div id="map_canvas" style="width:50%; height:30%; position:absolute;left:620px;top:700px;overflow: none"></div>
 </div>
-	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
-	</div>
+
+<div class="row buttons">
+	<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+</div>
 
 <?php $this->endWidget(); ?>
 

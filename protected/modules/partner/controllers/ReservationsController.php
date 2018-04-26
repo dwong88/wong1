@@ -132,14 +132,24 @@ class ReservationsController extends Controller
 	}
 
 	#fungsi load room
-	public function actionLoadroom()
+	public function actionLoadroom($id=0)
 	{
-			$room1 = DAO::queryAllSql("select r.room_id as id, r.`room_name` as name,rt.room_type_id as parent_id,rt.room_type_name as parent_name,rt.`room_type_room_size` as capacity from tghroom as r
-			inner join `tghroomtype` as rt on r.`room_type_id` = rt.`room_type_id`
-			inner join `tghproperty` as pt on rt.`property_id` = pt.`property_id`
-			WHERE rt.`property_id` = '".$_GET['pid']."' OR '".$_GET['pid']."' = '0'
-			GROUP BY rt.room_type_id
-			ORDER BY rt.room_type_id");
+			$id=$_GET['pid'];
+			if($id==0){
+				$room1 = DAO::queryAllSql("select r.room_id as id, r.`room_name` as name,rt.room_type_id as parent_id,rt.room_type_name as parent_name,rt.`room_type_room_size` as capacity from tghroom as r
+				inner join `tghroomtype` as rt on r.`room_type_id` = rt.`room_type_id`
+				inner join `tghproperty` as pt on rt.`property_id` = pt.`property_id`
+				GROUP BY rt.room_type_id
+				ORDER BY rt.room_type_id");
+			}
+			else{
+				$room1 = DAO::queryAllSql("select r.room_id as id, r.`room_name` as name,rt.room_type_id as parent_id,rt.room_type_name as parent_name,rt.`room_type_room_size` as capacity from tghroom as r
+				inner join `tghroomtype` as rt on r.`room_type_id` = rt.`room_type_id`
+				inner join `tghproperty` as pt on rt.`property_id` = pt.`property_id`
+				WHERE rt.`property_id` = '".$id."'
+				GROUP BY rt.room_type_id
+				ORDER BY rt.room_type_id");
+			}
 
 			$result = array();
 			$c=0;

@@ -1,6 +1,6 @@
 <?php
-$model->room_type_id=$_GET['id'];
-Helper::registerNumberField('#tnumber, .dtl-price');
+	$model->room_type_id=$_GET['id'];
+	Helper::registerNumberField('#tnumber, .dtl-price');
 ?>
 <div class="form">
 
@@ -28,12 +28,11 @@ Helper::registerNumberField('#tnumber, .dtl-price');
 		else {
 			echo $form->textField($model,'room_type_id',array('readonly'=>'readonly'));
 		}
-		 ?>
+		?>
 		<?php echo $form->error($model,'room_type_id'); ?>
 	</div>
 
 <?php
-
 foreach (Basepriceroom::$publicTypePrice as $key => $value) {
 ?>
 <div class="row">
@@ -43,9 +42,9 @@ foreach (Basepriceroom::$publicTypePrice as $key => $value) {
 <?php
 }
 ?>
-	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
-	</div>
+<div class="row buttons">
+	<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+</div>
 
 <?php $this->endWidget(); ?>
 

@@ -26,8 +26,8 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'status'); ?>
-		<?php echo $form->textField($model,'status'); ?>
+		<?php echo $form->label($model,'status_cl'); ?>
+		<?php echo $form->textField($model,'status_cl'); ?>
 	</div>
 
 	<div class="row buttons">

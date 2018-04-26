@@ -5,12 +5,12 @@ $this->breadcrumbs=array(
 
 Yii::app()->clientScript->registerScript('search', "
 $('#srcbutton').click(function(){
-	$('.search-form').toggle();
-	return false;
+		$('.search-form').toggle();
+		return false;
 });
 $('.search-form form').submit(function(){
 	$('#roomclosure-grid').yiiGridView('update', {
-		data: $(this).serialize()
+			data: $(this).serialize()
 	});
 	$('.search-form').hide();
 	return false;
@@ -20,10 +20,10 @@ $('.search-form form').submit(function(){
 
 <?php Helper::showFlash(); ?>
 <?php
-$buttonBar = new ButtonBar('{search} {create}');
-$buttonBar->searchLinkHtmlOptions = array('cl_id'=>'srcbutton');
-$buttonBar->createUrl = array('create');
-$buttonBar->render();
+	$buttonBar = new ButtonBar('{search} {create}');
+	$buttonBar->searchLinkHtmlOptions = array('cl_id'=>'srcbutton');
+	$buttonBar->createUrl = array('create');
+	$buttonBar->render();
 ?>
 
 <div class="search-form" style="display:none">
@@ -42,7 +42,7 @@ $buttonBar->render();
 		array('name'=>'refRoom.room_name', 'header'=>'Room'),
 		'start_date',
 		'end_date',
-		'status',
+		'status_cl',
 		array('name'=>'refUsercreate.user_name', 'header'=>'Create By'),
 		/*
 		'create_by',

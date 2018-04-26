@@ -13,7 +13,6 @@
 
 				cursor: pointer;
 		}
-
 		.scheduler_default_rowheader_inner
 		{
 				border-right: 1px solid #ccc;
@@ -44,6 +43,11 @@
 				display: none !important;
 		}
 </style>
+<style>
+    #dp .scheduler_default_cellparent, .scheduler_default_cell.scheduler_default_cell_business.scheduler_default_cellparent {
+        background: #f3f3f3;
+    }
+</style>
 
 		<div style="margin-left: 0px;">
 			Date: <span id="start"></span> <a href="#" onclick="picker.show(); return false;">Change</a>
@@ -57,18 +61,13 @@
 						</select>-->
 						<div class="row">
 						    <?php
+										Property:
 						        echo CHtml::activeDropDownList($model, 'property_id',
 						        CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),
 						        array('empty'=>'Select Property','id'=>'filter'))
 						    ?>
 						</div>
 						<div class="space">
-								Time range:
-								<select id="timerange">
-										<option value="days">Days</option>
-										<option value="week">Week</option>
-										<option value="month" selected>Month</option>
-								</select>
 								<label for="autocellwidth"><input type="checkbox" id="autocellwidth">Auto Cell Width</label>
 						</div>
 				</div>
@@ -161,13 +160,14 @@
 
 			dp.onBeforeCellRender = function(args) {
 				//console.log(args.cell.events());
-				if (args.cell.start < DayPilot.Date.today() || args.cell.resource === "unallocated") {
+				console.log(JSON.stringify(args.cell.resource));
+				if (args.cell.start < DayPilot.Date.today()) {
 						args.cell.disabled = true;
 						args.cell.backColor = "#ccc";
 				}
 				if (args.cell.start.getDay() === 1) { // first day of month
 						args.cell.backColor = "#ffffd5";
-						args.cell.html = "<div style='position:absolute;right:2px;bottom:2px;font-size:8pt;color:#666;'>Libur</div>";
+						args.cell.html = "<div style='position:absolute;right:2px;bottom:2px;font-size:8pt;color:#666;'>Maintenance</div>";
 						args.cell.properties.status = "Under Maintenance";
 				}
 
@@ -207,7 +207,6 @@
 
 			// event resizing
 			dp.onEventResized = function (args) {
-				console.log(args.e.id());
 				var r = confirm("Press a button!");
 				if (r == true)
 				{
@@ -303,18 +302,30 @@
 		};
 
 		dp.onBeforeEventRender = function(args) {
+				//console.log(JSON.stringify(args));
 				var start = new DayPilot.Date(args.e.start);
 				var end = new DayPilot.Date(args.e.end);
-				console.log('masuk event render');
+				//console.log('masuk event render');
 				var today = DayPilot.Date.today();
 				var now = new DayPilot.Date();
 
 				args.e.html = args.e.text + " (" + start.toString("M/d/yyyy") + " - " + end.toString("M/d/yyyy") + ")";
 
+				if(isNaN(args.e.id)){
+					args.data.fontColor = "#fff";
+          args.data.backColor = "#E06666";
+          args.data.borderColor = "#E06666";
+					args.e.barColor = 'red';
+				}
+				else {
+					args.data.fontColor = "#000";
+          args.data.backColor = "#9FC5E8";
+          args.data.borderColor = "#3D85C6";
+					args.e.barColor = 'orange';
+				}
 				switch (args.e.status) {
 						case "New":
 								var in2days = today.addDays(1);
-
 								if (start < in2days) {
 										args.e.barColor = 'red';
 										args.e.toolTip = 'Expired (not confirmed in time)';
@@ -362,6 +373,7 @@
 
 				var paid = args.e.paid;
 				var paidColor = "#aaaaaa";
+				console.log(args.e.id);
 				args.data.areas = [
             {
                 onClick: function(args) { DayPilot.Modal.alert("<b>Event name:</b><br>" + args.source.text()); },
@@ -431,17 +443,17 @@
 
 		function loadResources() {
 				//$.post("backend_rooms.php",
-				console.log($("#filter").val());
+				//console.log($("#filter").val());
 				var pid =$("#filter").val();
 				$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadroom')?>&pid="+pid,
 					function(data) {
 					dp.resources = data;
-					console.log(data);
 					dp.update();
 				});
 		}
+
 		$(document).ready(function() {
-			var capacity = 0;
+			var pid = 0;
 			$("#filter").change(function() {
 				loadResources();
 			});

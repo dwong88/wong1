@@ -25,12 +25,12 @@ class RoomtypeController extends Controller
 	 */
 	public function actionCreate($id)
 	{
-		$mProperty = Property::model()->findByPk($id);
-        if($mProperty===null)
-            throw new CHttpException(404,'The requested page does not exist.');
+			$mProperty = Property::model()->findByPk($id);
+      if($mProperty===null)
+          throw new CHttpException(404,'The requested page does not exist.');
 
-        $model=new Roomtype;
-        $model->property_id = $mProperty->property_id;
+      $model=new Roomtype;
+      $model->property_id = $mProperty->property_id;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -84,7 +84,7 @@ class RoomtypeController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-        $mProperty = Property::model()->findByPk($model->property_id);
+    $mProperty = Property::model()->findByPk($model->property_id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -117,6 +117,21 @@ class RoomtypeController extends Controller
 			//$this->loadModelbaseprice($id)->delete(); #untuk delete Basepriceroom
 			//$this->loadModelpriceflexible($id)->delete(); #untuk delete Basepriceroom
 			//$this->loadModelroomphoto($id)->delete(); #untuk delete room type photo
+
+			#bagian proses delete photo room type
+			/*if($_GET['pid']!=NULL)
+			{
+				$pid=$_GET['pid'];
+				$photoDel = DAO::executeSql("DELETE FROM tghroomphoto WHERE room_type_id = '".$id."' AND photo_id = '".$pid."'");
+				$docPath = FileUpload::getFilePath($model->filename, FileUpload::ROOM_PHOTO_PATH);
+				if(file_exists($docPath)) unlink($docPath);
+			}
+			else
+			{
+				// we only allow deletion via POST request
+				$this->loadModel($id)->delete();
+				Roomtype::model()->deleteAll('property_id = :pid', array(':pid'=>$id));
+			}*/
 			$BaseDel = DAO::executeSql("DELETE w
 																	FROM `tghbasepriceroom` w
 																	WHERE w.room_type_id='$id'"); #untuk delete bulk delete tghroompriceflexible
