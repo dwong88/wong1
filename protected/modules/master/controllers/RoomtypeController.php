@@ -92,10 +92,19 @@ class RoomtypeController extends Controller
 		if(isset($_POST['Roomtype']))
 		{
 				$model->attributes=$_POST['Roomtype'];
-				if($model->save()) {
-					Yii::app()->user->setFlash('success', "Update Successfully");
-					$this->redirect(array('/partner/property/index'));
-				}
+				if($model->validate()) {
+					$transaction = Yii::app()->db->beginTransaction();
+				 	try{
+						 $model->save();
+						 $transaction->commit();
+		 				 Yii::app()->user->setFlash('success', "Update Successfully");
+		 				 $this->redirect(array('/partner/property/index'));
+	 			 }
+	 				 catch(exception $e) {
+	 					 $transaction->rollback();
+	 					 throw new CHttpException(500, $e->getMessage());
+	 			 }
+			}
 		}
 
 		$this->render('update',array(
@@ -119,7 +128,7 @@ class RoomtypeController extends Controller
 			//$this->loadModelroomphoto($id)->delete(); #untuk delete room type photo
 
 			#bagian proses delete photo room type
-			/*if($_GET['pid']!=NULL)
+			if($_GET['pid']!=NULL)
 			{
 				$pid=$_GET['pid'];
 				$photoDel = DAO::executeSql("DELETE FROM tghroomphoto WHERE room_type_id = '".$id."' AND photo_id = '".$pid."'");
@@ -130,8 +139,8 @@ class RoomtypeController extends Controller
 			{
 				// we only allow deletion via POST request
 				$this->loadModel($id)->delete();
-				Roomtype::model()->deleteAll('property_id = :pid', array(':pid'=>$id));
-			}*/
+				Roomphoto::model()->deleteAll('room_type_id = :pid', array(':pid'=>$id));
+			}
 			$BaseDel = DAO::executeSql("DELETE w
 																	FROM `tghbasepriceroom` w
 																	WHERE w.room_type_id='$id'"); #untuk delete bulk delete tghroompriceflexible

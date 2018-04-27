@@ -16,7 +16,7 @@ $this->widget('application.extensions.widget.GridView', array(
 		array(
       'class'=>'CButtonColumn',
       'template'=>'{delete}',
-			'deleteButtonUrl'=>'CHtml::normalizeUrl(array("room/delete", "id"=>$_GET["id"], "pid"=>$data->photo_id))',
+			'deleteButtonUrl'=>'CHtml::normalizeUrl(array("roomphoto/delete", "id"=>$_GET["id"], "pid"=>$data->photo_id))',
 		),
 	),
 ));

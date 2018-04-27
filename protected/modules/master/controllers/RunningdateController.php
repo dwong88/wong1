@@ -71,8 +71,6 @@ class RunningdateController extends Controller
 
 			$iso_date1; //outputs 2012-05-25
 			$iso_date2; //outputs 2012-05-25
-			//$date=date_create($iso_date1);
-			//echo date_format($date,"Y/m/d H:i:s");
 
 			$begin = new DateTime($iso_date1);
 			$end = new DateTime($iso_date2);

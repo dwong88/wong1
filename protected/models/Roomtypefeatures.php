@@ -26,7 +26,7 @@ class Roomtypefeatures extends ActiveRecord
 		// will receive user inputs.
 		return array(
 			array('room_features_id, room_type_id', 'required'),
-			array('room_features_id, room_type_id', 'numerical', 'integerOnly'=>true),
+			//array('room_features_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('room_features_id, room_type_id', 'safe', 'on'=>'search'),

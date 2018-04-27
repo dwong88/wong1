@@ -26,13 +26,13 @@ class RoomtypefeaturesController extends Controller
 	public function actionCreate($id=0)
 	{
 		$model=new Roomtypefeatures;
-        $model->room_type_id = $id;
+    $model->room_type_id = $id;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
+ 		#buat count loop
     $mSelf = DAO::queryAllSql("SELECT room_features_id FROM `tghroomtypefeatures`WHERE room_type_id = '".$id."'");
-		//$mSavef->prop_features_id = $temp_f;
 		#print_r($mSelf);
 		$countselect=count($mSelf);
 		for($c=0;$c<$countselect;$c++)
@@ -41,63 +41,47 @@ class RoomtypefeaturesController extends Controller
 		}
         $model->room_features_id = $checkedFeat;
 
+		#query data property
 		$qProperty = DAO::queryRowSql('SELECT property_name,room_type_name
                                     FROM `tghroomtype`
                                     JOIN tghproperty on tghroomtype.property_id=tghproperty.property_id
                                     WHERE room_type_id=:rid'
                                     , array(':rid'=>$id));
 
-		//echo $qProperty['room_type_name']
-
 		if(isset($_POST['Roomtypefeatures']))
 		{
-            $model->attributes = $_POST['Roomtypefeatures'];
-            //$model->room_features_id = array('room_features_id');
-            $loop=$model->room_features_id;
-            $id= $model->room_type_id;
+        $model->attributes = $_POST['Roomtypefeatures'];
+        //$model->room_features_id = array('room_features_id');
+        $loop=$model->room_features_id;
+        $id= $model->room_type_id;
 
-            $mDel = DAO::executeSql("DELETE FROM tghroomtypefeatures WHERE room_type_id = '".$id."'");
-            foreach ($loop as $key => $value) {
-                $msaverf= new Roomtypefeatures;
-                $msaverf->room_features_id = $value;
-                $msaverf->room_type_id = $id;
-                //Yii::app()->end();
-                $msaverf->save(false);
+        $mDel = DAO::executeSql("DELETE FROM tghroomtypefeatures WHERE room_type_id = '".$id."'");
+				if($model->validate()) {
+				$transaction = Yii::app()->db->beginTransaction();
+				try{
+	        foreach ($loop as $key => $value) {
+	            $msaverf= new Roomtypefeatures;
+	            $msaverf->room_features_id = $value;
+	            $msaverf->room_type_id = $id;
+	            //Yii::app()->end();
+	            $msaverf->save(false);
 
-            }
-            Yii::app()->user->setFlash('success', "Create Successfully");
-            $this->redirect(array('/partner/property/index'));
-        }
-
-
-
+	        }
+					$transaction->commit();
+	        Yii::app()->user->setFlash('success', "Create Successfully");
+	        $this->redirect(array('/partner/property/index'));
+				}catch(exception $e) {
+					$transaction->rollback();
+					throw new CHttpException(500, $e->getMessage());
+			}
+		}
+  }
 
 		$this->render('create',array(
 			'model'=>$model,
             'qProperty'=>$qProperty,
 		));
-	}
-
-    /*public function actionCreate()
-    {
-        $model=new Roomtypefeatures;
-
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
-
-        if(isset($_POST['Roomtypefeatures']))
-        {
-            $model->attributes=$_POST['Roomtypefeatures'];
-            if($model->save()) {
-                Yii::app()->user->setFlash('success', "Create Successfully");
-                $this->redirect(array('index'));
-            }
-        }
-
-        $this->render('create',array(
-            'model'=>$model,
-        ));
-    }*/
+}
 
 	/**
 	 * Updates a particular model.
@@ -114,10 +98,19 @@ class RoomtypefeaturesController extends Controller
 
 		if(isset($_POST['Roomtypefeatures']))
 		{
-			$roomfeatures = implode(",", $_POST['room_features_id']);
-			if($model->save()) {
-				Yii::app()->user->setFlash('success', "Update Successfully");
-				$this->redirect(array('index'));
+				$roomfeatures = implode(",", $_POST['room_features_id']);
+				if($model->validate()) {
+					$transaction = Yii::app()->db->beginTransaction();
+				 	try{
+						 $model->save();
+						 $transaction->commit();
+		 				 Yii::app()->user->setFlash('success', "Update Successfully");
+		 				 $this->redirect(array('index'));
+	 			 }
+	 				 catch(exception $e) {
+	 					 $transaction->rollback();
+	 					 throw new CHttpException(500, $e->getMessage());
+	 			 }
 			}
 		}
 

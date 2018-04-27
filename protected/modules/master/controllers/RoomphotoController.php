@@ -123,7 +123,22 @@ class RoomphotoController extends Controller
 		if(Yii::app()->request->isPostRequest)
 		{
 			// we only allow deletion via POST request
-			$this->loadModel($id)->delete();
+			//$this->loadModel($id)->delete();
+
+			#bagian proses delete photo room type
+			if($_GET['pid']!=NULL)
+			{
+				$pid=$_GET['pid'];
+				$photoDel = DAO::executeSql("DELETE FROM tghroomphoto WHERE room_type_id = '".$id."' AND photo_id = '".$pid."'");
+				$docPath = FileUpload::getFilePath($model->filename, FileUpload::ROOM_PHOTO_PATH);
+				if(file_exists($docPath)) unlink($docPath);
+			}
+			else
+			{
+				// we only allow deletion via POST request
+				$this->loadModel($id)->delete();
+				Roomtype::model()->deleteAll('property_id = :pid', array(':pid'=>$id));
+			}
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))

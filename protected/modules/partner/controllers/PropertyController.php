@@ -218,8 +218,6 @@ class PropertyController extends Controller
 			$checkedFeat[$c] = $mSelf[$c]['prop_features_id'];
 		}
 
-		//Yii::app()->end();
-
 		/*bagian update property general */
 		if(isset($_POST['Property']))
 		{
