@@ -71,7 +71,8 @@ class RunningdateController extends Controller
 
 			$iso_date1; //outputs 2012-05-25
 			$iso_date2; //outputs 2012-05-25
-
+			if($iso_date1<$iso_date2){
+			//Yii::app()->end();
 			$begin = new DateTime($iso_date1);
 			$end = new DateTime($iso_date2);
 			$interval = DateInterval::createFromDateString('1 day');
@@ -94,10 +95,10 @@ class RunningdateController extends Controller
 			      $transaction->rollback();
 			      throw new CHttpException(500, $e->getMessage());
 			  }
-			/*if($model->save()) {
-				Yii::app()->user->setFlash('success', "Create Successfully");
-				$this->redirect(array('index'));
-			}*/
+			}
+			else{
+				Yii::app()->user->setFlash('warning', "Create Failed");
+			}
 		}
 
 		$this->render('create',array(

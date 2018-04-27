@@ -33,9 +33,11 @@ class RoomclosureController extends Controller
 		if(isset($_POST['Roomclosure']))
 		{
 			$model->attributes=$_POST['Roomclosure'];
-			$model->room_id=$_POST['Roomclosure']['room_id'];
+			//$model->room_id=$_POST['Roomclosure']['room_id'];
 			$model->cl_id = Pattern::generate("CLOSURE_CODE");
-			$tgl1=$_POST['Roomclosure']['start_date'];
+			//echo $model->start_date;
+			//echo $model->end_date;
+			/*$tgl1=$_POST['Roomclosure']['start_date'];
 			$format = '%d/%m/%Y';
 			$date1 = $tgl1;
 			$parsed1 = strptime($date1 , $format);
@@ -72,8 +74,8 @@ class RoomclosureController extends Controller
 					$iso_date2 = "$y-$m-$d";
 			}
 
-			$model->start_date=$iso_date1; //outputs 2012-05-25
-			$model->end_date=$iso_date2; //outputs 2012-05-25
+			$model->start_date=$iso_date1;
+			$model->end_date=$iso_date2; */
 			if($model->validate()) {
 			  #$transaction mulai transaksi
 			  $transaction = Yii::app()->db->beginTransaction();
@@ -81,12 +83,9 @@ class RoomclosureController extends Controller
 					Pattern::increase('CLOSURE_CODE');
 			    $model->save();
 			    #jika tidak ada error transaksi proses di commit
-			    $transaction->commit();
-
-					$response = new Resultec();
-					$response->result = 'OK';
-					$response->message = 'Create successful';
-					Yii::app()->end();
+					$transaction->commit();
+					Yii::app()->user->setFlash('success', "Create Successfully");
+					$this->redirect(array('index'));
 			  }
 			    catch(exception $e) {
 			      $transaction->rollback();
@@ -142,7 +141,7 @@ class RoomclosureController extends Controller
 			}
 		}
 
-		$this->render('_form',array(
+		$this->render('_formcal',array(
 			'model'=>$model,
 		));
 	}
@@ -219,7 +218,7 @@ class RoomclosureController extends Controller
 			}
 		}
 
-		$this->render('_formup',array(
+		$this->render('_formupcal',array(
 			'model'=>$model,
 		));
 	}

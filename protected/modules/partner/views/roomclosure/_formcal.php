@@ -54,21 +54,20 @@
 	<div class="row">
 		<?php echo $form->labelEx($model,'start_date'); ?>
 		<?php $this->widget('application.extensions.widget.JuiDatePicker', array(
-																'model'=>$model,
-																'attribute'=>'start_date',
-																		));?>
+				                        'model'=>$model,
+				                        'attribute'=>'start_date',
+		                                ));?>
 		<?php echo $form->error($model,'start_date'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'end_date'); ?>
 		<?php $this->widget('application.extensions.widget.JuiDatePicker', array(
-																'model'=>$model,
-																'attribute'=>'end_date',
-																		));?>
+				                        'model'=>$model,
+				                        'attribute'=>'end_date',
+		                                ));?>
 		<?php echo $form->error($model,'end_date'); ?>
 	</div>
-
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'status_cl'); ?>

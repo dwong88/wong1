@@ -82,8 +82,9 @@ class GlobalsettingController extends Controller
 		public function actionLoadroom()
 		{
 			//echo "string1";
-
-		   $data=Room::model()->findAll('room_type_id=:room_type_id',array(':room_type_id'=>(int) $_POST['room_type_id']));
+			//echo $_POST['room_type_id'];
+		   //$data=Room::model()->findAll('room_type_id=:room_type_id',array(':room_type_id'=>(int) $_POST['room_type_id']));
+			 $data = DAO::queryAllSql("SELECT room_id,room_name FROM `tghroom` WHERE  room_type_id='".$_POST['room_type_id']."';");
 		   $data=CHtml::listData($data,'room_id','room_name');
 
 		   echo "<option value=''>Select Room</option>";
