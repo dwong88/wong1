@@ -1,3 +1,25 @@
+<?php
+#fungsi input value ajax city state country
+Yii::app()->clientScript->registerScript(
+					    '__inPageScript',
+					    "
+			 function close(result) {
+					if (parent && parent.DayPilot && parent.DayPilot.ModalStatic) {
+							parent.DayPilot.ModalStatic.close(result);
+					}
+			 }
+
+			 $('#roomclosure-form').submit(function () {
+					var f = $('#roomclosure-form');
+					$.post(f.attr('action'), f.serialize(), function (result) {
+							close(eval(result));
+					});
+					return false;
+			 });
+							",
+CClientScript::POS_READY
+);
+?>
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(

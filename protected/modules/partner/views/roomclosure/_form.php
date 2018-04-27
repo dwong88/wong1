@@ -1,3 +1,16 @@
+<?php
+#fungsi input value ajax city state country
+Yii::app()->clientScript->registerScript(
+					    '__inPageScript',
+					    "
+$('#room_id').change(function() {
+	var thisvalue = this.value;
+	$('#Roomclosure_room_id').text(thisvalue);
+});
+							",
+CClientScript::POS_READY
+);
+?>
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(

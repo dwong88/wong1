@@ -33,8 +33,10 @@ class RoomclosureController extends Controller
 		if(isset($_POST['Roomclosure']))
 		{
 			$model->attributes=$_POST['Roomclosure'];
-			//$model->room_id=$_POST['Roomclosure']['room_id'];
+			//print_r($_POST);
+			$model->room_id=$_POST['room_id'];
 			$model->cl_id = Pattern::generate("CLOSURE_CODE");
+			//Yii::app()->end();
 			//echo $model->start_date;
 			//echo $model->end_date;
 			/*$tgl1=$_POST['Roomclosure']['start_date'];
@@ -76,21 +78,28 @@ class RoomclosureController extends Controller
 
 			$model->start_date=$iso_date1;
 			$model->end_date=$iso_date2; */
-			if($model->validate()) {
-			  #$transaction mulai transaksi
-			  $transaction = Yii::app()->db->beginTransaction();
-			  try{
-					Pattern::increase('CLOSURE_CODE');
-			    $model->save();
-			    #jika tidak ada error transaksi proses di commit
-					$transaction->commit();
-					Yii::app()->user->setFlash('success', "Create Successfully");
-					$this->redirect(array('index'));
-			  }
-			    catch(exception $e) {
-			      $transaction->rollback();
-			      throw new CHttpException(500, $e->getMessage());
-			  }
+			$model->attributes=$_POST['Roomclosure'];
+			$model->room_id=$resource;
+			if($start<=$end){
+				if($model->validate()) {
+				  #$transaction mulai transaksi
+				  $transaction = Yii::app()->db->beginTransaction();
+				  try{
+						Pattern::increase('CLOSURE_CODE');
+				    $model->save();
+				    #jika tidak ada error transaksi proses di commit
+						$transaction->commit();
+						Yii::app()->user->setFlash('success', "Create Successfully");
+						$this->redirect(array('index'));
+				  }
+				    catch(exception $e) {
+				      $transaction->rollback();
+				      throw new CHttpException(500, $e->getMessage());
+				  }
+				}
+			}
+			else {
+				Yii::app()->user->setFlash('success', "Created Failed");
 			}
 		}
 
@@ -119,25 +128,30 @@ class RoomclosureController extends Controller
 		{
 			$model->attributes=$_POST['Roomclosure'];
 			$model->room_id=$resource;
-			if($model->validate()) {
-			  #$transaction mulai transaksi
-			  $transaction = Yii::app()->db->beginTransaction();
-			  try{
-					Pattern::increase('CLOSURE_CODE');
-			    $model->save();
-			    #jika tidak ada error transaksi proses di commit
-			    $transaction->commit();
-					#response ke json
-					$response = new Resultec();
-					$response->result = 'OK';
-					$response->message = 'Create successful';
+			if($start<=$end){
+				if($model->validate()) {
+				  #$transaction mulai transaksi
+				  $transaction = Yii::app()->db->beginTransaction();
+				  try{
+						Pattern::increase('CLOSURE_CODE');
+				    $model->save();
+				    #jika tidak ada error transaksi proses di commit
+				    $transaction->commit();
+						#response ke json
+						$response = new Resultec();
+						$response->result = 'OK';
+						$response->message = 'Create successful';
 
-					Yii::app()->end();
-			  }
-			    catch(exception $e) {
-			      $transaction->rollback();
-			      throw new CHttpException(500, $e->getMessage());
-			  }
+						Yii::app()->end();
+				  }
+				    catch(exception $e) {
+				      $transaction->rollback();
+				      throw new CHttpException(500, $e->getMessage());
+				  }
+				}
+			}
+			else {
+				Yii::app()->user->setFlash('success', "Created Failed");
 			}
 		}
 
@@ -151,9 +165,9 @@ class RoomclosureController extends Controller
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdate($start,$end,$resource)
+	public function actionUpdate($id)
 	{
-		$model=$this->loadModel($resource);
+		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -161,21 +175,28 @@ class RoomclosureController extends Controller
 		if(isset($_POST['Roomclosure']))
 		{
 			$model->attributes=$_POST['Roomclosure'];
-			if($model->validate()) {
-			  #$transaction mulai transaksi
-			  $transaction = Yii::app()->db->beginTransaction();
-			  try{
-			    $model->save();
-			    #jika tidak ada error transaksi proses di commit
-			    $transaction->commit();
-			    Yii::app()->user->setFlash('success', "Update Successfully");
-			    $this->redirect(array('index'));
-			  }
-			    catch(exception $e) {
-			      $transaction->rollback();
-			      throw new CHttpException(500, $e->getMessage());
-			  }
-			}
+			$start=$model->start_date;
+			$end=$model->end_date;
+			if($start<=$end){
+					if($model->validate()) {
+					  #$transaction mulai transaksi
+					  $transaction = Yii::app()->db->beginTransaction();
+					  try{
+					    $model->save();
+					    #jika tidak ada error transaksi proses di commit
+					    $transaction->commit();
+					    Yii::app()->user->setFlash('success', "Update Successfully");
+					    $this->redirect(array('index'));
+					  }
+					    catch(exception $e) {
+					      $transaction->rollback();
+					      throw new CHttpException(500, $e->getMessage());
+					  }
+					}
+				}
+				else {
+					Yii::app()->user->setFlash('success', "Update Failed");
+				}
 		}
 
 		$this->render('update',array(
@@ -194,27 +215,35 @@ class RoomclosureController extends Controller
 		if(isset($_POST['Roomclosure']))
 		{
 			$model->attributes=$_POST['Roomclosure'];
-			if($model->validate()) {
-				#$transaction mulai transaksi
-				$transaction = Yii::app()->db->beginTransaction();
-				try{
-					$model->save();
-					#jika tidak ada error transaksi proses di commit
-					$transaction->commit();
-					//Yii::app()->user->setFlash('success', "Update Successfully");
-					//$this->redirect(array('index'));
-					$response = new Resulted();
-					$response->result = 'OK';
-					$response->message = 'Update successful';
+			$model->attributes=$_POST['Roomclosure'];
+			$start=$model->start_date;
+			$end=$model->end_date;
+			if($start<=$end){
+				if($model->validate()) {
+					#$transaction mulai transaksi
+					$transaction = Yii::app()->db->beginTransaction();
+					try{
+						$model->save();
+						#jika tidak ada error transaksi proses di commit
+						$transaction->commit();
+						//Yii::app()->user->setFlash('success', "Update Successfully");
+						//$this->redirect(array('index'));
+						$response = new Resulted();
+						$response->result = 'OK';
+						$response->message = 'Update successful';
 
-					header('Content-Type: application/json');
-					echo json_encode($response);
-					Yii::app()->end();
+						header('Content-Type: application/json');
+						echo json_encode($response);
+						Yii::app()->end();
+					}
+						catch(exception $e) {
+							$transaction->rollback();
+							throw new CHttpException(500, $e->getMessage());
+					}
 				}
-					catch(exception $e) {
-						$transaction->rollback();
-						throw new CHttpException(500, $e->getMessage());
-				}
+			}
+			else {
+				Yii::app()->user->setFlash('success', "Update Failed");
 			}
 		}
 
