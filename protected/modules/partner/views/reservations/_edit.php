@@ -16,6 +16,23 @@ Yii::app()->clientScript->registerScript(
 							    });
 							    return false;
 							});
+							$('input').change(function(){
+								var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+								var firstDate = new Date(document.getElementById('Reservations_start_date').value);
+								var secondDate = new Date(document.getElementById('Reservations_end_date').value);
+
+								var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+								//console.log(diffDays);
+								document.getElementById('demo').innerHTML = diffDays;
+							});
+
+								var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+								var firstDate = new Date(document.getElementById('Reservations_start_date').value);
+								var secondDate = new Date(document.getElementById('Reservations_end_date').value);
+
+								var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+								//console.log(diffDays);
+								document.getElementById('demo').innerHTML = diffDays;
 							",
 CClientScript::POS_READY
 );
@@ -61,7 +78,7 @@ CClientScript::POS_READY
 		<?php echo $form->dropDownList($model,'room_id', CHtml::listData(Room::model()->findAll(), 'room_id', 'room_name'),array('prompt'=>'Pilih kamar')); ?>
 		<?php echo $form->error($model,'room_id'); ?>
 	</div>
-	
+
 	<?php echo $form->hiddenField($model,'reservations_id',array('value'=>''));?>
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

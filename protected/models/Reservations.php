@@ -6,12 +6,15 @@
  * The followings are the available columns in table 'tghreservations':
  * @property string $reservations_id
  * @property string $customer_name
+ * @property string $email
+ * @property string $phone
  * @property string $start_date
  * @property string $end_date
  * @property string $room_id
  * @property string $status
  * @property string $type
  * @property integer $paid
+ * @property string $guest_comment
  * @property string $create_dt
  * @property integer $create_by
  * @property string $update_dt
@@ -43,9 +46,12 @@ class Reservations extends ActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+			array('start_date', 'application.components.validator.DatePickerSwitcherValidator'),
+			array('end_date', 'application.components.validator.DatePickerSwitcherValidator'),
 			array('customer_name, start_date, end_date', 'required'),
 			array('room_id,paid, create_by, update_by', 'numerical', 'integerOnly'=>true),
-			array('customer_name', 'length', 'max'=>50),
+			array('customer_name,email,phone', 'length', 'max'=>50),
+			array('guest_comment', 'length', 'max'=>255),
 			array('status,type', 'length', 'max'=>30),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -74,11 +80,14 @@ class Reservations extends ActiveRecord
 		return array(
 			'reservations_id' => 'Reservations',
 			'customer_name' => 'Customer Name',
+			'email' => 'Email',
+			'phone' => 'phone',
 			'start_date' => 'Start Date',
 			'end_date' => 'End Date',
 			'type' => 'Type',
 			'status' => 'Status',
 			'paid' => 'Paid',
+			'guest_comment' => 'Comment',
 			'create_dt' => 'Create Dt',
 			'create_by' => 'Create By',
 			'update_dt' => 'Update Dt',
@@ -106,11 +115,14 @@ class Reservations extends ActiveRecord
 
 		$criteria->compare('reservations_id',$this->reservations_id,true);
 		$criteria->compare('customer_name',$this->customer_name,true);
+		$criteria->compare('email',$this->email,true);
+		$criteria->compare('phone',$this->phone,true);
 		$criteria->compare('start_date',$this->start_date,true);
 		$criteria->compare('end_date',$this->end_date,true);
 		$criteria->compare('type',$this->type,true);
 		$criteria->compare('status',$this->status,true);
 		$criteria->compare('paid',$this->paid);
+		$criteria->compare('guest_comment',$this->guest_comment,true);
 		$criteria->compare('create_dt',$this->create_dt,true);
 		$criteria->compare('create_by',$this->create_by);
 		$criteria->compare('update_dt',$this->update_dt,true);

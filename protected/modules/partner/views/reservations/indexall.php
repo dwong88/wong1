@@ -91,7 +91,7 @@
 				pattern: 'yyyy-MM-dd',
 				onTimeRangeSelected: function(args) {
 					dp.startDate = args.start;
-					console.log(args.start);
+					//console.log(args.start);
 					loadTimeline(args.start);
 					loadEvents();
 					dp.update();
@@ -138,7 +138,7 @@
         }
     	});
 
-			dp.contextMenu = new DayPilot.Menu({items: [
+			/*dp.contextMenu = new DayPilot.Menu({items: [
 			{text:"Show event ID", onclick: function() {alert("Event value: " + this.source.value());} },
 			{text:"Show event text", onclick: function() {alert("Event text: " + this.source.text());} },
 			{text:"Show event start", onclick: function() {alert("Event start: " + this.source.start().toStringSortable());} },
@@ -149,7 +149,16 @@
 							{text:"Show event text", onclick: function() {alert("Event text: " + this.source.text());} }
 					]
 			}
-			]});
+		]});*/
+		dp.contextMenu = new DayPilot.Menu({items: [
+				{text:"Edit", onClick: function(args) { dp.events.edit(args.source); } },
+				{text:"Delete", onClick: function(args) { dp.events.remove(args.source); } },
+				{text:"-"},
+				{text:"Select", onClick: function(args) { dp.multiselect.add(args.source); } },
+		]});
+
+			dp.progressiveRowRendering = true;
+			dp.progressiveRowRenderingPreload = 25;
 
 			dp.treeEnabled = true;
 			dp.treePreventParentUsage = true;
@@ -160,7 +169,7 @@
 
 			dp.onBeforeCellRender = function(args) {
 				//console.log(args.cell.events());
-				console.log(JSON.stringify(args.cell.resource));
+				//console.log(JSON.stringify(args.cell.events()));
 				if (args.cell.start < DayPilot.Date.today()) {
 						args.cell.disabled = true;
 						args.cell.backColor = "#ccc";
@@ -241,8 +250,12 @@
 		// event creating
 		dp.onTimeRangeSelected = function (args) {
 		//var name = prompt("New event name:", "Event");
-
+		console.log(JSON.stringify(args));
 		var modal = new DayPilot.Modal();
+		modal.top = 60;
+    modal.width = 300;
+    modal.opacity = 70;
+    modal.border = "10px solid #d0d0d0";
 		modal.closed = function() {
 			dp.clearSelection();
 
@@ -267,7 +280,7 @@
 				}
 			};
 			//modal.showUrl("edit.php?id=" + args.e.id());
-			console.log(JSON.stringify(args));
+			//console.log(JSON.stringify(args));
 			//isNaN(123)
 			if(isNaN(args.e.id())){
 				modal.showUrl("<?php echo Yii::app()->createUrl('partner/roomclosure/updatecal')?>&id=" + args.e.id());
@@ -318,10 +331,6 @@
 					args.e.barColor = 'red';
 				}
 				else {
-					args.data.fontColor = "#000";
-          args.data.backColor = "#9FC5E8";
-          args.data.borderColor = "#3D85C6";
-					args.e.barColor = 'orange';
 				}
 				switch (args.e.status) {
 						case "New":
@@ -364,8 +373,17 @@
 								args.e.barColor = "gray";
 								args.e.toolTip = "Checked out";
 								break;
+						case 'Cancel': // Cancel
+								args.e.barColor = "#f41616";  // red
+								args.e.toolTip = "Cancel";
+								break;
+						case 'unallocated': // is_unallocated
+								args.e.barColor = "black";
+								args.e.toolTip = "unallocated";
+								break;
 						default:
-								args.e.toolTip = "Unexpected state";
+								//args.e.toolTip = "Unexpected state";
+								args.e.toolTip = "Unavailable";
 								break;
 				}
 
@@ -373,7 +391,7 @@
 
 				var paid = args.e.paid;
 				var paidColor = "#aaaaaa";
-				console.log(args.e.id);
+				//console.log(args.e.id);
 				args.data.areas = [
             {
                 onClick: function(args) { DayPilot.Modal.alert("<b>Event name:</b><br>" + args.source.text()); },
@@ -434,7 +452,7 @@
 					},
 					function(data) {
 						dp.events.list = data;
-						console.log(data);
+						//console.log(data);
 						dp.update();
 				}
 				);
@@ -448,6 +466,15 @@
 				$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadroom')?>&pid="+pid,
 					function(data) {
 					dp.resources = data;
+					var i;
+					var text;
+					for (i = 0; i < data.length; i++) {
+					    text = data[i]['children'][i]['name'];
+							/*if (text=="unallocated") {
+									args.cell.disabled = true;
+									args.cell.backColor = "#ccc";
+							}*/
+					}
 					dp.update();
 				});
 		}

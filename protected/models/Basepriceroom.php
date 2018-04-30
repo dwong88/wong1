@@ -44,7 +44,7 @@ class Basepriceroom extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('room_type_id,hr0,hr1,hr2,hr3,hr4,hr5,hr6,hr7,hr8,hr9,hr10,hr11,hr12', 'required'),
+			array('hr0,hr1,hr2,hr3,hr4,hr5,hr6,hr7,hr8,hr9,hr10,hr11,hr12', 'required'),
 			//array('date', 'application.components.validator.DatePickerSwitcherValidator'),
 			array('price','application.components.validator.NumberSwitcherValidator'),
 			array('room_type_id, hours', 'numerical', 'integerOnly'=>true),

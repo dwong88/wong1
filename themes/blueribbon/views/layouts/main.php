@@ -16,6 +16,10 @@
 
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/sitemenu.css" />
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/site.css" />
+	<script src="<?php echo Yii::app()->request->baseUrl; ?>/code/highcharts.js"></script>
+	<script src="<?php echo Yii::app()->request->baseUrl; ?>/code/modules/series-label.js"></script>
+	<script src="<?php echo Yii::app()->request->baseUrl; ?>/code/modules/exporting.js"></script>
+	<script src="<?php echo Yii::app()->request->baseUrl; ?>/code/modules/export-data.js"></script>
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
 </head>
 

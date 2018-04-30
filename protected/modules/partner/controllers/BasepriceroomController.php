@@ -36,16 +36,28 @@ class BasepriceroomController extends Controller
 
 			if(isset($_POST['Basepriceroom']))
 			{
-				//print_r($_POST['Basepriceroom']);
-				foreach (Basepriceroom::$publicTypePrice as $key => $PriceType) {
-					$mSaveRoomPrice = new Basepriceroom(); #declare $mSaveRoomPrice menggunakan table Propertydesc
-					$mSaveRoomPrice->attributes=$_POST['Basepriceroom'];
-					$mSaveRoomPrice->room_type_id = $model->room_type_id;
-					$mSaveRoomPrice->hours = $PriceType;
-					$mSaveRoomPrice->price = "";
+					//print_r($_POST['Basepriceroom']);
+				if($model->validate()) {
+					$transaction = Yii::app()->db->beginTransaction();
+				  try{
+						foreach (Basepriceroom::$publicTypePrice as $key => $PriceType) {
+							$mSaveRoomPrice = new Basepriceroom(); #declare $mSaveRoomPrice menggunakan table Propertydesc
+							$mSaveRoomPrice->attributes=$_POST['Basepriceroom'];
+							$mSaveRoomPrice->room_type_id = $model->room_type_id;
+							$mSaveRoomPrice->hours = $PriceType;
+							$mSaveRoomPrice->price = "";
 
-					//echo $mSaveRoomPrice->price = $model->$PriceType;
-					$mSaveRoomPrice->save(); #save(false)--> save tidak validasi
+							//echo $mSaveRoomPrice->price = $model->$PriceType;
+							$mSaveRoomPrice->save(); #save(false)--> save tidak validasi
+							$transaction->commit();
+					    Yii::app()->user->setFlash('success', "Create Successfully");
+					    $this->redirect(array('index'));
+						}
+					}
+					catch(exception $e) {
+			      $transaction->rollback();
+			      throw new CHttpException(500, $e->getMessage());
+			  }
 				}
 				//$this->redirect(array('index'));
 			}
@@ -85,19 +97,32 @@ class BasepriceroomController extends Controller
 		{
 			$modelbase->attributes = $_POST['Basepriceroom'];
 			//print_r($_POST['Basepriceroom']);
-			foreach (Basepriceroom::$publicTypePrice as $key => $value)
-			{
-				$mSaveDesc = $this->loadModelprice($id, $value);
-				//$mSaveDesc->price = $modelbase->$value;
-				$mSaveDesc->price = $_POST['Basepriceroom'][$value];
-				//echo ("UPDATE tghbasepriceroom SET price='".$_POST['Basepriceroom'][$value]."'  WHERE room_type_id = '".$id."' AND hours = '".$value."';");
-				//$mUp = DAO::executeSql("UPDATE tghbasepriceroom SET price='".$_POST['Basepriceroom'][$value]."'  WHERE room_type_id = '".$id."' AND hours = '".$value."' ");
-				//Yii::app()->end();
-				$mSaveDesc->save(false);
-				//Yii::app()->end();
+			if($model->validate()) {
+				$transaction = Yii::app()->db->beginTransaction();
+			  try{
+					foreach (Basepriceroom::$publicTypePrice as $key => $value)
+					{
+						//echo "string";
+
+						$mSaveDesc = $this->loadModelprice($id, $value);
+						//$mSaveDesc->price = $modelbase->$value;
+						$mSaveDesc->price = $_POST['Basepriceroom'][$value];
+						$mSaveDesc->save(false);
+
+
+						//Yii::app()->end();
+					}
+					$transaction->commit();
+					Yii::app()->user->setFlash('success', "Update Successfully");
+					$this->redirect(array('property/index'));
+				}
+				catch(exception $e) {
+					$transaction->rollback();
+					throw new CHttpException(500, $e->getMessage());
+				}
 			}
 			//print_r($model);
-				$this->redirect(array('property/index'));
+				//$this->redirect(array('property/index'));
 		}
 
 		$this->render('update',array(

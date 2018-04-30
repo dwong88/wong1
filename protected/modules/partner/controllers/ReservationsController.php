@@ -259,10 +259,10 @@ class ReservationsController extends Controller
 			    $e->start = $row['start'];
 			    $e->end = $row['end'];
 			    $e->resource = $row['room_id'];
-					$e->unavailable=1;
+					//$e->unavailable=1;
 
-					$e->tag = new stdClass();
-					$e->tag->unavailable=1;
+					//$e->tag = new stdClass();
+					//$e->tag->unavailable=1;
 			    // additional properties
 			    $events[] = $e;
 
@@ -307,7 +307,7 @@ class ReservationsController extends Controller
 			if(isset($_POST['Reservations']))
 			{
 				$model->attributes=$_POST['Reservations'];
-				$model->status="new";
+				$model->status="New";
 				$model->paid="";
 				if($model->validate()) {
 				  #$transaction mulai transaksi
@@ -354,6 +354,7 @@ class ReservationsController extends Controller
 				  #$transaction mulai transaksi
 				  $transaction = Yii::app()->db->beginTransaction();
 				  try{
+							//print_r($_POST);
 							$model->save();
 							#jika tidak ada error transaksi proses di commit
 							$transaction->commit();
