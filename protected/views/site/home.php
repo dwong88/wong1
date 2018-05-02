@@ -2,12 +2,17 @@
 $this->breadcrumbs=array(
 	'',
 );
-$begin = new DateTime('2018-04-01');
-$end = new DateTime('2018-04-10');
+
+$gtime = date("Y-m-d");
+$begin = new DateTime($gtime);
+//$end = new DateTime('2018-04-10');
+
+$time = strtotime($gtime);
+$final = date("Y-m-d", strtotime("+1 month", $time));
+$end = new DateTime($final);
 
 $interval = DateInterval::createFromDateString('1 day');
 $period = new DatePeriod($begin, $interval, $end);
-
 ?>
 <style>
 .flex-container {
@@ -28,8 +33,8 @@ $period = new DatePeriod($begin, $interval, $end);
 
 <div class="flex-container">
   <div>1</div>
-  <div>2</div>
-  <div><font>Projects Done</font>3</div>
+  <div><font>Rerservations:<br> <?php echo count(Reservations::model()->findAll());?></font></div>
+  <div><font>Rooms:<br> <?php echo count(Room::model()->findAll());?></font></div>
   <div>4</div>
   <div>5</div>
   <div>6</div>
@@ -49,9 +54,19 @@ $period = new DatePeriod($begin, $interval, $end);
 		    title: {
 		        text: 'G-Hours'
 		    },
-		    subtitle: {
-		        text: 'Irregular time data in Highcharts JS'
-		    },
+				rangeSelector:{
+							 enabled:true,
+							 inputPosition: {
+										align: 'left',
+										x: 0,
+										y: 0
+								},
+									buttonPosition: {
+										align: 'right',
+										x: -30,
+										y: 0
+								},
+					 },
 		    xAxis: {
 		        type: 'datetime',
 		        dateTimeLabelFormats: { // don't display the dummy year
@@ -64,13 +79,13 @@ $period = new DatePeriod($begin, $interval, $end);
 		    },
 		    yAxis: {
 		        title: {
-		            text: 'Order (m)'
+		            text: 'Order'
 		        },
 		        min: 0
 		    },
 		    tooltip: {
 		        headerFormat: '<b>{series.name}</b><br>',
-		        pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
+		        pointFormat: '{point.x:%e. %b}: {point.y:.2f}'
 		    },
 
 		    plotOptions: {
@@ -90,10 +105,12 @@ $period = new DatePeriod($begin, $interval, $end);
 		        name: "2018",
 		        data: [
 								<?php
-								$isi=0;
 									foreach ($period as $dt) {
-											$isi++;
-											echo "[Date.UTC(".$dt->format("Y").','.$dt->format("m").','.$dt->format("d")."),".$isi."],";
+											/*echo ("select count(rev.reservations_id) as id, rev.customer_name as name, rev.start_date as start, rev.end_date as end,rev.status,rev.paid from tghreservations as rev
+											WHERE rev.start_date like'%".$dt->format("Y-m-d")."%';");*/
+											$hasil = DAO::queryAllSql("select count(rev.reservations_id) as id, rev.customer_name as name, rev.start_date as start, rev.end_date as end,rev.status,rev.paid from tghreservations as rev
+											WHERE rev.start_date like'%".$dt->format("Y-m-d")."%';");
+											echo "[Date.UTC(".$dt->format("Y").','.(($dt->format("m"))-1).','.$dt->format("d")."),".$hasil[0]['id']."],";
 											//echo "[Date.UTC(2018, 0,  4), 1.6],";
 									}
 								?>

@@ -38,7 +38,6 @@ Yii::app()->clientScript->registerScript(
 							var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
 							console.log(firstDate);
 							document.getElementById('demo').innerHTML = diffDays;
-
 							",
 CClientScript::POS_READY
 );
@@ -47,104 +46,121 @@ CClientScript::POS_READY
 <div class="form">
 
 <?php
-$room_id = $model->room_id;
-$start = $model->start_date;
-$end = $model->end_date;
-$id_type = $model->type;
+		$room_id = $model->room_id;
+		$start = $model->start_date;
+		$end = $model->end_date;
+		$id_type = $model->type;
 
-if($model->isNewRecord){
- 		$actions[]='loadcreateevent&start='.$start."&end=".$end."&resource=".$room_id."&idtype=".$id_type;
-}
-else{
-		$id=$model->reservations_id;
-		$actions[]='loadeditevent&id='.$id."&idtype=".$id_type;
-}
-	$form=$this->beginWidget('CActiveForm', array(
-	'id'=>'reservations-form',
-	// Please note: When you enable ajax validation, make sure the corresponding
-	// controller action is handling ajax validation correctly.
-	// There is a call to performAjaxValidation() commented in generated controller code.
-	// See class documentation of CActiveForm for details on this.
-	'enableAjaxValidation'=>false,
-	'action'=>$actions,
-)); ?>
+		if($model->isNewRecord){
+		 		$actions[]='loadcreateevent&start='.$start."&end=".$end."&resource=".$room_id."&idtype=".$id_type;
+		}
+		else{
+				$id=$model->reservations_id;
+				$actions[]='loadeditevent&id='.$id."&idtype=".$id_type;
+		}
+			$form=$this->beginWidget('CActiveForm', array(
+			'id'=>'reservations-form',
+			// Please note: When you enable ajax validation, make sure the corresponding
+			// controller action is handling ajax validation correctly.
+			// There is a call to performAjaxValidation() commented in generated controller code.
+			// See class documentation of CActiveForm for details on this.
+			'enableAjaxValidation'=>false,
+			'action'=>$actions,
+		));
+?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
 
 	<?php Helper::showFlash(); ?>
-	<div class="row">
-		<?php echo $form->labelEx($model,'start_date'); ?>
-		<?php //echo $form->textField($model,'start_date'); ?>
-		<?php $this->widget('application.extensions.widget.JuiDatePicker', array(
-				                        'model'=>$model,
-				                        'attribute'=>'start_date',
-		                                ));?>
-		<?php echo $form->error($model,'start_date'); ?>
-	</div>
+	<table>
+		<tr>
+			<td>
+				<div class="row">
+					<?php echo '<Strong>Check in: </Strong>';?>
+					<?php //echo $form->textField($model,'start_date'); ?>
+					<?php
+					if($idtype!=0){
+					$this->widget('application.extensions.widget.JuiDatePicker', array(
+							                        'model'=>$model,
+							                        'attribute'=>'start_date',
+																		));
+																		}
+																		else {
+																			echo $form->textField($model,'start_date');
+																		}?>
+					<?php echo $form->error($model,'start_date'); ?>
+				</div>
+			</td>
+			<td>
+				<div class="row">
+					<?php echo '<Strong>Check out: </Strong>';?>
+					<?php //echo $form->textField($model,'end_date'); ?>
+					<?php
+					if($idtype!=0){
+						$this->widget('application.extensions.widget.JuiDatePicker', array(
+								                        'model'=>$model,
+								                        'attribute'=>'end_date',
+						                                ));
+																					}
+																			else {
+																				echo $form->textField($model,'end_date');
+																			}
+																					?>
+					<?php echo $form->error($model,'end_date'); ?>
+					</div>
+			</td>
+	</tr>
+			<?php if($idtype!=0){?>
+				<tr>
+						<td colspan="2">
+							<h3>Length of stay:<strong><font id="demo"></font>Nights</strong></h3>
+						</td>
+				</tr>
+			<?php }?>
+	<tr>
+		<td colspan="2">
+				<div class="row">
+					<?php
+					$idr=$model->room_id;
+					$rooms = Room::model()->findByPk($idr);
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'end_date'); ?>
-		<?php //echo $form->textField($model,'end_date'); ?>
-		<?php $this->widget('application.extensions.widget.JuiDatePicker', array(
-				                        'model'=>$model,
-				                        'attribute'=>'end_date',
-		                                ));?>
-		<?php
-					$this->widget('zii.widgets.jui.CJuiDatePicker',array(
-					'name'=>'publishDate',
-					'options'=>array(
-							'showAnim'=>'fold',
-							'dateFormat'=>'yy-mm-dd',
-							'onSelect'=>'js:function(i,j){
+					echo '<Strong>Room Name: </Strong>';
+					echo $rooms->room_name."<br>";
+					 ?>
+					<?php //echo $form->dropDownList($model,'room_id', CHtml::listData(Room::model()->findAll($idr), 'room_id', 'room_name'),array('prompt'=>'Pilih kamar')); ?>
+					<?php //echo $form->error($model,'room_id'); ?>
+					<?php echo '<Strong>Adult</Strong>';?>
+					<?php echo $form->textField($model,'adult',array('size'=>2,'maxlength'=>2)); ?>
+					<?php echo $form->error($model,'adult'); ?>
 
-													 function JSClock() {
-															var time = new Date();
-															var hour = time.getHours();
-															var minute = time.getMinutes();
-															var second = time.getSeconds();
-															var temp="";
-															temp +=(hour<10)? "0"+hour : hour;
-															temp += (minute < 10) ? ":0"+minute : ":"+minute ;
-															temp += (second < 10) ? ":0"+second : ":"+second ;
-															return temp;
-														}
+					<?php echo'<Strong>Child</Strong>'; ?>
+					<?php echo $form->textField($model,'child',array('size'=>2,'maxlength'=>2)); ?>
+					<?php echo $form->error($model,'child'); ?>
+					<?php echo'<Strong>Infant</Strong>'; ?>
+					<?php echo $form->textField($model,'infant',array('size'=>2,'maxlength'=>2)); ?>
+					<?php echo $form->error($model,'infant'); ?>
+				</div>
+		</td>
+		<td>
 
-														$v=$(this).val();
-														$(this).val($v+" "+JSClock());
-
-										 }'
-				 ),
-					'htmlOptions'=>array(
-							'style'=>'height:20px;'
-					),
-			));
-		?>
-		<?php echo $form->error($model,'end_date'); ?>
-		<h3>Length of stay:<strong><font id="demo"></font>Nights</strong></h3>
-	</div>
-	<div class="row">
-		<?php
-		$idr=$model->room_id;
-		$rooms = Room::model()->findByPk($idr);
-
-		echo $form->labelEx($model,'room_id');
-		echo $rooms->room_name;
-		 ?>
-		<?php //echo $form->dropDownList($model,'room_id', CHtml::listData(Room::model()->findAll($idr), 'room_id', 'room_name'),array('prompt'=>'Pilih kamar')); ?>
-		<?php //echo $form->error($model,'room_id'); ?>
-	</div>
+		</td>
+	</tr>
 	<?php
 	#fungsi cek tipe reservation regular atau flexible
 	if($idtype==1)
 	{
 	?>
-		<div class="row">
-			<?php echo $form->labelEx($model,'type'); ?>
-			<?php echo $form->dropDownList($model, 'type', array('regular'=>'Regular','onenight'=>'24 Hours'), array('prompt'=>'Pilih')); ?>
-			<?php echo $form->error($model,'type'); ?>
-		</div>
+	<tr>
+		<td>
+			<div class="row">
+				<?php echo $form->labelEx($model,'type'); ?>
+				<?php echo $form->dropDownList($model, 'type', array('regular'=>'Regular','onenight'=>'24 Hours'), array('prompt'=>'Pilih')); ?>
+				<?php echo $form->error($model,'type'); ?>
+			</div>
+		</td>
+	</tr>
 	<?php
 	}
 	else
@@ -175,6 +191,7 @@ else{
 				<?php
 			}
 	?>
+</table>
 	<hr>
 	<div class="row">
 		<?php echo $form->labelEx($model,'customer_name'); ?>
@@ -185,6 +202,11 @@ else{
 		<?php echo $form->labelEx($model,'email'); ?>
 		<?php echo $form->textField($model,'email',array('size'=>50,'maxlength'=>50)); ?>
 		<?php echo $form->error($model,'email'); ?>
+	</div>
+	<div class="row">
+		<?php echo $form->labelEx($model,'country_id'); ?>
+		<?php echo $form->dropDownList($model,'country_id', CHtml::listData(Countries::model()->findAll(), 'country_id', 'country_name'),array('prompt'=>'Pilih')); ?>
+		<?php echo $form->error($model,'country_id'); ?>
 	</div>
 	<div class="row">
 		<?php echo $form->labelEx($model,'phone'); ?>

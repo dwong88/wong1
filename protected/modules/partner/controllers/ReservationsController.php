@@ -332,6 +332,12 @@ class ReservationsController extends Controller
 				  }
 				}
 			}
+			/*if($idtype==0){
+				$this->render('_formtime',array(
+					'model'=>$model,
+					'idtype'=>$idtype,
+				));
+			}*/
 			$this->render('_form',array(
 				'model'=>$model,
 				'idtype'=>$idtype,

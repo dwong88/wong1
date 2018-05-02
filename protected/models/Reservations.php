@@ -11,8 +11,12 @@
  * @property string $start_date
  * @property string $end_date
  * @property string $room_id
+ * @property string $adult
+ * @property string $child
+ * @property string $infant
  * @property string $status
  * @property string $type
+ * @property string $country_id
  * @property integer $paid
  * @property string $guest_comment
  * @property string $create_dt
@@ -49,7 +53,7 @@ class Reservations extends ActiveRecord
 			array('start_date', 'application.components.validator.DatePickerSwitcherValidator'),
 			array('end_date', 'application.components.validator.DatePickerSwitcherValidator'),
 			array('customer_name, start_date, end_date', 'required'),
-			array('room_id,paid, create_by, update_by', 'numerical', 'integerOnly'=>true),
+			array('room_id,country_id,adult,child,infant,paid, create_by, update_by', 'numerical', 'integerOnly'=>true),
 			array('customer_name,email,phone', 'length', 'max'=>50),
 			array('guest_comment', 'length', 'max'=>255),
 			array('status,type', 'length', 'max'=>30),
@@ -69,6 +73,7 @@ class Reservations extends ActiveRecord
 		return array(
 			'refUsercreate' => array(self::BELONGS_TO, 'User', 'create_by'),
 			'refUserupdate' => array(self::BELONGS_TO, 'User', 'update_by'),
+			'refCity' => array(self::BELONGS_TO, 'City', 'city_id'),
 		);
 	}
 
@@ -85,6 +90,10 @@ class Reservations extends ActiveRecord
 			'start_date' => 'Start Date',
 			'end_date' => 'End Date',
 			'type' => 'Type',
+			'country_id' => 'Country',
+			'adult' => 'Adult',
+			'child' => 'Child',
+			'infant' => 'Infant',
 			'status' => 'Status',
 			'paid' => 'Paid',
 			'guest_comment' => 'Comment',
@@ -120,6 +129,10 @@ class Reservations extends ActiveRecord
 		$criteria->compare('start_date',$this->start_date,true);
 		$criteria->compare('end_date',$this->end_date,true);
 		$criteria->compare('type',$this->type,true);
+		$criteria->compare('country_id',$this->country_id,true);
+		$criteria->compare('adult',$this->adult,true);
+		$criteria->compare('child',$this->child,true);
+		$criteria->compare('infant',$this->infant,true);
 		$criteria->compare('status',$this->status,true);
 		$criteria->compare('paid',$this->paid);
 		$criteria->compare('guest_comment',$this->guest_comment,true);

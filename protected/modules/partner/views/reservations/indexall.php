@@ -308,7 +308,10 @@
 
 
 		//dp.cellWidth = 60;
-		dp.cellWidth = 100;
+		//dp.cellWidth = 100;
+		dp.cellWidth = 40;  // reset for "Fixed" mode
+		dp.cellWidthSpec ="Auto";
+		dp.update();
 
 		dp.onIncludeTimeCell = function(args) {
 

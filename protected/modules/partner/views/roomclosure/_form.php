@@ -28,7 +28,6 @@ CClientScript::POS_READY
 
 	<?php Helper::showFlash(); ?>
 	<?if($_GET['resource']!=null){
-		echo "string";
 	}else{?>
 	<?php
 	echo $form->labelEx($model,'property_id');
