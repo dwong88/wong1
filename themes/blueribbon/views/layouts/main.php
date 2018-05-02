@@ -17,7 +17,6 @@
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/sitemenu.css" />
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/site.css" />
 
-	<script src="http://code.highcharts.com/stock/highstock.js"></script>
 	<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/moment.js"></script>
 	<script src="<?php echo Yii::app()->request->baseUrl; ?>/code/highcharts.js"></script>
 	<script src="<?php echo Yii::app()->request->baseUrl; ?>/code/modules/series-label.js"></script>

@@ -38,6 +38,10 @@ Yii::app()->clientScript->registerScript(
 							var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
 							console.log(firstDate);
 							document.getElementById('demo').innerHTML = diffDays;
+							$('#Reservations_test_date').datetimepicker
+							(
+								$.timepicker.regional['id']
+							);
 							",
 CClientScript::POS_READY
 );
@@ -85,7 +89,7 @@ CClientScript::POS_READY
 					$this->widget('application.extensions.widget.JuiDatePicker', array(
 							                        'model'=>$model,
 							                        'attribute'=>'start_date',
-																		));
+																			     ));
 																		}
 																		else {
 																			echo $form->textField($model,'start_date');
@@ -98,6 +102,17 @@ CClientScript::POS_READY
 					<?php echo '<Strong>Check out: </Strong>';?>
 					<?php //echo $form->textField($model,'end_date'); ?>
 					<?php
+
+					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
+																			'model'=>$model,
+																			'attribute'=>'test_date',
+																			'language'=> 'en-GB',
+											                'mode'=>'datetime', //use "time","date" or "datetime" (default)
+																			'options'   => array(
+																						 'dateFormat' => 'dd/mm/yy',
+																						 'timeFormat' => 'hh:mm tt',//'hh:mm tt' default
+																				 ),
+																					));
 					if($idtype!=0){
 						$this->widget('application.extensions.widget.JuiDatePicker', array(
 								                        'model'=>$model,

@@ -67,9 +67,9 @@
 						        array('empty'=>'Select Property','id'=>'filter'))
 						    ?>
 						</div>
-						<div class="space">
+						<!--<div class="space">
 								<label for="autocellwidth"><input type="checkbox" id="autocellwidth">Auto Cell Width</label>
-						</div>
+						</div>-->
 				</div>
 				<div class="space">
 				    Filter: <input id="filtersearch" /> <a href="#" id="clear">Clear</a>

@@ -48,11 +48,11 @@ if($subs='index')
 				}
 		});
 		//fungsi autocellwidth
-		$("#autocellwidth").click(function() {
+		/*$("#autocellwidth").click(function() {
 				dp.cellWidth = 40;  // reset for "Fixed" mode
 				dp.cellWidthSpec = $(this).is(":checked") ? "Auto" : "Fixed";
 				dp.update();
-		});
+		});*/
 
 </script>
 <script type="text/javascript">
@@ -296,7 +296,10 @@ if($subs='index')
 		args.left.html = args.start.toString("h:mm tt");
 		};
 
-		dp.cellWidth = 60;
+		//dp.cellWidth = 60;
+		dp.cellWidth = 40;  // reset for "Fixed" mode
+		dp.cellWidthSpec ="Auto";
+		dp.update();
 
 		dp.onIncludeTimeCell = function(args) {
 
