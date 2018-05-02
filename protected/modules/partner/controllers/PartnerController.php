@@ -131,9 +131,10 @@ class PartnerController extends Controller
 		$model->unsetAttributes();  // clear any default values
 		$model1=new Partnerlogin('search');
 		$model1->unsetAttributes();  // clear any default values
-		if(isset($_GET['Partner']))
-			$model->attributes=$_GET['Partner'];
-			$model1->attributes=$_GET['Partner'];
+		if(isset($_GET['Partner'])) {
+            $model1->attributes = $_GET['Partner'];
+            $model->attributes = $_GET['Partner'];
+        }
 
 		$this->render('index',array(
 			'model'=>$model,'model1'=>$model1
