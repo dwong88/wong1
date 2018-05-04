@@ -50,30 +50,38 @@
 </style>
 
 		<div style="margin-left: 0px;">
-			Date: <span id="start"></span> <a href="#" onclick="picker.show(); return false;">Change</a>
-				<div class="space">
-						<!--Show rooms:
-						<select id="filter">
-								<option value="0">All</option>
-								<option value="1">Single</option>
-								<option value="2">Double</option>
-								<option value="4">Family</option>
-						</select>-->
-						<div class="row">
-						    <?php
-										Property:
-						        echo CHtml::activeDropDownList($model, 'property_id',
-						        CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),
-						        array('empty'=>'Select Property','id'=>'filter'))
-						    ?>
-						</div>
-						<!--<div class="space">
-								<label for="autocellwidth"><input type="checkbox" id="autocellwidth">Auto Cell Width</label>
-						</div>-->
-				</div>
-				<div class="space">
-				    Filter: <input id="filtersearch" /> <a href="#" id="clear">Clear</a>
-				</div>
+			<table>
+				<tr>
+					<td>
+							<div class="space">
+									<div class="row">
+										<strong>	Date: </strong><span id="start"></span> <a href="#" onclick="picker.show(); return false;">Change</a>
+										</div>
+								</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="space">
+									<div class="row">
+									    <?php
+													Property:
+									        echo CHtml::activeDropDownList($model, 'property_id',
+									        CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),
+									        array('empty'=>'Select Property','id'=>'filter'))
+									    ?>
+									</div>
+								</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+								<div class="space">
+								    Filter: <input id="filtersearch" /> <a href="#" id="clear">Clear</a>
+								</div>
+						</td>
+					</tr>
+			</table>
 				<div id="dp"></div>
 			</div>
 <?php
@@ -88,7 +96,8 @@
 <script type="text/javascript">
 		var picker = new DayPilot.DatePicker({
 				target: 'start',
-				pattern: 'yyyy-MM-dd',
+				//pattern: 'yyyy-MM-dd',
+				pattern: 'dd/MM/yyyy',
 				onTimeRangeSelected: function(args) {
 					dp.startDate = args.start;
 					//console.log(args.start);
@@ -138,18 +147,6 @@
         }
     	});
 
-			/*dp.contextMenu = new DayPilot.Menu({items: [
-			{text:"Show event ID", onclick: function() {alert("Event value: " + this.source.value());} },
-			{text:"Show event text", onclick: function() {alert("Event text: " + this.source.text());} },
-			{text:"Show event start", onclick: function() {alert("Event start: " + this.source.start().toStringSortable());} },
-			{text:"Go to google.com", href: "http://www.google.com/?q={0}"},
-			{text:"CallBack: Delete this event", command: "delete"} ,
-			{text:"submenu", items: [
-							{text:"Show event ID", onclick: function() {alert("Event value: " + this.source.value());} },
-							{text:"Show event text", onclick: function() {alert("Event text: " + this.source.text());} }
-					]
-			}
-		]});*/
 		dp.contextMenu = new DayPilot.Menu({items: [
 				{text:"Edit", onClick: function(args) { dp.events.edit(args.source); } },
 				{text:"Delete", onClick: function(args) { dp.events.remove(args.source); } },

@@ -309,10 +309,32 @@ class ReservationsController extends Controller
 				$model->attributes=$_POST['Reservations'];
 				$model->status="New";
 				$model->paid="";
+				$idtype=$_POST['Reservations']['idtype'];
+
+				if($idtype!=0){
+					$model->start_date=str_replace(' ', '',$_POST['Reservations']['start_date']);
+					$model->end_date=str_replace(' ', '',$_POST['Reservations']['end_date']);
+				}
+				else {
+
+					$start_time=substr($_POST['Reservations']['start_date'],10,8).":00";
+					$end_time=substr($_POST['Reservations']['end_date'],10,8).":00";
+					$model->start_date=substr($_POST['Reservations']['start_date'],0,10);
+					$model->end_date= substr($_POST['Reservations']['end_date'],0,10);
+				}
+
+
 				if($model->validate()) {
+
 				  #$transaction mulai transaksi
 				  $transaction = Yii::app()->db->beginTransaction();
 				  try{
+
+						if($idtype==0){
+						$model->start_date = $model->start_date." ".$start_time;
+						$model->end_date =$model->end_date." ".$end_time;
+						}
+						//Yii::app()->end();
 						$model->save();
 						#jika tidak ada error transaksi proses di commit
 						$transaction->commit();
@@ -351,10 +373,40 @@ class ReservationsController extends Controller
 		 //Yii::app()->end();
 			$model=$this->loadModel($id);
 			$model->reservations_id=$id;
-
+			if($idtype!=0){
+				//$model->start_date = date_format($model->start_date,"Y/m/d");
+				$tes1=$model->start_date;
+				$newDate1 = date("d/m/Y", strtotime($tes1));
+				$tes2=$model->end_date;
+				$newDate2 = date("d/m/Y", strtotime($tes2));
+				$model->start_date=$newDate1;
+				$model->end_date=$newDate2;
+			}
+			else {
+				$tes1=$model->start_date;
+				$newDate1 = date("d/m/Y H:i:s", strtotime($tes1));
+				$tes2=$model->end_date;
+				$newDate2 = date("d/m/Y H:i:s", strtotime($tes2));
+				$model->start_date=$newDate1;
+				$model->end_date=$newDate2;
+			}
 			if(isset($_POST['Reservations']))
 			{
 				$model->attributes=$_POST['Reservations'];
+
+				$idtype=$_POST['Reservations']['idtype'];
+
+				if($idtype!=0){
+					$model->start_date=str_replace(' ', '',$_POST['Reservations']['start_date']);
+					$model->end_date=str_replace(' ', '',$_POST['Reservations']['end_date']);
+				}
+				else {
+
+					$start_time=substr($_POST['Reservations']['start_date'],10,8).":00";
+					$end_time=substr($_POST['Reservations']['end_date'],10,8).":00";
+					$model->start_date=substr($_POST['Reservations']['start_date'],0,10);
+					$model->end_date= substr($_POST['Reservations']['end_date'],0,10);
+				}
 				if($model->validate())
 				{
 				  #$transaction mulai transaksi

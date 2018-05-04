@@ -3,11 +3,12 @@
 Yii::app()->clientScript->registerScript(
 					    '__inPageScript',
 					    "
-$('#city_name').change(function() {
+$('#city_id').change(function() {
 	var thisvalue = this.value;
+	console.log(thisvalue);
 	$('#Property_state_id').text(thisvalue);
 });
-$('#state_name').change(function() {
+$('#state_id').change(function() {
 	var thisvalue = this.value;
 	$('#Property_city_id').text(thisvalue);
 });
@@ -15,22 +16,9 @@ $('#state_name').change(function() {
 							",
 CClientScript::POS_READY
 );
-?>
-<?php
-#looping buat jam
-for($d=0;$d<=23;$d++)
-{
-	$win[$d] = $d;
-}
-?>
-<?php
-#looping buat Menit
-for($f=0;$f<=59;$f++)
-{
-	$min[$f] = $f;
-}
-?>
 
+//$mSelf = DAO::queryAllSql("SELECT property_id,prop_features_id FROM $tghbasepriceroom WHERE room_type_id = '".$id."'");
+?>
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -68,7 +56,10 @@ for($f=0;$f<=59;$f++)
 							<?php echo $form->textField($model,'postal_code',array('size'=>5,'maxlength'=>5)); ?>
 							<?php echo $form->error($model,'postal_code'); ?>
 						</div>
-						<?php echo $form->hiddenField($model,'state_id',array('value'=>''));?>
+						<?php
+						if($model->isNewRecord){
+									//hiddenfield untuk get value dari selected option
+									echo $form->hiddenField($model,'state_id',array('value'=>''));?>
 						<?php echo $form->hiddenField($model,'city_id',array('value'=>''));?>
 						</div>
 						<?php echo $form->dropDownList($model,'country_id', CHtml::listData(Countries::model()->findAll(), 'country_id', 'country_name'),array(
@@ -91,7 +82,36 @@ for($f=0;$f<=59;$f++)
 							  'data'=>array('state_id'=>'js:this.value'),
 							  )));
 								echo CHtml::dropDownList('city_id',$select_ct,
-								array($select_ct=>$mStatec[0]['city_name']), array('prompt'=>'Select City'));
+								array('prompt'=>'Select City'));
+							}
+							else{
+						?>
+						<?php	echo $form->hiddenField($model,'state_id',array($model->state_id),array('value'=>''));?>
+						<?php echo $form->hiddenField($model,'city_id',array($model->city_id),array('value'=>''));?>
+						</div>
+						<?php echo $form->dropDownList($model,'country_id', CHtml::listData(Countries::model()->findAll(), 'country_id', 'country_name'),array(
+									'prompt'=>'Select Country',
+									'ajax' => array(
+									'type'=>'POST',
+									'url'=>Yii::app()->createUrl('core/globalsetting/loadstates'), //or $this->createUrl('loadcities') if '$this' extends CController
+									'update'=>'#state_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
+									'data'=>array('country_id'=>'js:this.value'),
+									))); ?>
+						<?php
+								echo CHtml::dropDownList('state_id',$select_st,
+								array($select_st=>$mStatec[0]['state_name']),
+							  array(
+							    'prompt'=>'Select Provinsi',
+									'options' => array($model->state_id=>array('selected'=>true)),
+							    'ajax' => array(
+							    'type'=>'POST',
+							    'url'=>Yii::app()->createUrl('core/globalsetting/loadcities'), //or $this->createUrl('loadcities') if '$this' extends CController
+							    'update'=>'#city_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
+							  'data'=>array('state_id'=>'js:this.value'),
+							  )));
+								echo CHtml::dropDownList('city_id',$select_ct,
+								array($select_ct=>$mStatec[0]['city_name']),array('prompt'=>'Select City','options' => array($model->state_id=>array('selected'=>true))));
+							}
 						?>
 						<div class="row">
 							<?php echo $form->labelEx($model,'weekend_start').'<br>'; ?>
@@ -174,17 +194,33 @@ for($f=0;$f<=59;$f++)
 					</div>
 					<div class="row">
 						<?php echo $form->labelEx($model,'available_cleaning_start').'<br>'; ?>
-						<?php echo $form->dropDownList($model, 'start_hours',
-						 $win,array('prompt'=>'--Select Hours---')); ?>
-						 <?php echo $form->dropDownList($model, 'start_minutes',
-					 	 $min,array('prompt'=>'--Select Minutes---')); ?>
+						<?php 	$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
+								'model'     => $model,
+								'attribute' => 'available_cleaning_start',
+								'options'   => array(
+									'timeOnly'   => true,
+									'showHour'   => true,
+									'showMinute' => true,
+									'showSecond' => true,
+									'ampm'=>true,
+									'timeFormat' => 'hh.mm.tt',
+								),
+							) );?>
 					</div>
 					<div class="row">
 						<?php echo $form->labelEx($model,'available_cleaning_end').'<br>'; ?>
-						<?php echo $form->dropDownList($model, 'end_hours',
-						 $win,array('prompt'=>'--Select Hours---')); ?>
-						 <?php echo $form->dropDownList($model, 'end_minutes',
-					 	 $min,array('prompt'=>'--Select Minutes---')); ?>
+						<?php 	$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
+								'model'     => $model,
+								'attribute' => 'available_cleaning_end',
+								'options'   => array(
+									'timeOnly'   => true,
+									'showHour'   => true,
+									'showMinute' => true,
+									'showSecond' => true,
+									'ampm'=>true,
+									'timeFormat' => 'hh.mm.tt',
+								),
+							) );?>
 					</div>
 					<div class="row">
 						<?php echo $form->labelEx($model,'locationinstruction'); ?>
@@ -264,7 +300,7 @@ $default='-6.214626,106.84513';
 	<p>Longitude: <input size="20" type="text" id="lngbox" name="lng" ></p>
 </div>-->
 <div class="row">
-  <div id="map_canvas" style="width:50%; height:30%; position:absolute;left:620px;top:700px;overflow: none"></div>
+  <div id="map_canvas" style="width:50%; height:30%; position:absolute;left:620px;top:690px;overflow: none"></div>
 </div>
 
 <div class="row buttons">

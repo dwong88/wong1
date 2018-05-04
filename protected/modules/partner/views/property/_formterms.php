@@ -13,6 +13,16 @@ $('#id-sel-language').change(function() {
 					 };
 });
 
+$('#city_id').change(function() {
+	var thisvalue = this.value;
+	console.log(thisvalue);
+	$('#Property_state_id').text(thisvalue);
+});
+$('#state_id').change(function() {
+	var thisvalue = this.value;
+	$('#Property_city_id').text(thisvalue);
+});
+
 							",
 CClientScript::POS_READY
 );

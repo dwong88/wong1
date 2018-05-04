@@ -1,22 +1,23 @@
 <?php
-#fungsi close iframe saat onsubmit
+#fungsi hitung difference day
+if($idtype!=0){
+$times= '';
 Yii::app()->clientScript->registerScript(
 					    '__inPageScript',
 					    "
 							function close(result) {
-							    if (parent && parent.DayPilot && parent.DayPilot.ModalStatic) {
-							        parent.DayPilot.ModalStatic.close(result);
-							    }
+									if (parent && parent.DayPilot && parent.DayPilot.ModalStatic) {
+											parent.DayPilot.ModalStatic.close(result);
+									}
 							}
 
 							$('#reservations-form').submit(function () {
-							    var f = $('#reservations-form');
-							    $.post(f.attr('action'), f.serialize(), function (result) {
-							        close(eval(result));
-							    });
-							    return false;
+									var f = $('#reservations-form');
+									$.post(f.attr('action'), f.serialize(), function (result) {
+											close(eval(result));
+									});
+									return false;
 							});
-
 							$('input').change(function(){
 								var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
 								var day1 = moment(document.getElementById('Reservations_start_date').value, 'DD/MM/YYYY');
@@ -45,7 +46,32 @@ Yii::app()->clientScript->registerScript(
 							",
 CClientScript::POS_READY
 );
+}
+else{
+	$times= 'HH:mm';
+	#fungsi close iframe saat onsubmit
+	Yii::app()->clientScript->registerScript(
+						    '__inPageScript',
+						    "
+								function close(result) {
+								    if (parent && parent.DayPilot && parent.DayPilot.ModalStatic) {
+								        parent.DayPilot.ModalStatic.close(result);
+								    }
+								}
+
+								$('#reservations-form').submit(function () {
+								    var f = $('#reservations-form');
+								    $.post(f.attr('action'), f.serialize(), function (result) {
+								        close(eval(result));
+								    });
+								    return false;
+								});
+								",
+	CClientScript::POS_READY
+	);
+}
 ?>
+
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/moment.js"></script>
 <div class="form">
 
@@ -85,15 +111,16 @@ CClientScript::POS_READY
 					<?php echo '<Strong>Check in: </Strong>';?>
 					<?php //echo $form->textField($model,'start_date'); ?>
 					<?php
-					if($idtype!=0){
-					$this->widget('application.extensions.widget.JuiDatePicker', array(
-							                        'model'=>$model,
-							                        'attribute'=>'start_date',
-																			     ));
-																		}
-																		else {
-																			echo $form->textField($model,'start_date');
-																		}?>
+					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
+																			'model'=>$model,
+																			'attribute'=>'start_date',
+											                'mode'=>'datetime', //use "time","date" or "datetime" (default)
+																			'options'   => array(
+																						 'dateFormat' => 'dd/mm/yy',
+																						 'timeFormat' => $times,//'hh:mm tt' default
+																				 ),
+																			 ));
+																					?>
 					<?php echo $form->error($model,'start_date'); ?>
 				</div>
 			</td>
@@ -102,26 +129,15 @@ CClientScript::POS_READY
 					<?php echo '<Strong>Check out: </Strong>';?>
 					<?php //echo $form->textField($model,'end_date'); ?>
 					<?php
-
 					$this->widget('application.extensions.timepicker.EJuiDateTimePicker', array(
 																			'model'=>$model,
-																			'attribute'=>'test_date',
-																			'language'=> 'en-GB',
+																			'attribute'=>'end_date',
 											                'mode'=>'datetime', //use "time","date" or "datetime" (default)
 																			'options'   => array(
 																						 'dateFormat' => 'dd/mm/yy',
-																						 'timeFormat' => 'hh:mm tt',//'hh:mm tt' default
+																						 'timeFormat' => $times,//'hh:mm tt' default
 																				 ),
-																					));
-					if($idtype!=0){
-						$this->widget('application.extensions.widget.JuiDatePicker', array(
-								                        'model'=>$model,
-								                        'attribute'=>'end_date',
-						                                ));
-																					}
-																			else {
-																				echo $form->textField($model,'end_date');
-																			}
+																			 ));
 																					?>
 					<?php echo $form->error($model,'end_date'); ?>
 					</div>
@@ -166,20 +182,20 @@ CClientScript::POS_READY
 	#fungsi cek tipe reservation regular atau flexible
 	if($idtype==1)
 	{
+		echo $form->hiddenField($model,'idtype',array('value'=>'1'));
 	?>
 	<tr>
-		<td>
+		<td colspan="3">
 			<div class="row">
-				<?php echo $form->labelEx($model,'type'); ?>
+				<?php echo'<Strong>Type</Strong>'; ?>
 				<?php echo $form->dropDownList($model, 'type', array('regular'=>'Regular','onenight'=>'24 Hours'), array('prompt'=>'Pilih')); ?>
 				<?php echo $form->error($model,'type'); ?>
-			</div>
-		</td>
-	</tr>
+
 	<?php
 	}
 	else
 	{
+			echo $form->hiddenField($model,'idtype',array('value'=>'0'));
 			echo $form->hiddenField($model,'type',array('value'=>'flexible'));
 	}
 ?>
@@ -192,17 +208,20 @@ CClientScript::POS_READY
 						$disabled='disabled';
 				}
 			?>
-				<div class="row">
-					<?php echo $form->labelEx($model,'status'); ?>
-					<?php echo $form->dropDownList($model, 'status', array('New'=>'New','Confirmed'=>'Confirmed', 'Arrived'=>'Arrived', 'Cancel'=>'Cancel', 'unallocated'=>'Unallocated', 'CheckedOut'=>'Checked Out'), array('prompt'=>'Pilih','disabled'=>$disabled)); ?>
-					<?php echo $form->error($model,'status'); ?>
-				</div>
 
-				<div class="row">
-					<?php echo $form->labelEx($model,'paid'); ?>
-					<?php echo $form->dropDownList($model, 'paid', array('0'=>'0%','50'=>'50%', '100'=>'100%'), array('prompt'=>'Pilih')); ?>
-					<?php echo $form->error($model,'paid'); ?>
-				</div>
+
+							<?php echo'<Strong>Status</Strong>'; ?>
+							<?php echo $form->dropDownList($model, 'status', array('New'=>'New','Confirmed'=>'Confirmed', 'Arrived'=>'Arrived', 'Cancel'=>'Cancel', 'unallocated'=>'Unallocated', 'CheckedOut'=>'Checked Out'), array('prompt'=>'Pilih','disabled'=>$disabled)); ?>
+							<?php echo $form->error($model,'status'); ?>
+
+
+
+							<?php echo'<Strong>Paid</Strong>'; ?>
+							<?php echo $form->dropDownList($model, 'paid', array('0'=>'0%','50'=>'50%', '100'=>'100%'), array('prompt'=>'Pilih')); ?>
+							<?php echo $form->error($model,'paid'); ?>
+						</div>
+					</td>
+				</tr>
 				<?php
 			}
 	?>

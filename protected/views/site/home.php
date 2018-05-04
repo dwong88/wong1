@@ -33,7 +33,7 @@ $period = new DatePeriod($begin, $interval, $end);
 
 <div class="flex-container">
   <div>1</div>
-  <div><font>Rerservations:<br> <?php echo count(Reservations::model()->findAll());?></font></div>
+  <div><font>Reservations:<br> <?php echo count(Reservations::model()->findAll());?></font></div>
   <div><font>Rooms:<br> <?php echo count(Room::model()->findAll());?></font></div>
   <div>4</div>
   <div>5</div>
