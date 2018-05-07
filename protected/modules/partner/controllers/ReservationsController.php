@@ -316,7 +316,6 @@ class ReservationsController extends Controller
 					$model->end_date=str_replace(' ', '',$_POST['Reservations']['end_date']);
 				}
 				else {
-
 					$start_time=substr($_POST['Reservations']['start_date'],10,8).":00";
 					$end_time=substr($_POST['Reservations']['end_date'],10,8).":00";
 					$model->start_date=substr($_POST['Reservations']['start_date'],0,10);
@@ -331,8 +330,8 @@ class ReservationsController extends Controller
 				  try{
 
 						if($idtype==0){
-						$model->start_date = $model->start_date." ".$start_time;
-						$model->end_date =$model->end_date." ".$end_time;
+							$model->start_date = $model->start_date." ".$start_time;
+							$model->end_date =$model->end_date." ".$end_time;
 						}
 						//Yii::app()->end();
 						$model->save();
@@ -390,12 +389,20 @@ class ReservationsController extends Controller
 				$model->start_date=$newDate1;
 				$model->end_date=$newDate2;
 			}
+
+
 			if(isset($_POST['Reservations']))
 			{
 				$model->attributes=$_POST['Reservations'];
-				if($_POST['room_type_id']!=null){
-					$model->room_type_id = $_POST['room_type_id'];
-					$model->room_id = $_POST['room_id'];
+				//print_r($_POST);
+				if($_POST['roomtype_id']!=null){
+						//$model->room_type_id = $_POST['room_type_id'];
+						$model->room_id = $_POST['room_id'];
+				}
+				else {
+					{
+						$model->room_id = $_POST['roomtype_id'];
+					}
 				}
 
 

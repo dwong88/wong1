@@ -250,7 +250,7 @@
 		console.log(JSON.stringify(args));
 		var modal = new DayPilot.Modal();
 		modal.top = 60;
-    modal.width = 350;
+    modal.width = 300;
     modal.opacity = 70;
     modal.border = "10px solid #d0d0d0";
 		modal.closed = function() {
@@ -262,7 +262,6 @@
 				loadEvents();
 			}
 		};
-
 			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadpages')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource+ "&idtype=" + <?php echo $idtype;?>);
 
 		};

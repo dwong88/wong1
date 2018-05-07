@@ -22,11 +22,11 @@ Yii::app()->clientScript->registerScript(
 							$('#room_id').change(function() {
 								var thisvalue = this.value;
 								console.log(thisvalue);
-								$('#Property_state_id').text(thisvalue);
+								$('#Reservations_room_type_id').text(thisvalue);
 							});
 							$('#roomtype_id').change(function() {
 								var thisvalue = this.value;
-								$('#Property_city_id').text(thisvalue);
+								$('#Reservations_room_id').text(thisvalue);
 							});
 
 							$('input').change(function(){
@@ -37,7 +37,6 @@ Yii::app()->clientScript->registerScript(
 								var secondDate = new Date(day2);
 
 								var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
-								//console.log(diffDays);
 								document.getElementById('demo').innerHTML = diffDays;
 								//hitung
 								var x = document.getElementById('Reservations_price');
@@ -56,10 +55,12 @@ Yii::app()->clientScript->registerScript(
 							var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
 							//console.log(firstDate);
 							document.getElementById('demo').innerHTML = diffDays;
+
 							$('#Reservations_test_date').datetimepicker
 							(
 								$.timepicker.regional['id']
 							);
+
 							var x = document.getElementById('Reservations_price');
 							var currentVal = x.value;
 							var totalprice=diffDays*currentVal;
@@ -87,6 +88,16 @@ else{
 								        close(eval(result));
 								    });
 								    return false;
+								});
+
+								$('#room_id').change(function() {
+									var thisvalue = this.value;
+									console.log(thisvalue);
+									$('#Reservations_room_type_id').text(thisvalue);
+								});
+								$('#roomtype_id').change(function() {
+									var thisvalue = this.value;
+									$('#Reservations_room_id').text(thisvalue);
 								});
 
 								var day1 = moment(document.getElementById('Reservations_start_date').value, 'DD/MM/YYYY hh:mm:ss');
@@ -135,29 +146,29 @@ $dataroom=CHtml::listData($dataroom,'room_id','room_name');
 
 <?php
 
-		$id_type = $model->type;
-
 		if($model->isNewRecord){
-
-				if($id_type!=0){
+			//print_r($model);
+				//echo $idtype;
+				if($idtype!=0){
 					$start = $model->start_date;
 					$newDate1 = date("d/m/Y", strtotime($start));
 					$model->start_date = $newDate1;
+
 					$end = $model->end_date;
 					$newDate2 = date("d/m/Y", strtotime($end));
 					$model->end_date = $newDate2;
 				}
 				else {
 					$start = $model->start_date;
-					$newDate1 = date("d/m/Y hh:mm:ss", strtotime($start));
+					$newDate1 = date("d/m/Y h:m:s", strtotime($start));
 					$model->start_date = $newDate1;
 					$end = $model->end_date;
-					$newDate2 = date("d/m/Y hh:mm:ss", strtotime($end));
+					$newDate2 = date("d/m/Y h:m:s", strtotime($end));
 					$model->end_date = $newDate2;
 					$id=$model->reservations_id;
-					$actions[]='loadeditevent&id='.$id."&idtype=".$id_type;
+					//$actions[]='loadeditevent&id='.$id."&idtype=".$id_type;
 				}
-		 		$actions[]='loadcreateevent&start='.$start."&end=".$end."&resource=".$room_id."&idtype=".$id_type;
+		 		$actions[]='loadcreateevent&start='.$start."&end=".$end."&resource=".$room_id."&idtype=".$idtype;
 		}
 		else{
 
