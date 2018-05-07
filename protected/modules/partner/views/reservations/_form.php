@@ -18,6 +18,17 @@ Yii::app()->clientScript->registerScript(
 									});
 									return false;
 							});
+
+							$('#room_id').change(function() {
+								var thisvalue = this.value;
+								console.log(thisvalue);
+								$('#Property_state_id').text(thisvalue);
+							});
+							$('#roomtype_id').change(function() {
+								var thisvalue = this.value;
+								$('#Property_city_id').text(thisvalue);
+							});
+
 							$('input').change(function(){
 								var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
 								var day1 = moment(document.getElementById('Reservations_start_date').value, 'DD/MM/YYYY');
@@ -28,6 +39,12 @@ Yii::app()->clientScript->registerScript(
 								var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
 								//console.log(diffDays);
 								document.getElementById('demo').innerHTML = diffDays;
+								//hitung
+								var x = document.getElementById('Reservations_price');
+								var currentVal = x.value;
+								var totalprice=diffDays*currentVal;
+								//console.log(totalprice);
+								document.getElementById('totalprices').innerHTML = totalprice;
 							});
 
 							var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
@@ -37,12 +54,17 @@ Yii::app()->clientScript->registerScript(
 							var secondDate = new Date(day2);
 
 							var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
-							console.log(firstDate);
+							//console.log(firstDate);
 							document.getElementById('demo').innerHTML = diffDays;
 							$('#Reservations_test_date').datetimepicker
 							(
 								$.timepicker.regional['id']
 							);
+							var x = document.getElementById('Reservations_price');
+							var currentVal = x.value;
+							var totalprice=diffDays*currentVal;
+							//console.log(totalprice);
+							document.getElementById('totalprices').innerHTML = totalprice;
 							",
 CClientScript::POS_READY
 );
@@ -66,27 +88,79 @@ else{
 								    });
 								    return false;
 								});
+
+								var day1 = moment(document.getElementById('Reservations_start_date').value, 'DD/MM/YYYY hh:mm:ss');
+								var day2 = moment(document.getElementById('Reservations_end_date').value, 'DD/MM/YYYY hh:mm:ss');
+								var firstDate = new Date(day1);
+								var secondDate = new Date(day2);
+								var date1 = new Date(firstDate);
+								var date2 = new Date(secondDate);
+
+								//alert(date2);
+
+								var diff = date2.getTime() - date1.getTime();
+
+								var msec = diff;
+								var hh = Math.floor(msec / 1000 / 60 / 60);
+								msec -= hh * 1000 * 60 * 60;
+								var mm = Math.floor(msec / 1000 / 60);
+								msec -= mm * 1000 * 60;
+								var ss = Math.floor(msec / 1000);
+								msec -= ss * 1000;
+								//alert(hh + ':' + mm + ':' + ss);
+								if(hh>12){
+									alert('overtime');
+								}
 								",
 	CClientScript::POS_READY
 	);
 }
+$room_id = $model->room_id;
+$roomsprice =DAO::queryAllSql("SELECT rm.room_id,rm.room_name,rt.room_type_name , rm.room_type_id, bp.price,pt.property_id FROM tghroom as rm
+														INNER JOIN `tghbasepriceroom` as bp on rm.room_type_id = bp.room_type_id
+														INNER JOIN `tghroomtype` as rt on rm.room_type_id = rt.room_type_id
+														INNER JOIN `tghproperty` as pt on rt.property_id = pt.property_id
+	WHERE rm.room_id = '".$room_id."' and bp.hours='hr0';");
+
+#tampilkan room_name
+$dataroom=Room::model()->findAll('room_type_id=:room_type_id',array(':room_type_id'=>(string) $roomsprice[0]['room_type_id']));
+$dataroom=CHtml::listData($dataroom,'room_id','room_name');
+//var_dump($datas);die;
+//print_r($dataroom);
+
 ?>
 
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/moment.js"></script>
 <div class="form">
 
 <?php
-		$room_id = $model->room_id;
-		$start = $model->start_date;
-		$end = $model->end_date;
+
 		$id_type = $model->type;
 
 		if($model->isNewRecord){
+
+				if($id_type!=0){
+					$start = $model->start_date;
+					$newDate1 = date("d/m/Y", strtotime($start));
+					$model->start_date = $newDate1;
+					$end = $model->end_date;
+					$newDate2 = date("d/m/Y", strtotime($end));
+					$model->end_date = $newDate2;
+				}
+				else {
+					$start = $model->start_date;
+					$newDate1 = date("d/m/Y hh:mm:ss", strtotime($start));
+					$model->start_date = $newDate1;
+					$end = $model->end_date;
+					$newDate2 = date("d/m/Y hh:mm:ss", strtotime($end));
+					$model->end_date = $newDate2;
+					$id=$model->reservations_id;
+					$actions[]='loadeditevent&id='.$id."&idtype=".$id_type;
+				}
 		 		$actions[]='loadcreateevent&start='.$start."&end=".$end."&resource=".$room_id."&idtype=".$id_type;
 		}
 		else{
-				$id=$model->reservations_id;
-				$actions[]='loadeditevent&id='.$id."&idtype=".$id_type;
+
 		}
 			$form=$this->beginWidget('CActiveForm', array(
 			'id'=>'reservations-form',
@@ -147,21 +221,60 @@ else{
 				<tr>
 						<td colspan="2">
 							<h3>Length of stay:<strong><font id="demo"></font>Nights</strong></h3>
+							<h3>Prices:<strong>Rp<font id="totalprices"></font></strong></h3>
 						</td>
 				</tr>
-			<?php }?>
+			<?php
+					echo $form->hiddenField($model,'price',array('value'=>$roomsprice[0]['price']));
+			}?>
 	<tr>
 		<td colspan="2">
 				<div class="row">
 					<?php
-					$idr=$model->room_id;
+					/*$idr=$model->room_id;
 					$rooms = Room::model()->findByPk($idr);
 
 					echo '<Strong>Room Name: </Strong>';
-					echo $rooms->room_name."<br>";
+					echo $rooms->room_name."<br>";*/
 					 ?>
+				 <?php
+				 		 $model->property_id = $roomsprice[0]['property_id'];
+						 $model->room_type_id = $roomsprice[0]['room_type_id'];
+						 $model->room_id = $roomsprice[0]['room_id'];
+						 echo $form->labelEx($model,'property_id');
+						 echo $form->dropDownList($model,'property_id', CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),array(
+							 'prompt'=>'Select Property',
+							 'ajax' => array(
+							 'type'=>'POST',
+							 'url'=>Yii::app()->createUrl('core/globalsetting/loadroomtype'), //or $this->createUrl('loadcities') if '$this' extends CController
+							 'update'=>'#roomtype_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
+							 'data'=>array('property_id'=>'js:this.value'),
+							 )));
+						 ?>
+						 <?php
+							 echo $form->labelEx($model,'room_type_id');
+							 echo CHtml::dropDownList('roomtype_id',$select_st,
+							 array($select_st=>$roomsprice[0]['room_type_name']),
+							 array(
+								 'prompt'=>'Select Room Type',
+								 'options' => array($model->room_type_id=>array('selected'=>true)),
+								 'ajax' => array(
+								 'type'=>'POST',
+								 'url'=>Yii::app()->createUrl('core/globalsetting/loadroom'), //or $this->createUrl('loadcities') if '$this' extends CController
+								 'update'=>'#room_id', //or 'success' => 'function(data){...handle the data in the way you want...}',
+							 'data'=>array('room_type_id'=>'js:this.value'),
+							 )));
+
+						 ?>
+						 <div><?php
+						 		 echo $form->labelEx($model,'room_id');
+						 		 echo CHtml::dropDownList('room_id',$select_ct,
+								 array($select_ct=>$roomsprice[0]['room_name']), array('prompt'=>'Select Room','options' => array($model->room_id=>array('selected'=>true))));?>
+						 </div>
 					<?php //echo $form->dropDownList($model,'room_id', CHtml::listData(Room::model()->findAll($idr), 'room_id', 'room_name'),array('prompt'=>'Pilih kamar')); ?>
 					<?php //echo $form->error($model,'room_id'); ?>
+					<?php echo $form->hiddenField($model,'room_type_id',array($model->room_type_id),array('value'=>''));?>
+					<?php echo $form->hiddenField($model,'room_id',array($model->room_id),array('value'=>''));?>
 					<?php echo '<Strong>Adult</Strong>';?>
 					<?php echo $form->textField($model,'adult',array('size'=>2,'maxlength'=>2)); ?>
 					<?php echo $form->error($model,'adult'); ?>
@@ -208,13 +321,9 @@ else{
 						$disabled='disabled';
 				}
 			?>
-
-
 							<?php echo'<Strong>Status</Strong>'; ?>
 							<?php echo $form->dropDownList($model, 'status', array('New'=>'New','Confirmed'=>'Confirmed', 'Arrived'=>'Arrived', 'Cancel'=>'Cancel', 'unallocated'=>'Unallocated', 'CheckedOut'=>'Checked Out'), array('prompt'=>'Pilih','disabled'=>$disabled)); ?>
 							<?php echo $form->error($model,'status'); ?>
-
-
 
 							<?php echo'<Strong>Paid</Strong>'; ?>
 							<?php echo $form->dropDownList($model, 'paid', array('0'=>'0%','50'=>'50%', '100'=>'100%'), array('prompt'=>'Pilih')); ?>

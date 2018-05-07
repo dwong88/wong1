@@ -393,6 +393,11 @@ class ReservationsController extends Controller
 			if(isset($_POST['Reservations']))
 			{
 				$model->attributes=$_POST['Reservations'];
+				if($_POST['room_type_id']!=null){
+					$model->room_type_id = $_POST['room_type_id'];
+					$model->room_id = $_POST['room_id'];
+				}
+
 
 				$idtype=$_POST['Reservations']['idtype'];
 

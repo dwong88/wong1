@@ -84,7 +84,7 @@ class GlobalsettingController extends Controller
 			//echo $_POST['room_type_id'];
 		   //$data=Room::model()->findAll('room_type_id=:room_type_id',array(':room_type_id'=>(int) $_POST['room_type_id']));
 			 $data = DAO::queryAllSql("SELECT room_id,room_name FROM `tghroom` WHERE  room_type_id='".$_POST['room_type_id']."';");
-		   $data=CHtml::listData($data,'room_id','room_name');
+		   $data = CHtml::listData($data,'room_id','room_name');
 
 		   echo "<option value=''>Select Room</option>";
 		   foreach($data as $value=>$room_name)
@@ -97,13 +97,6 @@ class GlobalsettingController extends Controller
 			 //Yii::app()->end();
 				$start;
 
-				/*$stmt = $db->prepare("select r.room_id as id, r.`room_name` as name,rt.room_type_id as parent_id,rt.room_type_name as parent_name,rt.`room_type_room_size` as capacity from tghroom as r
-				inner join `tghroomtype` as rt on r.`room_type_id` = rt.`room_type_id`
-				GROUP BY rt.room_type_id
-				ORDER BY rt.room_type_id");
-				$stmt->bindParam(':capacity', $_POST['capacity']);
-				$stmt->execute();
-				$rooms = $stmt->fetchAll();*/
 				$room1 = DAO::queryAllSql("select r.room_id as id, r.`room_name` as name,rt.room_type_id as parent_id,rt.room_type_name as parent_name,rt.`room_type_room_size` as capacity from tghroom as r
 				inner join `tghroomtype` as rt on r.`room_type_id` = rt.`room_type_id`
 				GROUP BY rt.room_type_id

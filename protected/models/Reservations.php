@@ -27,8 +27,10 @@
 class Reservations extends ActiveRecord
 {
 	public $property_id;
+	public $room_type_id;
 	public $test_date;
 	public $idtype;
+	public $price;
 	public $interval_time;
 	/**
 	 * @return string the associated database table name
