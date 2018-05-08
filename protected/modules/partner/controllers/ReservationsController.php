@@ -1,11 +1,13 @@
 <?php
-class Roomres{}
-class Children{} # class children or sub room
-class Eventes {}
+#ini class tambahan untuk class ReservationsController
+class Roomres  {} #untuk load room
+class Children {} #class children or sub room
+class Eventes  {} #untuk loadEvents
 class Resulted {} #edit
 class Resultsm {} #moveevent
 class Resulter {} #resize
 class Resultec {} #create
+
 class ReservationsController extends Controller
 {
 	/**
@@ -37,13 +39,13 @@ class ReservationsController extends Controller
 		$model->end_date=$end;
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
+
 		if(isset($_POST['Reservations']))
 		{
 			$model->attributes=$_POST['Reservations'];
 			$model->status="new";
 			$model->paid="";
 			if($model->save()) {
-				//Yii::app()->user->setFlash('success', "Create Successfully");
 
 				$response = new Resultec();
 				$response->result = 'OK';
@@ -168,6 +170,8 @@ class ReservationsController extends Controller
 				}
 				$r->children = array();
 				$roomsp =DAO::queryAllSql("SELECT room_name as name, room_id as id FROM tghroom WHERE room_type_id = '".$room['parent_id']."' ORDER BY is_unallocated");
+
+				#looping child
 				foreach($roomsp as $value) {
 					$children = new Children;
 
@@ -183,7 +187,6 @@ class ReservationsController extends Controller
 					$r->children[] = $children;
 				}
 				$result[] = $r;
-
 			}
 
 			//convert to json
@@ -198,6 +201,8 @@ class ReservationsController extends Controller
 			/*$result = DAO::queryAllSql("select rev.reservations_id as id, rev.customer_name as name, rev.start_date as start, rev.end_date as end,rev.status,rev.paid,rm.room_id as room_id,rm.room_name from tghreservations as rev
 			inner join `tghroom` as rm on rm.room_id = rev.room_id
 			WHERE NOT (rev.end_date <= '".$start."') OR (rev.start_date >=' ".$end."')");*/
+
+			#query events
 			$result = DAO::queryAllSql("select rev.reservations_id as id, rev.customer_name as name, rev.start_date as start, rev.end_date as end,rev.status,rev.paid,rm.room_id as room_id,rm.room_name from tghreservations as rev
 			inner join `tghroom` as rm on rm.room_id = rev.room_id
 			WHERE NOT (rev.end_date <= '".$start."') OR (rev.start_date >='".$end."')
@@ -223,13 +228,6 @@ class ReservationsController extends Controller
 			    $e->paid = $row['paid'];
 			    $events[] = $e;
 
-			    /*
-			        int paid = Convert.ToInt32(e.DataItem["ReservationPaid"]);
-			        string paidColor = "#aaaaaa";
-
-			        e.Areas.Add(new Area().Bottom(10).Right(4).Html("<div style='color:" + paidColor + "; font-size: 8pt;'>Paid: " + paid + "%</div>").Visibility(AreaVisibility.Visible));
-			        e.Areas.Add(new Area().Left(4).Bottom(8).Right(4).Height(2).Html("<div style='background-color:" + paidColor + "; height: 100%; width:" + paid + "%'></div>").Visibility(AreaVisibility.Visible));
-			     * */
 			}
 
 			header('Content-Type: application/json');
@@ -243,6 +241,8 @@ class ReservationsController extends Controller
 		 	$events = array();
 			/*$result = DAO::queryAllSql("select cl_id as id, room_id, status as name , start_date as start, end_date as end from tghroomclosure
 			WHERE NOT (end_date <= '".$start."') OR (start_date >=' ".$end."')");*/
+
+			#query roomclosure
 			$result = DAO::queryAllSql("select rev.reservations_id as id, rev.customer_name as name, rev.start_date as start, rev.end_date as end,rev.status,rev.paid,rm.room_id as room_id,rm.room_name from tghreservations as rev
 			inner join `tghroom` as rm on rm.room_id = rev.room_id
 			WHERE NOT (rev.end_date <= '".$start."') OR (rev.start_date >='".$end."')
@@ -252,6 +252,7 @@ class ReservationsController extends Controller
 						inner join `tghroom` as rm on rm.room_id = cl.room_id
 						WHERE NOT (end_date <= '".$start."') OR (start_date >='".$end."')
 			) as c");
+
 			foreach($result as $row) {
 			    $e = new Eventes();
 			    $e->id = $row['id'];
@@ -266,13 +267,6 @@ class ReservationsController extends Controller
 			    // additional properties
 			    $events[] = $e;
 
-			    /*
-			        int paid = Convert.ToInt32(e.DataItem["ReservationPaid"]);
-			        string paidColor = "#aaaaaa";
-
-			        e.Areas.Add(new Area().Bottom(10).Right(4).Html("<div style='color:" + paidColor + "; font-size: 8pt;'>Paid: " + paid + "%</div>").Visibility(AreaVisibility.Visible));
-			        e.Areas.Add(new Area().Left(4).Bottom(8).Right(4).Height(2).Html("<div style='background-color:" + paidColor + "; height: 100%; width:" + paid + "%'></div>").Visibility(AreaVisibility.Visible));
-			     * */
 			}
 
 			header('Content-Type: application/json');
@@ -333,19 +327,29 @@ class ReservationsController extends Controller
 							$model->start_date = $model->start_date." ".$start_time;
 							$model->end_date =$model->end_date." ".$end_time;
 						}
-						//Yii::app()->end();
-						$model->save();
-						#jika tidak ada error transaksi proses di commit
-						$transaction->commit();
-						//Yii::app()->user->setFlash('success', "Create Successfully");
+						if($model->end_date<$model->start_date){
+							$response = new Resultec();
+							$response->result = 'OK';
+							$response->message = 'Create Failed';
 
-						$response = new Resultec();
-						$response->result = 'OK';
-						$response->message = 'Create successful';
+							header('Content-Type: application/json');
+							echo json_encode($response);
+							Yii::app()->end();
+						}
+						else{
+							$model->save();
+							#jika tidak ada error transaksi proses di commit
+							$transaction->commit();
+							//Yii::app()->user->setFlash('success', "Create Successfully");
 
-						header('Content-Type: application/json');
-						echo json_encode($response);
-						Yii::app()->end();
+							$response = new Resultec();
+							$response->result = 'OK';
+							$response->message = 'Create successful';
+
+							header('Content-Type: application/json');
+							echo json_encode($response);
+							Yii::app()->end();
+						}
 					}
 					catch(exception $e) {
 				      $transaction->rollback();
@@ -353,12 +357,6 @@ class ReservationsController extends Controller
 				  }
 				}
 			}
-			/*if($idtype==0){
-				$this->render('_formtime',array(
-					'model'=>$model,
-					'idtype'=>$idtype,
-				));
-			}*/
 			$this->render('_form',array(
 				'model'=>$model,
 				'idtype'=>$idtype,
@@ -369,11 +367,10 @@ class ReservationsController extends Controller
 	public function actionLoadeditevent($id,$idtype)
 	{
 			$this->layout = '//layouts/iframe1';
-		 //Yii::app()->end();
 			$model=$this->loadModel($id);
 			$model->reservations_id=$id;
 			if($idtype!=0){
-				//$model->start_date = date_format($model->start_date,"Y/m/d");
+
 				$tes1=$model->start_date;
 				$newDate1 = date("d/m/Y", strtotime($tes1));
 				$tes2=$model->end_date;
@@ -389,7 +386,6 @@ class ReservationsController extends Controller
 				$model->start_date=$newDate1;
 				$model->end_date=$newDate2;
 			}
-
 
 			if(isset($_POST['Reservations']))
 			{
@@ -413,11 +409,30 @@ class ReservationsController extends Controller
 					$model->end_date=str_replace(' ', '',$_POST['Reservations']['end_date']);
 				}
 				else {
+					$start_time=substr($_POST['Reservations']['start_date'],10,8);
+					$end_time=substr($_POST['Reservations']['end_date'],10,8);
+					//echo $start_time;
+					$diff = strtotime($end_time)-strtotime($start_time);
+					$hh = floor($diff/60/60);
+					//echo $diff;
+					if($hh>12)
+					{
+						echo "overtime";
+					}
+					if($hh<0)
+					{
+						//echo "error";
+						$response = new Resultec();
+						$response->result = 'OK';
+						$response->message = 'Create Failed';
 
-					$start_time=substr($_POST['Reservations']['start_date'],10,8).":00";
-					$end_time=substr($_POST['Reservations']['end_date'],10,8).":00";
+						header('Content-Type: application/json');
+						echo json_encode($response);
+						Yii::app()->end();
+					}
 					$model->start_date=substr($_POST['Reservations']['start_date'],0,10);
 					$model->end_date= substr($_POST['Reservations']['end_date'],0,10);
+					Yii::app()->end();
 				}
 				if($model->validate())
 				{
@@ -448,51 +463,14 @@ class ReservationsController extends Controller
 			));
 	}
 
-	#fungsi untuk edit room closure
-	public function actionLoadeditevent1($id)
-	{
-			$this->layout = '//layouts/iframe1';
-		 //Yii::app()->end();
-			$model=$this->loadModel($id);
-			$model->reservations_id=$id;
-
-			if(isset($_POST['Reservations']))
-			{
-				$model->attributes=$_POST['Reservations'];
-				if($model->validate())
-				{
-				  #$transaction mulai transaksi
-				  $transaction = Yii::app()->db->beginTransaction();
-				  try{
-							$model->save();
-							#jika tidak ada error transaksi proses di commit
-							$transaction->commit();
-							$response = new Resulted();
-							$response->result = 'OK';
-							$response->message = 'Update successful';
-
-							header('Content-Type: application/json');
-							echo json_encode($response);
-							Yii::app()->end();
-					}
-					catch(exception $e) {
-			      $transaction->rollback();
-			      throw new CHttpException(500, $e->getMessage());
-			  	}
-				}
-			}
-			$this->render('_form',array(
-				'model'=>$model,
-				'idtype'=>$idtype,
-			));
-	}
-
 	#fungsi untuk move events
 	public function actionLoadmovedevent($id,$start,$end,$resource)
 	{
 			$hasil = DAO::queryAllSql("select rev.reservations_id as id, rev.customer_name as name, rev.start_date as start, rev.end_date as end,rev.status,rev.paid from tghreservations as rev
 			WHERE NOT ((rev.end_date <= '".$start."') OR (rev.start_date >='".$end."')) AND rev.reservations_id<>$id AND rev.room_id=$resource");
+			#count
 			$overlaps=count($hasil);
+
 			if ($overlaps) {
 			    $response = new Resultsm();
 			    $response->result = 'Error';
@@ -512,7 +490,7 @@ class ReservationsController extends Controller
 			echo json_encode($response);
 	}
 
-	#module resize
+	#module resize events
 	public function actionLoadresizedevent($start,$end,$id)
 	{
 		$hasil = DAO::executeSql("UPDATE tghreservations SET start_date='".$start."',end_date='".$end."' where reservations_id=$id");
@@ -525,7 +503,7 @@ class ReservationsController extends Controller
 		echo json_encode($response);
 	}
 
-	#module resize
+	#module resize closure
 	public function actionLoadresizedclosure($start,$end,$id)
 	{
 		$hasil = DAO::executeSql("UPDATE tghroomclosure SET start_date='".$start."',end_date='".$end."' where cl_id='".$id."';");

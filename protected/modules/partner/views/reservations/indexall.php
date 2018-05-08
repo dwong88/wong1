@@ -165,7 +165,6 @@
 
 
 			dp.onBeforeCellRender = function(args) {
-				//console.log(args.cell.events());
 				//console.log(JSON.stringify(args.cell.events()));
 				if (args.cell.start < DayPilot.Date.today()) {
 						args.cell.disabled = true;
@@ -278,7 +277,7 @@
 			};
 			//modal.showUrl("edit.php?id=" + args.e.id());
 			//console.log(JSON.stringify(args));
-			//isNaN(123)
+
 			if(isNaN(args.e.id())){
 				modal.showUrl("<?php echo Yii::app()->createUrl('partner/roomclosure/updatecal')?>&id=" + args.e.id());
 			}
@@ -391,7 +390,7 @@
 
 				var paid = args.e.paid;
 				var paidColor = "#aaaaaa";
-				//console.log(args.e.id);
+
 				args.data.areas = [
             {
                 onClick: function(args) { DayPilot.Modal.alert("<b>Event name:</b><br>" + args.source.text()); },
@@ -408,21 +407,18 @@
 						{ left: 4, bottom: 8, right: 4, height: 2, html: "<div style='background-color:" + paidColor + "; height: 100%; width:" + paid + "%'></div>", v: "Visible" }
         ];
 
-				/*args.e.areas = [
-						{ bottom: 10, right: 4, html: "<div style='color:" + paidColor + "; font-size: 8pt;'>Paid: " + paid + "%</div>", v: "Visible"},
-						{ left: 4, bottom: 8, right: 4, height: 2, html: "<div style='background-color:" + paidColor + "; height: 100%; width:" + paid + "%'></div>", v: "Visible" }
-
-				];*/
-				//args.e.bubbleHtml = "<div><b>" + args.e.text + "</b></div><div>Start: " + new DayPilot.Date(args.e.start).toString("M/d/yyyy") + "</div><div>End: " + new DayPilot.Date(args.e.end).toString("M/d/yyyy") + "</div>";
-        args.e.bubbleHtml = "<div><b>" + args.e.text + "</b></div><div>Start: " + new DayPilot.Date(args.e.start).toString() + "</div><div>End: " + new DayPilot.Date(args.e.end).toString() + "</div>";
+				args.e.bubbleHtml = "<div><b>" + args.e.text + "</b></div><div>Start: " + new DayPilot.Date(args.e.start).toString() + "</div><div>End: " + new DayPilot.Date(args.e.end).toString() + "</div>";
 
 		};
+
 			dp.onRowFilter = function(args) {
 					if (args.row.name.toUpperCase().indexOf(args.filter.toUpperCase()) === -1) {
 							args.visible = false;
 					}
 			};
+
 			dp.init();
+
 			loadResources();
 			loadEvents();
 
@@ -451,10 +447,10 @@
 						id: DayPilot.guid()
 					},
 					function(data) {
-						dp.events.list = data;
-						//console.log(data);
-						dp.update();
-				}
+							dp.events.list = data;
+							//console.log(data);
+							dp.update();
+					}
 				);
 			}
 
@@ -466,15 +462,6 @@
 				$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadroom')?>&pid="+pid,
 					function(data) {
 					dp.resources = data;
-					var i;
-					var text;
-					for (i = 0; i < data.length; i++) {
-					    text = data[i]['children'][i]['name'];
-							/*if (text=="unallocated") {
-									args.cell.disabled = true;
-									args.cell.backColor = "#ccc";
-							}*/
-					}
 					dp.update();
 				});
 		}
@@ -490,12 +477,11 @@
             dp.rows.filter(query); // see dp.onRowFilter below
         });
 
-        $("#clear").click(function() {
-
-            $("#filter").val("");
-            dp.rows.filter(null);
-            return false;
-        });
+      $("#clear").click(function() {
+          $("#filter").val("");
+          dp.rows.filter(null);
+          return false;
+      });
 
 		});
 //dp.scrollTo("2013-03-24T16:00:00");
@@ -506,11 +492,10 @@ dp.scrollTo(new DayPilot.Date());
 <!-- bottom -->
 
 <script type="text/javascript">
-$(document).ready(function() {
-var url = window.location.href;
-var filename = url.substring(url.lastIndexOf('/')+1);
-if (filename === "") filename = "index.html";
-$(".menu a[href='" + filename + "']").addClass("selected");
-});
-
+	$(document).ready(function() {
+		var url = window.location.href;
+		var filename = url.substring(url.lastIndexOf('/')+1);
+		if (filename === "") filename = "index.html";
+		$(".menu a[href='" + filename + "']").addClass("selected");
+	});
 </script>

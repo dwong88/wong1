@@ -43,14 +43,17 @@ CClientScript::POS_READY
 						<?php echo $form->labelEx($model,'property_type_id'); ?>
 						<?php echo $form->dropDownList($model,'property_type_id', CHtml::listData(Propertytype::model()->findAll(), 'property_type_id', 'property_type_name'),array('prompt'=>'Pilih Tipe')); ?>
 						<?php echo $form->error($model,'property_type_id'); ?>
+
 						<div class="row">
 							<?php echo $form->labelEx($model,'addressline1'); ?>
 							<?php echo $form->textArea($model,'addressline1',array('rows'=>6, 'cols'=>50,'placeholder'=>'Masukan Alamat Property')); ?>
 							<?php echo $form->error($model,'addressline1'); ?>
 						</div>
+
 						<?php echo $form->labelEx($model,'addressline2'); ?>
 						<?php echo $form->textArea($model,'addressline2',array('rows'=>6, 'cols'=>50,'placeholder'=>'Masukan Alamat Alternatif Property')); ?>
 						<?php echo $form->error($model,'addressline2'); ?>
+						
 						<div class="row">
 							<?php echo $form->labelEx($model,'postal_code').'<br>'; ?>
 							<?php echo $form->textField($model,'postal_code',array('size'=>5,'maxlength'=>5)); ?>

@@ -9,23 +9,43 @@
 				display: none !important;
 		}
 </style>
-		<div style="margin-left: 0px;">
-				Date: <span id="start"></span> <a href="#" onclick="picker.show(); return false;">Change</a>
-				<div class="space">
-						Property:
-						<div class="row">
-								<?php
-										echo CHtml::activeDropDownList($model, 'property_id',
-										CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),
-										array('empty'=>'Select Property','id'=>'filter'))
-								?>
+
+<div style="margin-left: 0px;">
+	<table>
+		<tr>
+			<td>
+					<div class="space">
+							<div class="row">
+								<strong>	Date: </strong><span id="start"></span> <a href="#" onclick="picker.show(); return false;">Change</a>
+								</div>
 						</div>
-				</div>
-				<div class="space">
-						Filter: <input id="filtersearch" /> <a href="#" id="clear">Clear</a>
-				</div>
-				<div id="dp"></div>
-		</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="space">
+							<div class="row">
+									<?php
+											Property:
+											echo CHtml::activeDropDownList($model, 'property_id',
+											CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),
+											array('empty'=>'Select Property','id'=>'filter'))
+									?>
+							</div>
+						</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+						<div class="space">
+								Filter: <input id="filtersearch" /> <a href="#" id="clear">Clear</a>
+						</div>
+				</td>
+			</tr>
+	</table>
+		<div id="dp"></div>
+</div>
+
 <?php
 #fungsi cek url index regular atau flexible
 $subs=substr($_GET['r'],21)."<br>";
@@ -35,7 +55,8 @@ if($subs='index')
 	$idtype=0;
 }
 ?>
-<!--script untuk calendar navigasi-->
+
+<!--script untuk calendar navigasi/DatePicker-->
 <script type="text/javascript">
 		var picker = new DayPilot.DatePicker({
 				target: 'start',
@@ -47,14 +68,9 @@ if($subs='index')
 						dp.update();
 				}
 		});
-		//fungsi autocellwidth
-		/*$("#autocellwidth").click(function() {
-				dp.cellWidth = 40;  // reset for "Fixed" mode
-				dp.cellWidthSpec = $(this).is(":checked") ? "Auto" : "Fixed";
-				dp.update();
-		});*/
-
 </script>
+
+<!--script untuk calendar Scheduler-->
 <script type="text/javascript">
 			var dp = new DayPilot.Scheduler("dp");
 
@@ -74,6 +90,7 @@ if($subs='index')
 			// see also DayPilot.Event.data.staticBubbleHTML property
 			dp.eventHeight = 60;
 			dp.eventStackingLineHeight = 30;
+
 			//declare functions bubbleHtml
 			dp.bubble = new DayPilot.Bubble({
         onLoad: function(args) {
@@ -82,24 +99,15 @@ if($subs='index')
         }
     });
 
-			/*dp.contextMenu = new DayPilot.Menu({items: [
-			{text:"Show event ID", onclick: function() {alert("Event value: " + this.source.value());} },
-			{text:"Show event text", onclick: function() {alert("Event text: " + this.source.text());} },
-			{text:"Show event start", onclick: function() {alert("Event start: " + this.source.start().toStringSortable());} },
-			{text:"Go to google.com", href: "http://www.google.com/?q={0}"},
-			{text:"CallBack: Delete this event", command: "delete"} ,
-			{text:"submenu", items: [
-							{text:"Show event ID", onclick: function() {alert("Event value: " + this.source.value());} },
-							{text:"Show event text", onclick: function() {alert("Event text: " + this.source.text());} }
-					]
-			}
-		]});*/
 		dp.contextMenu = new DayPilot.Menu({items: [
 				{text:"Edit", onClick: function(args) { dp.events.edit(args.source); } },
 				{text:"Delete", onClick: function(args) { dp.events.remove(args.source); } },
 				{text:"-"},
 				{text:"Select", onClick: function(args) { dp.multiselect.add(args.source); } },
 		]});
+
+			dp.progressiveRowRendering = true;
+			dp.progressiveRowRenderingPreload = 25;
 
 			dp.treeEnabled = true;
 			dp.treePreventParentUsage = true;
@@ -108,16 +116,29 @@ if($subs='index')
 			dp.eventHoverHandling = "Bubble";
 
 			dp.onBeforeEventRender = function(args) {
+					//console.log(JSON.stringify(args));
 					var start = new DayPilot.Date(args.e.start);
 					var end = new DayPilot.Date(args.e.end);
-
+					//console.log('masuk event render');
 					var today = DayPilot.Date.today();
 					var now = new DayPilot.Date();
+
 					args.e.html = args.e.text + " (" + start.toString("M/d/yyyy") + " - " + end.toString("M/d/yyyy") + ")";
+
+					if(isNaN(args.e.id)){
+						args.data.fontColor = "#fff";
+	          args.data.backColor = "#E06666";
+	          args.data.borderColor = "#E06666";
+						args.e.barColor = 'red';
+					}
+					else {
+						//none
+					}
+
+					//cekstatus events dan room closure
 					switch (args.e.status) {
 							case "New":
 									var in2days = today.addDays(1);
-
 									if (start < in2days) {
 											args.e.barColor = 'red';
 											args.e.toolTip = 'Expired (not confirmed in time)';
@@ -165,7 +186,8 @@ if($subs='index')
 									args.e.toolTip = "unallocated";
 									break;
 							default:
-									args.e.toolTip = "Unexpected state";
+									//args.e.toolTip = "Unexpected state";
+									args.e.toolTip = "Unavailable";
 									break;
 					}
 
@@ -174,47 +196,52 @@ if($subs='index')
 					var paid = args.e.paid;
 					var paidColor = "#aaaaaa";
 
-					args.e.areas = [
+					args.data.areas = [
+	            {
+	                onClick: function(args) { DayPilot.Modal.alert("<b>Event name:</b><br>" + args.source.text()); },
+	                height:17,
+	                width:20,
+									visibility: "Hover",
+			 						css: "event_action_delete",
+	                html:"info",
+	                top:36,
+	                right:2,
+	                style: "border: 1px solid #ccc; border-radius: 5px; font-size: 10px; box-sizing: border-box; padding: 1px; background-color: #fff;"
+	            },
 							{ bottom: 10, right: 4, html: "<div style='color:" + paidColor + "; font-size: 8pt;'>Paid: " + paid + "%</div>", v: "Visible"},
 							{ left: 4, bottom: 8, right: 4, height: 2, html: "<div style='background-color:" + paidColor + "; height: 100%; width:" + paid + "%'></div>", v: "Visible" }
-					];
-					//args.e.bubbleHtml = "<div><b>" + args.e.text + "</b></div><div>Start: " + new DayPilot.Date(args.e.start).toString("M/d/yyyy") + "</div><div>End: " + new DayPilot.Date(args.e.end).toString("M/d/yyyy") + "</div>";
+	        ];
+
 	        args.e.bubbleHtml = "<div><b>" + args.e.text + "</b></div><div>Start: " + new DayPilot.Date(args.e.start).toString() + "</div><div>End: " + new DayPilot.Date(args.e.end).toString() + "</div>";
 
 			};
 
+			//fungsi sebelum load cell
 			dp.onBeforeCellRender = function(args) {
-				if (args.cell.start < DayPilot.Date.today() || args.cell.resource === "D") {
+				//console.log(JSON.stringify(args.cell.events()));
+				if (args.cell.start < DayPilot.Date.today()) {
 						args.cell.disabled = true;
 						args.cell.backColor = "#ccc";
 				}
-				//fungsi cek unavailable
-				var row = dp.rows.find(args.cell.resource);
-				var unavailable = row.data.unavailable;
-				if (!unavailable) {
-						return;
+				if (args.cell.start.getDay() === 1) { // first day of month
+						args.cell.backColor = "#ffffd5";
+						args.cell.html = "<div style='position:absolute;right:2px;bottom:2px;font-size:8pt;color:#666;'>Maintenance</div>";
+						args.cell.properties.status = "Under Maintenance";
 				}
-				var matches = unavailable.some(function(range) {
-						var start = new DayPilot.Date(range.start);
-						var end = new DayPilot.Date(range.end).addDays(1);
-						return DayPilot.Util.overlaps(start, end, args.cell.start, args.cell.end);
-				});
 
-				if (matches) {
-						args.cell.disabled = true;
-						args.cell.backColor = "#ea9999";
-						args.cell.html = "<div style='position:absolute;right:2px;bottom:2px;font-size:8pt;color:#666;'>Unavailable</div>";
-				}
-		};
+				var row = dp.rows.find(args.cell.resource);
+			};
+
+
 		// event moving
 		dp.onEventMoved = function (args) {
 			//$.post("backend_move.php",
 			$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadmovedevent')?>&start="+args.newStart.toString()+"&end="+args.newEnd.toString()+"&id="+args.e.id()+"&resource="+args.newResource,
 			{
-				id: args.e.id(),
-				newStart: args.newStart.toString(),
-				newEnd: args.newEnd.toString(),
-				newResource: args.newResource
+					id: args.e.id(),
+					newStart: args.newStart.toString(),
+					newEnd: args.newEnd.toString(),
+					newResource: args.newResource
 			},
 			function(data) {
 				dp.message(data.message);
@@ -222,22 +249,37 @@ if($subs='index')
 		};
 
 		// event resizing
-    dp.onEventResized = function (args) {
-      var r = confirm("Press a button!");
-      if (r == true)
-      {
-        //$.post("backend_resize.php",
-				$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadresizedevent')?>&start="+args.newStart.toString()+"&end="+args.newEnd.toString()+"&id="+args.e.id(),
-        {
-            id: args.e.id(),
-            newStart: args.newStart.toString(),
-            newEnd: args.newEnd.toString()
-        },
-        function() {
-            dp.message("Resized.");
-        });
-      }
-    };
+		dp.onEventResized = function (args) {
+			var r = confirm("Press a button!"); //buat konfirmasi
+			if (r == true)
+			{
+				if(isNaN(args.e.id())){
+					//$.post("backend_resize.php",
+					$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadresizedclosure')?>&start="+args.newStart.toString()+"&end="+args.newEnd.toString()+"&id="+args.e.id(),
+					{
+							id: args.e.id(),
+							newStart: args.newStart.toString(),
+							newEnd: args.newEnd.toString()
+					},
+
+					function() {
+							dp.message("Resized.");
+					});
+				}
+				else{
+					$.post("<?php echo Yii::app()->createUrl('partner/reservations/loadresizedevent')?>&start="+args.newStart.toString()+"&end="+args.newEnd.toString()+"&id="+args.e.id(),
+					{
+							id: args.e.id(),
+							newStart: args.newStart.toString(),
+							newEnd: args.newEnd.toString()
+					},
+
+					function() {
+							dp.message("Resized.");
+					});
+				}
+			}
+		};
 
 		// event creating
 		dp.onTimeRangeSelected = function (args) {
@@ -255,18 +297,25 @@ if($subs='index')
 			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadpages')?>&start=" + args.start + "&end=" + args.end + "&resource=" + args.resource+ "&idtype=" + <?php echo $idtype;?>);
 		};
 
-		// event edit
+		//module edit events
 		dp.onEventClicked = function(args) {
-		var modal = new DayPilot.Modal();
-			modal.closed = function() {
-				// reload all events
-				var data = this.result;
-				if (data && data.result === "OK") {
-					loadEvents();
+				var modal = new DayPilot.Modal();
+				modal.closed = function() {
+					// reload all events
+					var data = this.result;
+					if (data && data.result === "OK") {
+						loadEvents();
+					}
+				};
+
+				//console.log(JSON.stringify(args));
+				//fungsi cek event atau roomclosure
+				if(isNaN(args.e.id())){
+					modal.showUrl("<?php echo Yii::app()->createUrl('partner/roomclosure/updatecal')?>&id=" + args.e.id());
 				}
-			};
-			//modal.showUrl("edit.php?id=" + args.e.id());
-			modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadeditevent')?>&id=" + args.e.id()+ "&idtype=" + <?php echo $idtype;?>);
+				else {
+					modal.showUrl("<?php echo Yii::app()->createUrl('partner/reservations/loadeditevent')?>&id=" + args.e.id()+ "&idtype=" + <?php echo $idtype;?>);
+				}
 		};
 
 		// event delete
@@ -285,6 +334,7 @@ if($subs='index')
 			alert("clicked: " + args.header.start);
 		};
 
+		//event onmoving
 		dp.onEventMoving = function(args) {
 			var offset = args.start.getMinutes() % 5;
 			if (offset) {
@@ -310,6 +360,7 @@ if($subs='index')
 						args.visible = false;
 				}
 		};
+
 		dp.init();
 
 		loadResources();
@@ -352,15 +403,15 @@ if($subs='index')
 		}
 
 		$(document).ready(function() {
-			var capacity = 0;
-			$("#filter").change(function() {
-				loadResources();
-			});
-			$("#print-button").click(function(ev) {
-            ev.preventDefault();
-            var format = $("#format").val();
-            dp.exportAs(format).print();
-        });
+				var capacity = 0;
+				$("#filter").change(function() {
+					loadResources();
+				});
+				$("#print-button").click(function(ev) {
+	            ev.preventDefault();
+	            var format = $("#format").val();
+	            dp.exportAs(format).print();
+	        });
 				//buat filter search
 				$("#filtersearch").keyup(function() {
 	            var query = $(this).val();
@@ -371,7 +422,6 @@ if($subs='index')
             dp.rows.filter(null);
             return false;
         });
-
 		});
 dp.scrollTo(new DayPilot.Date());
 
@@ -386,5 +436,4 @@ dp.scrollTo(new DayPilot.Date());
 			if (filename === "") filename = "index.html";
 			$(".menu a[href='" + filename + "']").addClass("selected");
 		});
-
 </script>
