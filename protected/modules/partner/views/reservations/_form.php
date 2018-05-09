@@ -167,7 +167,7 @@ $dataroom=CHtml::listData($dataroom,'room_id','room_name');
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/moment.js"></script>
 <div class="form">
 <?php
-#cek kondisi data baru?
+		#cek kondisi data baru?
 		if($model->isNewRecord){
 				//print_r($model);
 				#cek id reservation 0=flexible 1=regular 2=1night
@@ -182,10 +182,11 @@ $dataroom=CHtml::listData($dataroom,'room_id','room_name');
 				}
 				else {
 					$start = $model->start_date;
-					$newDate1 = date("d/m/Y h:m", strtotime($start));
+
+					$newDate1 = date("d/m/Y H:m", strtotime($start));
 					$model->start_date = $newDate1;
 					$end = $model->end_date;
-					$newDate2 = date("d/m/Y h:m", strtotime($end));
+					$newDate2 = date("d/m/Y H:m", strtotime($end));
 					$model->end_date = $newDate2;
 					$id=$model->reservations_id;
 					//$actions[]='loadeditevent&id='.$id."&idtype=".$id_type;
@@ -248,31 +249,35 @@ $dataroom=CHtml::listData($dataroom,'room_id','room_name');
 					</div>
 			</td>
 	</tr>
-<?php if($idtype!=0){?>
-	<tr>
-			<td colspan="2">
-				<h3>Length of stay:<strong><font id="demo"></font>Nights</strong></h3>
-				<h3>Prices:<strong>Rp<font id="totalprices"></font></strong></h3>
-			</td>
-	</tr>
+<?php if($idtype!=0)
+{?>
+		<tr>
+				<td colspan="2">
+					<h3>Length of stay:<strong><font id="demo"></font>Nights</strong></h3>
+					<h3>Prices:<strong>Rp<font id="totalprices"></font></strong></h3>
+				</td>
+		</tr>
 <?php
 		echo $form->hiddenField($model,'price',array('value'=>$roomsprice[0]['price']));
 }
-else{
-		foreach ($roomspricehours as $key => $value) {
-			echo "<p style='display:none;' id='".$value['hours']."'>".$value['price']."</p>";
-		}
+else
+{
 ?>
 	<tr>
 			<td colspan="2">
+				<?php
+						foreach ($roomspricehours as $key => $value) {
+							echo "<p style='display:none;' id='".$value['hours']."'>".$value['price']."</p>";
+						}
+				?>
 				<h3>Length of stay:<strong><font id="demo"></font>Hours</strong></h3>
 				<h3>Prices:<strong>Rp<font id="totalprices"></font></strong></h3>
 			</td>
 	</tr>
-	<?php
+<?php
 			echo $form->hiddenField($model,'price',array('value'=>$roomsprice[0]['price']));
-	}
-			?>
+}
+?>
 	<tr>
 		<td colspan="2">
 				<div class="row">
@@ -344,10 +349,16 @@ else{
 						<?php echo $form->dropDownList($model, 'type', array('regular'=>'Regular','onenight'=>'24 Hours'), array('prompt'=>'Pilih')); ?>
 						<?php echo $form->error($model,'type'); ?>
 
-	<?php
+<?php
 	}
 	else
 	{
+?>
+
+		<tr>
+			<td colspan="3">
+				<div class="row">
+<?php
 			echo $form->hiddenField($model,'idtype',array('value'=>'0'));
 			echo $form->hiddenField($model,'type',array('value'=>'flexible'));
 	}

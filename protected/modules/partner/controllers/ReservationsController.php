@@ -328,13 +328,7 @@ class ReservationsController extends Controller
 							$model->end_date =$model->end_date." ".$end_time;
 						}
 						if($model->end_date<$model->start_date){
-							$response = new Resultec();
-							$response->result = 'OK';
-							$response->message = 'Create Failed';
-
-							header('Content-Type: application/json');
-							echo json_encode($response);
-							Yii::app()->end();
+							echo "string";
 						}
 						else{
 							$model->save();
@@ -391,17 +385,23 @@ class ReservationsController extends Controller
 			{
 				$model->attributes=$_POST['Reservations'];
 				//print_r($_POST);
-				if($_POST['roomtype_id']!=null){
+				if($_POST['Reservations']['room_type_id']!=null){
 						//$model->room_type_id = $_POST['room_type_id'];
-						$model->room_id = $_POST['room_id'];
+						$model->room_id = $_POST['Reservations']['room_id'];
 				}
 				else {
-					{
-						$model->room_id = $_POST['roomtype_id'];
-					}
+						if($_POST['roomtype_id']!=null){
+								//$model->room_type_id = $_POST['room_type_id'];
+								$model->room_id = $_POST['room_id'];
+						}
+						else {
+								//$model->room_id = $_POST['roomtype_id'];
+								$model->room_id = $_POST['Reservations']['room_id'];
+						}
 				}
 
 
+				//Yii::app()->end();
 				$idtype=$_POST['Reservations']['idtype'];
 
 				if($idtype!=0){
@@ -412,16 +412,26 @@ class ReservationsController extends Controller
 					$start_time=substr($_POST['Reservations']['start_date'],10,8);
 					$end_time=substr($_POST['Reservations']['end_date'],10,8);
 					//echo $start_time;
-					$diff = strtotime($end_time)-strtotime($start_time);
-					$hh = floor($diff/60/60);
-					//echo $diff;
+
+					//$model->start_date=$_POST['Reservations']['start_date'].":00";
+					//$model->end_date=$_POST['Reservations']['start_date'].":00";
+
+					$datefirst= new DateTime($_POST['Reservations']['start_date']);
+					$timeFirst=$datefirst->format('Y-d-m H:i:s'); // 31.07.2012
+					$model->start_date=$timeFirst;
+					$datesec = new DateTime($_POST['Reservations']['end_date']);
+					$timeSecond = $datesec->format('Y-d-m H:i:s');
+					$model->end_date=$timeSecond;
+					$differenceInSeconds = strtotime($timeSecond) - strtotime($timeFirst);
+					$hh = floor($differenceInSeconds/60/60);
+					//echo $differenceInSeconds."<br>";
+					//echo $hh;
 					if($hh>12)
 					{
 						echo "overtime";
 					}
 					if($hh<0)
 					{
-						//echo "error";
 						$response = new Resultec();
 						$response->result = 'OK';
 						$response->message = 'Create Failed';
@@ -430,9 +440,6 @@ class ReservationsController extends Controller
 						echo json_encode($response);
 						Yii::app()->end();
 					}
-					$model->start_date=substr($_POST['Reservations']['start_date'],0,10);
-					$model->end_date= substr($_POST['Reservations']['end_date'],0,10);
-					Yii::app()->end();
 				}
 				if($model->validate())
 				{
@@ -440,6 +447,7 @@ class ReservationsController extends Controller
 				  $transaction = Yii::app()->db->beginTransaction();
 				  try{
 							//print_r($_POST);
+							//print_r($model);
 							$model->save();
 							#jika tidak ada error transaksi proses di commit
 							$transaction->commit();
