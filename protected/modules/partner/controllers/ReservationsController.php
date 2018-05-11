@@ -193,7 +193,7 @@ class ReservationsController extends Controller
 			header('Content-Type: application/json');
 			echo json_encode($result);
 	}
-	
+
 	#fungsi load events
 	public function actionLoadevents($start,$end)
 	{
@@ -395,22 +395,22 @@ class ReservationsController extends Controller
 			{
 				$model->attributes=$_POST['Reservations'];
 				//print_r($_POST);
-				if($_POST['Reservations']['room_type_id']!=null){
+
+				if($_POST['roomtype_id']!=null){
 						//$model->room_type_id = $_POST['room_type_id'];
-						$model->room_id = $_POST['Reservations']['room_id'];
+						$model->room_id = $_POST['room_id'];
 				}
 				else {
-						if($_POST['roomtype_id']!=null){
-								//$model->room_type_id = $_POST['room_type_id'];
-								$model->room_id = $_POST['room_id'];
-						}
-						else {
-								//$model->room_id = $_POST['roomtype_id'];
-								$model->room_id = $_POST['Reservations']['room_id'];
-						}
+					if($_POST['Reservations']['room_type_id']!=null){
+							//$model->room_type_id = $_POST['room_type_id'];
+							$model->room_id = $_POST['Reservations']['room_id'];
+					}
+					else {
+							$model->room_id = $_POST['Reservations']['room_id'];
+					}
 				}
 
-
+				//echo $model->room_id;
 				//Yii::app()->end();
 				$idtype=$_POST['Reservations']['idtype'];
 

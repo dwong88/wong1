@@ -255,8 +255,14 @@ $dataroom=CHtml::listData($dataroom,'room_id','room_name');
 {?>
 		<tr>
 				<td colspan="2">
-					<h3>Length of stay:<strong><font id="demo"></font>Nights</strong></h3>
-					<h3>Prices:<strong>Rp<font id="totalprices"></font></strong></h3>
+					<div class="pure-g">
+					<div class="pure-u-1 pure-u-md-1-3">
+						<h3>Length of stay:<strong><font id="demo"></font>Nights</strong></h3>
+					</div>
+					<div class="pure-u-1 pure-u-md-1-3">
+						<h3>Prices:<strong>Rp<font id="totalprices"></font></strong></h3>
+					</div>
+					<div>
 				</td>
 		</tr>
 <?php
@@ -371,6 +377,7 @@ else
 		}
 		else
 		{
+				$disabled1='disabled';
 				if($model->status == "CheckedOut"){
 						$disabled='disabled';
 					}
@@ -392,7 +399,7 @@ else
 	<hr>
 	<div class="row">
 		<?php echo $form->labelEx($model,'customer_name'); ?>
-		<?php echo $form->textField($model,'customer_name',array('size'=>50,'maxlength'=>50)); ?>
+		<?php echo $form->textField($model,'customer_name',array('size'=>50,'maxlength'=>50,'disabled'=>$disabled1)); ?>
 		<?php echo $form->error($model,'customer_name'); ?>
 	</div>
 	<div class="row">
@@ -422,17 +429,3 @@ else
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
-<form class="pure-form">
-    <fieldset>
-        <legend>A compact inline form</legend>
-
-        <input type="email" placeholder="Email">
-        <input type="password" placeholder="Password">
-
-        <label for="remember">
-            <input id="remember" type="checkbox"> Remember me
-        </label>
-
-        <button type="submit" class="pure-button pure-button-primary">Sign in</button>
-    </fieldset>
-</form>

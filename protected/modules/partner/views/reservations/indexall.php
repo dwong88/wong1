@@ -258,7 +258,8 @@
 		console.log(JSON.stringify(args));
 		var modal = new DayPilot.Modal();
 		modal.top = 60;
-    modal.width = 300;
+		modal.width = 300; // width of the dialog
+	  modal.height = 250; // height of the dialog
     modal.opacity = 70;
     modal.border = "10px solid #d0d0d0";
 		modal.closed = function() {
