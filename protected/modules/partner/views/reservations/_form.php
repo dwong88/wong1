@@ -396,6 +396,14 @@ else
 		}
 	?>
 </table>
+<script>
+function myFunction() {
+		//alert('eror');
+		window.print();
+}
+</script>
+<?php echo CHtml::button("(+)",array('title'=>"Topic",'onclick'=>'js:myFunction();'));?>
+<?php echo CHtml::link('Link Text','http://facebook.com', array('target'=>'_blank')); ?>
 	<hr>
 	<div class="row">
 		<?php echo $form->labelEx($model,'customer_name'); ?>
