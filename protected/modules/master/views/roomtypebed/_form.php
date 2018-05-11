@@ -7,6 +7,9 @@
 	// There is a call to performAjaxValidation() commented in generated controller code.
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
+	'htmlOptions'=>array(
+		'class'=>'pure-form',
+		),
 ));
 echo $form->hiddenField($model, 'room_type_bed_id');
 ?>

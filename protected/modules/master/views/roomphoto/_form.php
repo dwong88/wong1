@@ -30,6 +30,9 @@ $this->widget('application.extensions.widget.GridView', array(
 		// There is a call to performAjaxValidation() commented in generated controller code.
 		// See class documentation of CActiveForm for details on this.
 		'enableAjaxValidation' => false,
+		'htmlOptions'=>array(
+			'class'=>'pure-form',
+			),
 		'htmlOptions' => array('enctype' => 'multipart/form-data', 'title' => 'form title'),
 
 )); ?>

@@ -9,17 +9,20 @@
 	// There is a call to performAjaxValidation() commented in generated controller code.
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
+	'htmlOptions'=>array(
+		'class'=>'pure-form',
+		),
 )); ?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
-	
+
 	<?php Helper::showFlash(); ?>
-    
+
     <br><h1><?php echo $mProperty->property_name; ?></h1><br/>
     <?php echo $form->hiddenField($model,'property_id'); ?>
-    
+
     <table>
     <tr>
         <td colspan="2">
@@ -56,7 +59,7 @@
             </div>
         </td>
     </tr>
-    
+
     <tr>
         <td style="width: 300px;">
             <div class="row">
@@ -83,8 +86,8 @@
         </td>
     </tr>
     </table>
-    
-    
+
+
     <br>
     <br>
     <h1>RATES</h1>
@@ -123,12 +126,12 @@
             </div>
         </td>
     </table>
-    
+
     <br>
     <br>
     <h1>OCCUPANCIES</h1>
     <br/>
-    
+
     <table>
     <tr>
         <td style="width: 300px;">
@@ -163,7 +166,7 @@
         </td>
     </tr>
     <tr>
-        <td style="width: 300px;">    
+        <td style="width: 300px;">
             <div class="row">
                 <?php echo $form->labelEx($model,'room_type_bed_size'); ?>
                 <?php echo $form->textField($model,'room_type_bed_size',array('size'=>20,'maxlength'=>20)); ?>
@@ -189,7 +192,7 @@
     </table>
     <br/>
 
-    
+
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>

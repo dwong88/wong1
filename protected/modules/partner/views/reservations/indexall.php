@@ -52,15 +52,21 @@
 		<div style="margin-left: 0px;">
 			<table>
 				<tr>
+					<td width='10%'>
+							<strong>	Date: </strong>
+					</td>
 					<td>
 							<div class="space">
 									<div class="row">
-										<strong>	Date: </strong><span id="start"></span> <a href="#" onclick="picker.show(); return false;">Change</a>
+												<span id="start"></span> <a href="#" onclick="picker.show(); return false;">Change</a>
 										</div>
 								</div>
 						</td>
 					</tr>
 					<tr>
+						<td>
+								<strong>	Property: </strong>
+						</td>
 						<td>
 							<div class="space">
 									<div class="row">
@@ -76,8 +82,11 @@
 					</tr>
 					<tr>
 						<td>
+								<strong>	Filter: </strong>
+						</td>
+						<td>
 								<div class="space">
-								    Filter: <input id="filtersearch" /> <a href="#" id="clear">Clear</a>
+								     <input id="filtersearch" /> <a href="#" id="clear">Clear</a>
 								</div>
 						</td>
 					</tr>

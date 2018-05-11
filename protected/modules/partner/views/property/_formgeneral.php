@@ -28,6 +28,9 @@ CClientScript::POS_READY
 	// There is a call to performAjaxValidation() commented in generated controller code.
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
+	'htmlOptions'=>array(
+		'class'=>'pure-form',
+		),
 )); ?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
@@ -53,7 +56,7 @@ CClientScript::POS_READY
 						<?php echo $form->labelEx($model,'addressline2'); ?>
 						<?php echo $form->textArea($model,'addressline2',array('rows'=>6, 'cols'=>50,'placeholder'=>'Masukan Alamat Alternatif Property')); ?>
 						<?php echo $form->error($model,'addressline2'); ?>
-						
+
 						<div class="row">
 							<?php echo $form->labelEx($model,'postal_code').'<br>'; ?>
 							<?php echo $form->textField($model,'postal_code',array('size'=>5,'maxlength'=>5)); ?>

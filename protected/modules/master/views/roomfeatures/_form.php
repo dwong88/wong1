@@ -7,13 +7,16 @@
 	// There is a call to performAjaxValidation() commented in generated controller code.
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
+	'htmlOptions'=>array(
+		'class'=>'pure-form',
+		),
 )); ?>
 
 	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
 	<?php if($model->hasErrors()) echo $form->errorSummary($model); ?>
-	
-	<?php Helper::showFlash(); ?>	
+
+	<?php Helper::showFlash(); ?>
 	<div class="row">
 		<?php echo $form->labelEx($model,'room_features_name'); ?>
 		<?php echo $form->textField($model,'room_features_name',array('size'=>50,'maxlength'=>50)); ?>

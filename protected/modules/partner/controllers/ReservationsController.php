@@ -193,6 +193,7 @@ class ReservationsController extends Controller
 			header('Content-Type: application/json');
 			echo json_encode($result);
 	}
+	
 	#fungsi load events
 	public function actionLoadevents($start,$end)
 	{
@@ -327,8 +328,17 @@ class ReservationsController extends Controller
 							$model->start_date = $model->start_date." ".$start_time;
 							$model->end_date =$model->end_date." ".$end_time;
 						}
+
+						#validasi tanggal
 						if($model->end_date<$model->start_date){
-							echo "string";
+							//echo "string";
+							$response = new Resultec();
+							$response->result = 'OK';
+							$response->message = 'Create Failed';
+
+							header('Content-Type: application/json');
+							echo json_encode($response);
+							Yii::app()->end();
 						}
 						else{
 							$model->save();
@@ -416,12 +426,15 @@ class ReservationsController extends Controller
 					//$model->start_date=$_POST['Reservations']['start_date'].":00";
 					//$model->end_date=$_POST['Reservations']['start_date'].":00";
 
+					#cek selisih waktu
 					$datefirst= new DateTime($_POST['Reservations']['start_date']);
 					$timeFirst=$datefirst->format('Y-d-m H:i:s'); // 31.07.2012
 					$model->start_date=$timeFirst;
+
 					$datesec = new DateTime($_POST['Reservations']['end_date']);
 					$timeSecond = $datesec->format('Y-d-m H:i:s');
 					$model->end_date=$timeSecond;
+
 					$differenceInSeconds = strtotime($timeSecond) - strtotime($timeFirst);
 					$hh = floor($differenceInSeconds/60/60);
 					//echo $differenceInSeconds."<br>";
@@ -447,7 +460,6 @@ class ReservationsController extends Controller
 				  $transaction = Yii::app()->db->beginTransaction();
 				  try{
 							//print_r($_POST);
-							//print_r($model);
 							$model->save();
 							#jika tidak ada error transaksi proses di commit
 							$transaction->commit();

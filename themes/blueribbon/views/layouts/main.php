@@ -17,6 +17,8 @@
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/sitemenu.css" />
 	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/site.css" />
 
+	<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+
 	<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/moment.js"></script>
 	<script src="<?php echo Yii::app()->request->baseUrl; ?>/code/highcharts.js"></script>
 	<script src="<?php echo Yii::app()->request->baseUrl; ?>/code/modules/series-label.js"></script>

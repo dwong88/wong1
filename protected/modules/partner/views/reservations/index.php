@@ -13,20 +13,25 @@
 <div style="margin-left: 0px;">
 	<table>
 		<tr>
+			<td width='10%'>
+					<strong>	Date: </strong>
+			</td>
 			<td>
 					<div class="space">
-							<div class="row">
-								<strong>	Date: </strong><span id="start"></span> <a href="#" onclick="picker.show(); return false;">Change</a>
+								<div class="row">
+									<span id="start"></span> <a href="#" onclick="picker.show(); return false;">Change</a>
 								</div>
 						</div>
 				</td>
 			</tr>
 			<tr>
+				<td width='10%'>
+						<strong>	Property: </strong>
+				</td>
 				<td>
 					<div class="space">
 							<div class="row">
 									<?php
-											Property:
 											echo CHtml::activeDropDownList($model, 'property_id',
 											CHtml::listData(Property::model()->findAll(), 'property_id', 'property_name'),
 											array('empty'=>'Select Property','id'=>'filter'))
@@ -37,8 +42,11 @@
 			</tr>
 			<tr>
 				<td>
+						Filter: 
+				</td>
+				<td>
 						<div class="space">
-								Filter: <input id="filtersearch" /> <a href="#" id="clear">Clear</a>
+								<input id="filtersearch" /> <a href="#" id="clear">Clear</a>
 						</div>
 				</td>
 			</tr>
